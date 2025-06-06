@@ -6,25 +6,25 @@ import { useState } from "react";
 import { CloudAlert } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Details from "./Details";
 type Camera = components["schemas"]["Camera"];
-const CameraCard = ({
+export default function CameraCard({
   id,
   snapshot,
   name,
   tags,
   is_active,
   status_message,
-}: Camera) => {
+}: Camera) {
   const [imgError, setImgError] = useState(false);
-  console.log("CameraCard", name, imgError);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       key={id}
-      className="flex flex-col relative text-white p-4  bg-slate-900 gap-4  shadow hover:shadow-lg rounded-2xl transition-shadow border-1"
+      className="flex flex-col relative text-white p-4 w-full  bg-slate-900 gap-4  shadow hover:shadow-lg rounded-2xl transition-shadow border-1"
     >
-      <div className="h-[250px] w-full  relative">
+      <div className="h-[300px] w-full  relative">
         {!imgError ? (
           <Image
             fill={true}
@@ -42,10 +42,10 @@ const CameraCard = ({
         )}
       </div>
       <h2 className="text-2xl font-bold x ">{name}</h2>
-      <div className="flex-col gap-1 items-center justify-center">
+      <div className="flex-col flex gap-1">
         <div
           className={cn(
-            "flex items-center  gap-2 text-shadow-white font-semibold text-xl",
+            "flex items-center  gap-2  font-semibold text-xl",
             is_active ? "text-green-500 " : "text-red-500"
           )}
         >
@@ -72,13 +72,13 @@ const CameraCard = ({
         ))}
       </div>
       <div className="flex  gap-2 w-full mt-auto ">
-        <Button className="flex-1">View Details</Button>
+        <Details camId={id}>
+          <Button className="flex-1">View Details</Button>
+        </Details>
         <Button className="flex-1 bg-cyan-500 hover:bg-cyan-600">
           Live Preview
         </Button>
       </div>
     </motion.div>
   );
-};
-
-export default CameraCard;
+}

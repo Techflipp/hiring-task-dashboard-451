@@ -1,11 +1,12 @@
 "use client";
-import { getCameras } from "@/app/services";
+import { getCameras } from "@/services";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import DynamicPagination from "./DynamicPagination";
 import { Skeleton } from "./ui/skeleton";
 import CameraCard from "./CameraCard";
 import { useRouter, useSearchParams } from "next/navigation";
+import { getCamerasResponse } from "@/constants/apitypes";
 
 export default function CamerasList() {
   const router = useRouter();
@@ -16,13 +17,10 @@ export default function CamerasList() {
   const camName = searchParams.get("search");
   const [currentPage, setCurrentPage] = useState(1);
 
-  const queryClient = useQueryClient();
-
-  queryClient.invalidateQueries({
-    queryKey: ["cameras", { page: currentPage }],
-    exact: true,
-  });
-  const { data, isLoading, refetch, isFetching } = useQuery({
+  const { data, isLoading, refetch, isFetching } = useQuery<
+    getCamerasResponse,
+    Error
+  >({
     queryKey: ["cameras", { page: currentPage }],
     queryFn: () => getCameras(camName, currentPage, pageSize),
   });
@@ -51,7 +49,7 @@ export default function CamerasList() {
     data?.items.length,
   ]);
   return (
-    <div className="w-full p-4 py-10 ">
+    <div className="w-full max-container p-4 py-10 ">
       <DynamicPagination
         totalPages={data?.pages || 1}
         dynamicPage={currentPage}

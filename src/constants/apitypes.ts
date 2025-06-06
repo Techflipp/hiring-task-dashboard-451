@@ -3,8 +3,10 @@ import { paths } from "@/types/api";
 export type TagsResponse =
   paths["/tags/"]["get"]["responses"]["200"]["content"]["application/json"];
 
-export type getCameraParams = paths["/cameras/"]["get"]["parameters"]["query"];
-export type getCameraResponse =
+export type getCameraByIdParams =
+  paths["/cameras/{camera_id}"]["get"]["parameters"]["path"];
+export type getCamerasParams = paths["/cameras/"]["get"]["parameters"]["query"];
+export type getCamerasResponse =
   paths["/cameras/"]["get"]["responses"]["200"]["content"]["application/json"];
 export type updateCameraResponse =
   paths["/cameras/{camera_id}"]["put"]["responses"]["200"]["content"]["application/json"];
