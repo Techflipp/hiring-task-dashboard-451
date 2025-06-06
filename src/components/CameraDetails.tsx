@@ -9,12 +9,12 @@ import { Badge } from "./ui/badge";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { getCameraById, getTags, updateCamera } from "@/services";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CloudAlert, Edit, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { string, z } from "zod";
+import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -55,51 +55,73 @@ const formSchema = z.object({
 export default function CameraDetails({ camId }: { camId: string }) {
   const [imgError, setImgError] = useState<boolean>(false);
   const [editMode, setEditMode] = useState<boolean>(false);
-  const [selectedTags, setSelectedTages] = useState<string[]>([]);
 
   const queryClient = useQueryClient();
 
-  const { data } = useQuery<getCameraByIdResponse, Error>({
+  const { data, isSuccess } = useQuery<getCameraByIdResponse, Error>({
     queryKey: ["camera", { id: camId }],
     queryFn: (): Promise<getCameraByIdResponse> => getCameraById(camId),
+    enabled: !!camId,
   });
-
-  console.log(data);
-
-  const { data: tagsData } = useQuery({
-    queryKey: ["tags"],
-    queryFn: () => getTags(),
-  });
-
-  const mutation = useMutation<getCameraByIdResponse, Error>({
+  const mutation = useMutation<
+    updateCameraResponse,
+    Error,
+    z.infer<typeof formSchema>
+  >({
     mutationKey: ["camera", { id: camId }],
-    mutationFn: (vals) => updateCamera(camId, vals),
-
+    mutationFn: (vals: updateCameraRequest): Promise<updateCameraResponse> =>
+      updateCamera(camId, vals),
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["camera", { id: camId }] }),
   });
 
+  const { data: tagsData } = useQuery<TagsResponse, Error>({
+    queryKey: ["tags"],
+    queryFn: (): Promise<TagsResponse> => getTags(),
+  });
+  const [selectedTags, setSelectedTages] = useState<string[]>([]);
+
+  console.log(selectedTags);
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    if (selectedTags.length >= 2) {
+      const reqbody = { ...values, tags: selectedTags };
+      mutation.mutate(reqbody);
+      setEditMode(false);
+    }
+  }
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: data?.name,
-      rtsp_url: data?.rtsp_url,
-      stream_frame_width: data?.stream_frame_width,
-      stream_frame_height: data?.stream_frame_height,
-      stream_max_length: data?.stream_max_length,
-      stream_quality: data?.stream_quality,
-      stream_fps: data?.stream_fps,
-      stream_skip_frames: data?.stream_skip_frames,
+      name: "",
+      rtsp_url: "",
+      stream_frame_width: 0,
+      stream_frame_height: 0,
+      stream_max_length: 0,
+      stream_quality: 0,
+      stream_fps: 0,
+      stream_skip_frames: 0,
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const reqbody = { ...values, tags: Array.from(selectedTags) };
-    console.log(reqbody);
-    mutation.mutate(reqbody);
-    setEditMode(false);
-  }
+  useEffect(() => {
+    if (isSuccess && data) {
+      form.reset({
+        name: data?.name,
+        rtsp_url: data?.rtsp_url,
+        stream_frame_width: data?.stream_frame_width,
+        stream_frame_height: data?.stream_frame_height,
+        stream_max_length: data?.stream_max_length,
+        stream_quality: data?.stream_quality,
+        stream_fps: data?.stream_fps,
+        stream_skip_frames: data?.stream_skip_frames,
+      });
 
+      setSelectedTages(data?.tags.map((tag) => tag.id));
+    }
+    queryClient.invalidateQueries({ queryKey: ["cameras"] });
+  }, [isSuccess, data, form, queryClient, camId]);
   if (!data) {
     return (
       <div className="size-full flex flex-center">
@@ -178,20 +200,19 @@ export default function CameraDetails({ camId }: { camId: string }) {
                 ? tagsData?.map(
                     (tag: { id: string; name: string; color: string }) => (
                       <Badge
-                        key={tag.name}
-                        className={
-                          selectedTags.find((name) => name === tag.name)
-                            ? "opacity-100 cursor-pointer"
-                            : "opacity-50 cursor-pointer"
-                        }
-                        style={{ backgroundColor: tag.color }}
+                        key={tag.id}
+                        style={{
+                          backgroundColor: tag.color,
+                          opacity: selectedTags.find((id) => id === tag.id)
+                            ? "1"
+                            : "0.5",
+                          cursor: "pointer",
+                        }}
                         onClick={() =>
                           setSelectedTages((prev) =>
-                            prev.includes(
-                              tagsData.find(({ name }) => name === tag.name)
-                            )
-                              ? prev.filter((t) => t !== tag)
-                              : [...prev, tag.name]
+                            prev.includes(tag.id)
+                              ? prev.filter((t) => t != tag.id)
+                              : [...prev, tag.id]
                           )
                         }
                       >
@@ -209,6 +230,9 @@ export default function CameraDetails({ camId }: { camId: string }) {
                       </Badge>
                     )
                   )}
+              {selectedTags.length < 2 && (
+                <span className="text-red-500">select 2 tags at least</span>
+              )}
             </div>
           </div>
           <div className="w-full">

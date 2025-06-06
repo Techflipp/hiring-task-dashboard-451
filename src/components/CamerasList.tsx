@@ -1,6 +1,6 @@
 "use client";
 import { getCameras } from "@/services";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import DynamicPagination from "./DynamicPagination";
 import { Skeleton } from "./ui/skeleton";
