@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Camera, ChartLineIcon } from "lucide-react";
 import CameraDetails from "./CameraDetails";
 import { DialogDescription, DialogTitle } from "@radix-ui/react-dialog";
+import DemoGraphicsDetails from "./DemoGraphicsDetails";
 
 export default function Details({
   children,
@@ -43,8 +44,8 @@ export default function Details({
           <TabsContent value="camera" className="p-4 h-full">
             <CameraDetails camId={camId} />
           </TabsContent>
-          <TabsContent value="demographics">
-            Change your password here.
+          <TabsContent value="demographics" className="p-4 h-full">
+            <DemoGraphicsDetails camId={camId} />
           </TabsContent>
         </Tabs>
       </DialogContent>

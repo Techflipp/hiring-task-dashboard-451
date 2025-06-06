@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import DynamicPagination from "./DynamicPagination";
 import { Skeleton } from "./ui/skeleton";
-import CameraCard from "./CameraCard";
+import CameraCard from "./CameraCards";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getCamerasResponse } from "@/constants/apitypes";
 

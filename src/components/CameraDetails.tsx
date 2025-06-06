@@ -60,24 +60,23 @@ export default function CameraDetails({ camId }: { camId: string }) {
 
   const { data, isSuccess } = useQuery<getCameraByIdResponse, Error>({
     queryKey: ["camera", { id: camId }],
-    queryFn: (): Promise<getCameraByIdResponse> => getCameraById(camId),
+    queryFn: () => getCameraById(camId),
     enabled: !!camId,
   });
   const mutation = useMutation<
     updateCameraResponse,
     Error,
-    z.infer<typeof formSchema>
+    updateCameraRequest
   >({
     mutationKey: ["camera", { id: camId }],
-    mutationFn: (vals: updateCameraRequest): Promise<updateCameraResponse> =>
-      updateCamera(camId, vals),
+    mutationFn: (vals) => updateCamera(camId, vals),
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["camera", { id: camId }] }),
   });
 
   const { data: tagsData } = useQuery<TagsResponse, Error>({
     queryKey: ["tags"],
-    queryFn: (): Promise<TagsResponse> => getTags(),
+    queryFn: () => getTags(),
   });
   const [selectedTags, setSelectedTages] = useState<string[]>([]);
 
@@ -137,7 +136,7 @@ export default function CameraDetails({ camId }: { camId: string }) {
         className="flex flex-center h-full flex-col lg:flex-row w-full gap-10"
       >
         <div className="w-full flex-col flex gap-4">
-          <span>{data?.id}</span>
+          <span className="text-xs">{data?.id}</span>
           {!editMode ? (
             <h2 className="text-4xl font-bold">{data?.name}</h2>
           ) : (
@@ -231,7 +230,7 @@ export default function CameraDetails({ camId }: { camId: string }) {
                     )
                   )}
               {selectedTags.length < 2 && (
-                <span className="text-red-500">select 2 tags at least</span>
+                <FormMessage>select 2 tags at least</FormMessage>
               )}
             </div>
           </div>

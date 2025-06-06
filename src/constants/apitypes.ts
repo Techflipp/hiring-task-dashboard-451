@@ -1,4 +1,6 @@
-import { paths } from "@/types/api";
+import { paths, components } from "@/types/api";
+
+export type Camera = components["schemas"]["Camera"];
 
 export type TagsResponse =
   paths["/tags/"]["get"]["responses"]["200"]["content"]["application/json"];
@@ -15,3 +17,8 @@ export type updateCameraRequest =
 
 export type getCameraByIdResponse =
   paths["/cameras/{camera_id}"]["get"]["responses"]["200"]["content"]["application/json"];
+
+export type updateDemoGraphicsRequest =
+  paths["/demographics/config/{config_id}"]["put"]["requestBody"]["content"]["application/json"];
+export type updateDemoGraphicsResponse =
+  paths["/demographics/config/{config_id}"]["put"]["responses"]["200"]["content"]["application/json"];

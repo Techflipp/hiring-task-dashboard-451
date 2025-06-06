@@ -1,13 +1,13 @@
 import Image from "next/image";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { components } from "@/types/api";
 import { useState } from "react";
 import { CloudAlert } from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import Details from "./Details";
-type Camera = components["schemas"]["Camera"];
+import { Camera } from "@/constants/apitypes";
+
 export default function CameraCard({
   id,
   snapshot,

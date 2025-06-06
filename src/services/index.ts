@@ -7,10 +7,12 @@ import {
   updateCameraResponse,
   updateCameraRequest,
   getCameraByIdResponse,
+  updateDemoGraphicsRequest,
+  updateDemoGraphicsResponse,
 } from "@/constants/apitypes";
 
 export const getTags = async (): Promise<TagsResponse> => {
-  const response = await api.get<TagsResponse>(ENDPOINTS.getTags);
+  const response = await api.get(ENDPOINTS.getTags);
   return response.data;
 };
 
@@ -19,7 +21,7 @@ export const getCameras = async (
   page: number | null,
   size: number | null
 ): Promise<getCamerasResponse> => {
-  const response = await api.get<getCamerasResponse>(ENDPOINTS.getCameras, {
+  const response = await api.get(ENDPOINTS.getCameras, {
     params: { camera_name, page, size },
   });
   return response.data;
@@ -28,9 +30,7 @@ export const getCameras = async (
 export const getCameraById = async (
   id: string
 ): Promise<getCameraByIdResponse> => {
-  const response = await api.get<getCameraByIdResponse>(
-    ENDPOINTS.getCamera(id)
-  );
+  const response = await api.get(ENDPOINTS.getCamera(id));
   return response.data;
 };
 
@@ -38,9 +38,14 @@ export const updateCamera = async (
   id: string,
   data: updateCameraRequest
 ): Promise<updateCameraResponse> => {
-  const response = await api.put<updateCameraResponse>(
-    ENDPOINTS.updateCamera(id),
-    data
-  );
+  const response = await api.put(ENDPOINTS.updateCamera(id), data);
+  return response.data;
+};
+
+export const updateDemoGraphics = async (
+  id: string,
+  data: updateDemoGraphicsRequest
+): Promise<updateDemoGraphicsResponse> => {
+  const response = await api.put(ENDPOINTS.updateDemographics(id), data);
   return response.data;
 };
