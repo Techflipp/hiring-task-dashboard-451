@@ -9,6 +9,8 @@ import {
   getCameraByIdResponse,
   updateDemoGraphicsRequest,
   updateDemoGraphicsResponse,
+  getDemoGraphicsResultsParams,
+  getDemoGraphicsResultsResponse,
 } from "@/constants/apitypes";
 
 export const getTags = async (): Promise<TagsResponse> => {
@@ -47,5 +49,12 @@ export const updateDemoGraphics = async (
   data: updateDemoGraphicsRequest
 ): Promise<updateDemoGraphicsResponse> => {
   const response = await api.put(ENDPOINTS.updateDemographics(id), data);
+  return response.data;
+};
+
+export const getDemographicsResults = async (
+  params: getDemoGraphicsResultsParams
+): Promise<getDemoGraphicsResultsResponse> => {
+  const response = await api.get(ENDPOINTS.getDemographicsResult, { params });
   return response.data;
 };

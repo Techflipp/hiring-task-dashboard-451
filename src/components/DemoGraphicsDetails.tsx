@@ -1,18 +1,23 @@
 import {
   getCameraByIdResponse,
+  getDemoGraphicsResultsResponse,
   updateDemoGraphicsRequest,
   updateDemoGraphicsResponse,
 } from "@/constants/apitypes";
 
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { getCameraById, updateDemoGraphics } from "@/services";
-import Image from "next/image";
+import {
+  getCameraById,
+  getDemographicsResults,
+  updateDemoGraphics,
+} from "@/services";
 import { useState, useEffect } from "react";
-import { CloudAlert } from "lucide-react";
 import { Button } from "./ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { toast } from "sonner";
+import { Skeleton } from "./ui/skeleton";
 import {
   Form,
   FormControl,
@@ -22,6 +27,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Slider } from "./ui/slider";
+import { DemoGraphicChart } from "./DemoGraphicChart";
 
 const formSchema = z.object({
   track_history_max_length: z.coerce
@@ -74,13 +80,28 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
     enabled: !!camId,
   });
 
+  const { data: demoGraphicResult } = useQuery<
+    getDemoGraphicsResultsResponse,
+    Error
+  >({
+    queryKey: ["demographics", { id: camId }],
+    queryFn: () => getDemographicsResults({ camera_id: camId }),
+    enabled: !!camId,
+  });
+
   const mutation = useMutation<
     updateDemoGraphicsResponse,
     Error,
     updateDemoGraphicsRequest
   >({
-    mutationKey: ["camera", { id: camId }],
+    mutationKey: ["demographics", { id: camId }],
     mutationFn: (vals) => updateDemoGraphics(configId, vals),
+    onError: () => {
+      toast.error("Something went wrong");
+    },
+    onSuccess: () => {
+      toast.success("Demographic has been updated Successfully");
+    },
     onSettled: () =>
       queryClient.invalidateQueries({
         queryKey: ["camera", { id: camId }],
@@ -110,7 +131,6 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     mutation.mutate(values);
-    console.log(data?.demographics_config?.id);
   }
 
   useEffect(() => {
@@ -122,7 +142,7 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
         min_track_duration: data?.demographics_config
           ?.min_track_duration as number,
         detection_confidence_threshold: data?.demographics_config
-          ?.track_history_max_length as number,
+          ?.detection_confidence_threshold as number,
         demographics_confidence_threshold: data?.demographics_config
           ?.demographics_confidence_threshold as number,
         min_track_updates: data?.demographics_config
@@ -133,6 +153,12 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
         frame_skip_interval: data?.demographics_config
           ?.frame_skip_interval as number,
       });
+
+      if (data.demographics_config?.id === "") {
+        setGraphError(true);
+      } else {
+        setGraphError(false);
+      }
       setConfigId(data?.demographics_config?.id as string);
     }
   }, [isSuccess, data, form]);
@@ -148,9 +174,9 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-center h-full flex-col-reverse lg:flex-row w-full gap-10"
+        className="flex flex-center h-full flex-col-reverse lg:flex-row w-full gap-15"
       >
-        <div className="w-full flex-3 flex-col max-w-4xl flex gap-4">
+        <div className="w-full flex-1 flex-col max-w-4xl flex gap-4">
           <span className="text-xs">
             {"config_id: " + data?.demographics_config?.id || "no id"}
           </span>
@@ -455,23 +481,27 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
             </Button>
           </div>
         </div>
-        <div className="w-full flex-2  flex flex-col gap-2 ">
-          <div className="h-[400px] w-full relative">
-            {!graphError ? (
-              <Image
-                fill={true}
-                src={data?.snapshot || ""}
-                alt={data?.name || "no Image"}
-                className="w-full object-cover rounded-xl"
-                onError={() => setGraphError(true)}
-                priority
-              />
-            ) : (
-              <div className="w-full flex-col gap-2 z-20 rounded-xl bg-slate-500 h-full flex-center">
-                <CloudAlert size={40} />
-                NO IMAGE
-              </div>
-            )}
+        <div className="w-full flex-1  flex flex-col gap-2 ">
+          <div className=" w-full grid grid-cols-1 md:grid-cols-2 gap-5 relative">
+            {!graphError && demoGraphicResult?.analytics
+              ? Object.keys(demoGraphicResult.analytics)
+                  .slice(0, -1)
+                  .map((key) => (
+                    <DemoGraphicChart
+                      key={key}
+                      item={key}
+                      analytics={demoGraphicResult.analytics}
+                    />
+                  ))
+              : [...Array(4).keys()].map((i, index) => (
+                  <div className="flex flex-col space-y-3" key={index}>
+                    <Skeleton className="h-[250px] w-full rounded-xl" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-[250px]" />
+                      <Skeleton className="h-4 w-[200px]" />
+                    </div>
+                  </div>
+                ))}
           </div>
         </div>
       </form>

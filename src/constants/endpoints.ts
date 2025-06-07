@@ -10,4 +10,5 @@ export const ENDPOINTS = {
   createDemographics: `${API_BASE_URL}/demographics/config/`,
   updateDemographics: (id: string) =>
     `${API_BASE_URL}/demographics/config/${id}`,
+  getDemographicsResult: `${API_BASE_URL}/demographics/results/`,
 };

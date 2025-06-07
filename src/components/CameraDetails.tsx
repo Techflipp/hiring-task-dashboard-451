@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z
@@ -70,6 +71,12 @@ export default function CameraDetails({ camId }: { camId: string }) {
   >({
     mutationKey: ["camera", { id: camId }],
     mutationFn: (vals) => updateCamera(camId, vals),
+    onError: () => {
+      toast.error("something went wrong");
+    },
+    onSuccess: () => {
+      toast.success("Camera updated!");
+    },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: ["camera", { id: camId }] }),
   });
@@ -79,8 +86,6 @@ export default function CameraDetails({ camId }: { camId: string }) {
     queryFn: () => getTags(),
   });
   const [selectedTags, setSelectedTages] = useState<string[]>([]);
-
-  console.log(selectedTags);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     if (selectedTags.length >= 2) {
@@ -138,7 +143,7 @@ export default function CameraDetails({ camId }: { camId: string }) {
         <div className="w-full flex-col flex gap-4">
           <span className="text-xs">{data?.id}</span>
           {!editMode ? (
-            <h2 className="text-4xl font-bold">{data?.name}</h2>
+            <h3 className="text-4xl font-bold">{data?.name}</h3>
           ) : (
             <FormField
               control={form.control}
@@ -193,7 +198,7 @@ export default function CameraDetails({ camId }: { camId: string }) {
             )}
           </div>
           <div className="w-full">
-            <h3 className="text-2xl font-semibold">Tages</h3>
+            <h3 className="text-2xl font-semibold">Tags</h3>
             <div className="flex mt-2 flex-wrap gap-2">
               {editMode
                 ? tagsData?.map(

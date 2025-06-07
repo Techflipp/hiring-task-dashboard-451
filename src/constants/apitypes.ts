@@ -22,3 +22,8 @@ export type updateDemoGraphicsRequest =
   paths["/demographics/config/{config_id}"]["put"]["requestBody"]["content"]["application/json"];
 export type updateDemoGraphicsResponse =
   paths["/demographics/config/{config_id}"]["put"]["responses"]["200"]["content"]["application/json"];
+
+export type getDemoGraphicsResultsParams =
+  paths["/demographics/results"]["get"]["parameters"]["query"];
+export type getDemoGraphicsResultsResponse =
+  paths["/demographics/results"]["get"]["responses"]["200"]["content"]["application/json"];

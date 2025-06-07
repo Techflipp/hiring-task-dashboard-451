@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ReactQueryProvider from "@/Providers/ReactQuery";
 import LenisProvider from "@/Providers/LenisProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,6 +40,7 @@ export default function RootLayout({
                 <SidebarTrigger />
                 {children}
               </main>
+              <Toaster />
             </LenisProvider>
           </SidebarProvider>
         </ReactQueryProvider>

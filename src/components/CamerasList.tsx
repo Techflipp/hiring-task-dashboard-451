@@ -21,7 +21,10 @@ export default function CamerasList() {
     getCamerasResponse,
     Error
   >({
-    queryKey: ["cameras", { page: currentPage }],
+    queryKey: [
+      "cameras",
+      { page: currentPage, search: camName, size: pageSize },
+    ],
     queryFn: () => getCameras(camName, currentPage, pageSize),
   });
 
@@ -49,7 +52,7 @@ export default function CamerasList() {
     data?.items.length,
   ]);
   return (
-    <div className="w-full max-container p-4 py-10 ">
+    <section id="cameras" className="w-full max-container p-4 py-10 ">
       <DynamicPagination
         totalPages={data?.pages || 1}
         dynamicPage={currentPage}
@@ -74,6 +77,6 @@ export default function CamerasList() {
             ))
           : data?.items.map((item) => <CameraCard key={item.id} {...item} />)}
       </div>
-    </div>
+    </section>
   );
 }

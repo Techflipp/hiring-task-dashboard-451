@@ -44,8 +44,8 @@ export function AppSidebar({}) {
 
   const handleSizeReset = () => {
     const params = new URLSearchParams(searchParams.toString());
-    setPageSize("");
-    params.set("size", "");
+    setPageSize("20");
+    params.set("size", "20");
     router.push(`?${params.toString()}`);
   };
 
