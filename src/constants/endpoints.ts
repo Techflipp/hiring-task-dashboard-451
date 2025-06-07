@@ -1,5 +1,5 @@
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://api.example.com";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "https://api.example.com";
 
 export const ENDPOINTS = {
   getTags: `${API_BASE_URL}/tags`,
