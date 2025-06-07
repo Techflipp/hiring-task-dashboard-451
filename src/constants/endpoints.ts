@@ -4,11 +4,11 @@ export const API_BASE_URL =
 export const ENDPOINTS = {
   getTags: `${API_BASE_URL}/tags/`,
   getCameras: `${API_BASE_URL}/cameras/`,
-  getCamera: (id: string) => `${API_BASE_URL}/cameras/${id}/`,
-  updateCamera: (id: string) => `${API_BASE_URL}/cameras/${id}/`,
+  getCamera: (id: string) => `${API_BASE_URL}/cameras/${id}`,
+  updateCamera: (id: string) => `${API_BASE_URL}/cameras/${id}`,
   getDemographics: `${API_BASE_URL}/demographics/config/`,
   createDemographics: `${API_BASE_URL}/demographics/config/`,
   updateDemographics: (id: string) =>
-    `${API_BASE_URL}/demographics/config/${id}/`,
+    `${API_BASE_URL}/demographics/config/${id}`,
   getDemographicsResult: `${API_BASE_URL}/demographics/results/`,
 };
