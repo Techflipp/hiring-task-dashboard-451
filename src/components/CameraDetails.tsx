@@ -25,6 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
+//defining formSchema
 const formSchema = z.object({
   name: z
     .string()
@@ -108,6 +109,8 @@ export default function CameraDetails({ camId }: { camId: string }) {
       stream_skip_frames: 0,
     },
   });
+
+  //set inputs with the current value for better ux
 
   useEffect(() => {
     if (isSuccess && data) {

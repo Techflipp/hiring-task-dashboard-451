@@ -1,5 +1,5 @@
 "use client";
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -18,9 +18,11 @@ import { getDemoGraphicsResultsResponse } from "@/constants/apitypes";
 export function DemoGraphicChart({
   analytics,
   item,
+  date,
 }: {
   analytics: getDemoGraphicsResultsResponse["analytics"];
   item: string;
+  date: string;
 }) {
   const chartData = Object.entries(
     analytics[item as keyof typeof analytics]
@@ -29,31 +31,34 @@ export function DemoGraphicChart({
   const chartConfig = {
     value: {
       label: "Value",
-      color: "var(--chart-5)",
+      color: "var(--color-sky-600)",
     },
   } satisfies ChartConfig;
+
+  console.log(chartData);
   return (
     <Card>
       <CardHeader>
         <CardTitle>{item.split("_").join(" ").toUpperCase()}</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardDescription>{`${new Date(date).toDateString()}`}</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
-          <BarChart accessibilityLayer data={chartData}>
-            <CartesianGrid vertical={false} />
-            <XAxis
+          <BarChart accessibilityLayer data={chartData} layout="vertical">
+            <XAxis type="number" dataKey="value" hide />
+            <YAxis
               dataKey="key"
+              type="category"
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              tickFormatter={(value) => value.slice(0, 3)}
+              tickFormatter={(val) => val.split("_").join(" ")}
             />
             <ChartTooltip
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            <Bar dataKey="value" fill="var(--color-value)" radius={8} />
+            <Bar dataKey="value" fill="var(--color-value)" radius={5} />
           </BarChart>
         </ChartContainer>
       </CardContent>

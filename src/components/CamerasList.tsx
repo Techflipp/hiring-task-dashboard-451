@@ -32,7 +32,7 @@ export default function CamerasList() {
     const params = new URLSearchParams(searchParams.toString());
     if (isFetching) {
       params.set("search", camName || "");
-      params.set("page", currentPage.toString() || "1");
+      params.set("page", currentPage.toString());
       params.set("size", pageSize.toString());
       router.push(`?${params.toString()}`);
     }
@@ -66,7 +66,7 @@ export default function CamerasList() {
           </div>
         ) : null}
         {isLoading
-          ? [...Array(pageSize).keys()].map((i, index) => (
+          ? [...Array(pageSize ? pageSize : 20).keys()].map((i, index) => (
               <div className="flex flex-col space-y-3" key={index}>
                 <Skeleton className="h-[300px] w-full rounded-xl" />
                 <div className="space-y-2">

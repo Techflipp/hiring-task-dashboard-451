@@ -22,7 +22,7 @@ export default function CameraCard({
       initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       key={id}
-      className="flex flex-col relative text-white p-4 w-full  bg-slate-900 gap-4  shadow hover:shadow-lg rounded-2xl transition-shadow border-1"
+      className="flex flex-col relative text-white p-6 w-full  bg-slate-900 gap-4  shadow hover:shadow-lg rounded-2xl transition-shadow border-1"
     >
       <div className="h-[300px] w-full  relative">
         {!imgError ? (
@@ -41,7 +41,7 @@ export default function CameraCard({
           </div>
         )}
       </div>
-      <h2 className="text-2xl font-bold x ">{name}</h2>
+      <h2 className="text-3xl font-bold  ">{name}</h2>
       <div className="flex-col flex gap-1">
         <div
           className={cn(

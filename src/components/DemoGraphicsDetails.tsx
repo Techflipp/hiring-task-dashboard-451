@@ -29,6 +29,7 @@ import {
 import { Slider } from "./ui/slider";
 import { DemoGraphicChart } from "./DemoGraphicChart";
 
+//defining schema
 const formSchema = z.object({
   track_history_max_length: z.coerce
     .number()
@@ -133,6 +134,7 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
     mutation.mutate(values);
   }
 
+  //set inputs with the current value for better ux
   useEffect(() => {
     if (isSuccess && data.demographics_config !== undefined) {
       form.reset({
@@ -176,7 +178,7 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-center h-full flex-col-reverse lg:flex-row w-full gap-15"
       >
-        <div className="w-full flex-1 flex-col max-w-4xl flex gap-4">
+        <div className="w-full flex-2 flex-col max-w-4xl flex gap-4">
           <span className="text-xs">
             {"config_id: " + data?.demographics_config?.id || "no id"}
           </span>
@@ -481,7 +483,7 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
             </Button>
           </div>
         </div>
-        <div className="w-full flex-1  flex flex-col gap-2 ">
+        <div className="w-full flex-3  flex flex-col gap-2 ">
           <div className=" w-full grid grid-cols-1 md:grid-cols-2 gap-5 relative">
             {!graphError && demoGraphicResult?.analytics
               ? Object.keys(demoGraphicResult.analytics)
@@ -491,6 +493,7 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
                       key={key}
                       item={key}
                       analytics={demoGraphicResult.analytics}
+                      date={demoGraphicResult.items[0].created_at}
                     />
                   ))
               : [...Array(4).keys()].map((i, index) => (
