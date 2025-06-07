@@ -35,7 +35,6 @@ export function DemoGraphicChart({
     },
   } satisfies ChartConfig;
 
-  console.log(chartData);
   return (
     <Card>
       <CardHeader>
