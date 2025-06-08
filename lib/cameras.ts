@@ -1,7 +1,6 @@
 import type { Camera, PaginatedResponse } from "@/lib/types"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
-console.log('API_BASE_URL', API_BASE_URL)
+const API_BASE_URL = "https://task-451-api.ryd.wafaicloud.com"
 
 interface FetchCamerasParams {
   page?: number
