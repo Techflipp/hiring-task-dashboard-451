@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { QueryProvider } from '@/providers/query-provider';
-import { Header } from '@/components/layout/header';
-import { Navigation } from '@/components/layout/navigation';
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query'
+import { Header } from '../../components/layout/header';
+import { Navigation } from '../../components/layout/navigation';
+
+const queryClient = new QueryClient()
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +36,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-       <QueryProvider>
+       <QueryClientProvider client={queryClient}>
           <div className="min-h-screen bg-gray-50">
             <Header />
             <Navigation />
@@ -38,7 +44,7 @@ export default function RootLayout({
               {children}
             </main>
           </div>
-        </QueryProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );
