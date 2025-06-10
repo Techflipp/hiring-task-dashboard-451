@@ -1,17 +1,26 @@
 'use client';
 
+import { use } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '../../../../lib/api';
+import { CameraDetail } from '../../../../components/camera/camera-detail';
 import { Skeleton } from '../../../../components/ui/skeleton';
 import Link from 'next/link';
 import { Button } from '../../../../components/ui/button';
 import { Edit, BarChart3, ArrowLeft } from 'lucide-react';
-import { CameraDetail } from '../../../../components/camera/camera-detail';
 
-export default function CameraDetailPage({ params }: { params: { id: string } }) {
+export default function CameraDetailPage({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
+}) {
+  // Use React.use() to unwrap the Promise as per Next.js 15 docs
+  const { id } = use(params);
+  
   const { data: camera, isLoading, error } = useQuery({
-    queryKey: ['camera', params.id],
-    queryFn: () => apiClient.getCamera(params.id),
+    queryKey: ['camera', id],
+    queryFn: () => apiClient.getCamera(id),
+    enabled: !!id, // Only run query when id is available
   });
 
   if (error) {

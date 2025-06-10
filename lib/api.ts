@@ -2,6 +2,8 @@ import { Camera, CameraFilters, DemographicsConfig, DemographicsFilters, Demogra
 
 const API_BASE_URL = 'https://task-451-api.ryd.wafaicloud.com';
 
+import { DemographicsResponse } from './types';
+
 class ApiClient {
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
@@ -62,13 +64,13 @@ class ApiClient {
     });
   }
 
-  async getDemographicsResults(filters: DemographicsFilters): Promise<DemographicsResult[]> {
+  async getDemographicsResults(filters: DemographicsFilters): Promise<DemographicsResponse> {
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
       if (value) params.append(key, value.toString());
     });
 
-    return this.request<DemographicsResult[]>(`/demographics/results?${params}`);
+    return this.request<DemographicsResponse>(`/demographics/results?${params}`);
   }
 }
 

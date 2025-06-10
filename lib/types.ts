@@ -2,21 +2,34 @@ export interface Camera {
   id: string;
   name: string;
   rtsp_url: string;
+  
+  // Status and connection info (available in list and detail)
+  is_active: boolean;
+  status_message?: string;
+  snapshot?: string;
+  
+  // Stream configuration (only available in detailed view)
   stream_frame_width?: number;
   stream_frame_height?: number;
   stream_max_length?: number;
   stream_quality?: number;
   stream_fps?: number;
   stream_skip_frames?: number;
+  
+  // Related data
   tags?: Tag[];
   demographics_config?: DemographicsConfig;
+  
+  // Timestamps
   created_at: string;
   updated_at: string;
 }
 
+// Supporting interfaces
 export interface Tag {
   id: string;
   name: string;
+  color: string;
 }
 
 export interface DemographicsConfig {
@@ -35,13 +48,25 @@ export interface DemographicsConfig {
 
 export interface DemographicsResult {
   id: string;
-  camera_id: string;
+  count: number;
   gender: Gender;
   age: AgeGroup;
   emotion: Emotion;
   ethnicity: EthnicGroup;
-  confidence: number;
-  timestamp: string;
+  config_id: string;
+  created_at: string;
+}
+
+// Add the new response interface that matches the API
+export interface DemographicsResponse {
+  items: DemographicsResult[];
+  analytics: {
+    gender_distribution: Record<string, number>;
+    age_distribution: Record<string, number>;
+    emotion_distribution: Record<string, number>;
+    ethnicity_distribution: Record<string, number>;
+    total_count: number;
+  };
 }
 
 export type Gender = "male" | "female";
