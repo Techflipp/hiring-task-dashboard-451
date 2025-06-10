@@ -2,7 +2,6 @@
 import { Search, RotateCcw, Pencil } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
 import {
   Sidebar,
   SidebarContent,
@@ -15,7 +14,7 @@ import {
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export function AppSidebar({}) {
+export default function AppSidebar() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [pageSize, setPageSize] = useState(searchParams.get("size") || "");
@@ -62,6 +61,7 @@ export function AppSidebar({}) {
                 <Input
                   type="text"
                   placeholder="Search..."
+                  id="searchInput"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -79,6 +79,7 @@ export function AppSidebar({}) {
                 <Input
                   type="text"
                   placeholder="Items size"
+                  id="sizeInput"
                   value={pageSize}
                   onChange={(e) => setPageSize(e.target.value)}
                 />

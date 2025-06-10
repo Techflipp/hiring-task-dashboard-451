@@ -52,12 +52,13 @@ export default function CamerasList() {
     data?.items.length,
   ]);
   return (
-    <section id="cameras" className="w-full max-container p-4 py-10 ">
+    <section id="cameras" className="w-full max-container p-0 lg:p-4 py-10">
       <DynamicPagination
-        totalPages={data?.pages || 1}
+        totalPages={data?.pages || 3}
         dynamicPage={currentPage}
         setDynamicPage={setCurrentPage}
         refetch={refetch}
+        isFetching={isFetching}
       />
       <div className="grid grid-cols-1 w-full xl:grid-cols-2 gap-4 ">
         {data?.items.length === 0 && !isFetching && !isLoading ? (

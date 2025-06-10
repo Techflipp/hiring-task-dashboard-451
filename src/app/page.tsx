@@ -1,4 +1,5 @@
 import CamerasList from "@/components/CamerasList";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -7,7 +8,9 @@ export default function Home() {
         <h1 className="text-4xl font-bold text-center mt-10">
           Cameras Overview
         </h1>
-        <CamerasList />
+        <Suspense>
+          <CamerasList />
+        </Suspense>
       </div>
     </div>
   );

@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Ubuntu_Condensed, Ubuntu_Mono } from "next/font/google";
-import "./globals.css";
-import ReactQueryProvider from "@/Providers/ReactQuery";
-import LenisProvider from "@/Providers/LenisProvider";
 import { Toaster } from "@/components/ui/sonner";
+import AppProvider from "@/providers/Provider";
+import AppSidebar from "@/components/AppSidebar";
 import { Suspense } from "react";
+import "./globals.css";
 
 const main = Ubuntu_Condensed({
   variable: "--font-u-main",
@@ -33,20 +32,16 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${mono.variable} ${main.variable} antialiased`}>
-        <ReactQueryProvider>
-          <SidebarProvider>
-            <Suspense>
-              <AppSidebar />
-              <LenisProvider>
-                <main className="w-full">
-                  <SidebarTrigger />
-                  {children}
-                </main>
-                <Toaster />
-              </LenisProvider>
-            </Suspense>
-          </SidebarProvider>
-        </ReactQueryProvider>
+        <AppProvider>
+          <Suspense>
+            <AppSidebar />
+          </Suspense>
+          <main className="w-full">
+            <SidebarTrigger />
+            {children}
+          </main>
+          <Toaster />
+        </AppProvider>
       </body>
     </html>
   );

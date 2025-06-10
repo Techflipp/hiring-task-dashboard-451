@@ -3,10 +3,12 @@ import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { CloudAlert } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import Details from "./Details";
 import { Camera } from "@/constants/apitypes";
+import Spinner from "./Spinner";
+import { Skeleton } from "./ui/skeleton";
 
 export default function CameraCard({
   id,
@@ -16,7 +18,8 @@ export default function CameraCard({
   is_active,
   status_message,
 }: Camera) {
-  const [imgError, setImgError] = useState(false);
+  const [imgError, setImgError] = useState<boolean>(false);
+  const [ImgLoading, setImgLoading] = useState<boolean>(true);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
@@ -25,19 +28,26 @@ export default function CameraCard({
       className="flex flex-col relative text-white p-6 w-full  bg-slate-900 gap-4  shadow hover:shadow-lg rounded-2xl transition-shadow border-1"
     >
       <div className="h-[300px] w-full  relative">
+        {ImgLoading && !imgError && (
+          <Skeleton className="w-full h-full flex flex-col flex-center gap-2">
+            <Spinner />
+            <span>Loading Image</span>
+          </Skeleton>
+        )}
         {!imgError ? (
           <Image
             fill={true}
             src={snapshot}
             alt={name}
             className="w-full object-cover rounded-xl"
+            onLoad={() => setImgLoading(false)}
             onError={() => setImgError(true)}
             priority
           />
         ) : (
           <div className="w-full flex-col gap-2 z-20 rounded-xl bg-slate-500 h-full flex-center">
             <CloudAlert size={40} />
-            NO IMAGE
+            <span>NO IMAGE</span>
           </div>
         )}
       </div>

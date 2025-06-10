@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { Skeleton } from "./ui/skeleton";
+import Spinner from "./Spinner";
 
 //defining formSchema
 const formSchema = z.object({
@@ -56,6 +58,7 @@ const formSchema = z.object({
 
 export default function CameraDetails({ camId }: { camId: string }) {
   const [imgError, setImgError] = useState<boolean>(false);
+  const [ImgLoading, setImgLoading] = useState<boolean>(true);
   const [editMode, setEditMode] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
@@ -363,6 +366,12 @@ export default function CameraDetails({ camId }: { camId: string }) {
         </div>
         <div className="w-full  flex flex-col gap-2 ">
           <div className="h-[400px] w-full relative">
+            {ImgLoading && !imgError && (
+              <Skeleton className="w-full h-full flex flex-col flex-center gap-2">
+                <Spinner />
+                <span>Loading Image</span>
+              </Skeleton>
+            )}
             {!imgError ? (
               <Image
                 fill={true}
@@ -370,6 +379,7 @@ export default function CameraDetails({ camId }: { camId: string }) {
                 alt={data?.name || "no Image"}
                 className="w-full object-cover rounded-xl"
                 onError={() => setImgError(true)}
+                onLoad={() => setImgLoading(false)}
                 priority
               />
             ) : (

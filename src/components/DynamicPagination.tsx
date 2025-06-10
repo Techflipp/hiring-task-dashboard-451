@@ -1,3 +1,4 @@
+"use client";
 import {
   Pagination,
   PaginationContent,
@@ -7,18 +8,21 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useEffect } from "react";
+import Spinner from "./Spinner";
 export default function DynamicPagination({
   dynamicPage,
   totalPages,
   setDynamicPage,
   refetch,
+  isFetching,
 }: {
   dynamicPage: number;
   totalPages: number;
   refetch: () => void;
   setDynamicPage: (page: number) => void;
+  isFetching: boolean;
 }) {
-  const handlePageChange = async (page: number) => {
+  const handlePageChange = (page: number) => {
     setDynamicPage(page);
   };
 
@@ -36,16 +40,23 @@ export default function DynamicPagination({
             Previous
           </PaginationPrevious>
         </PaginationItem>
-        {[...Array(totalPages)?.keys()].map((page) => (
-          <PaginationItem key={page + 1}>
-            <PaginationLink
-              isActive={dynamicPage === page + 1}
-              onClick={() => handlePageChange(page + 1)}
-            >
-              {page + 1}
-            </PaginationLink>
+        {!isFetching ? (
+          [...Array(totalPages)?.keys()].map((page) => (
+            <PaginationItem key={page + 1}>
+              <PaginationLink
+                isActive={dynamicPage === page + 1}
+                onClick={() => handlePageChange(page + 1)}
+              >
+                {page + 1}
+              </PaginationLink>
+            </PaginationItem>
+          ))
+        ) : (
+          <PaginationItem className="flex flex-center">
+            <Spinner />
           </PaginationItem>
-        ))}
+        )}
+
         <PaginationItem>
           <PaginationNext
             onClick={() => handlePageChange(dynamicPage + 1)}
