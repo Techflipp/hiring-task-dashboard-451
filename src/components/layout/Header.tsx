@@ -11,14 +11,14 @@ export const Header: React.FC = () => {
             <Camera className="w-8 h-8 text-blue-600" />
             <span className="text-xl font-bold text-gray-900">Camera Management</span>
           </Link>
-          {/* <nav className="flex space-x-8">
+          <nav className="flex space-x-8">
             <Link
               href="/cameras"
               className="text-gray-700 hover:text-blue-600 transition-colors"
             >
               Cameras
             </Link>
-          </nav> */}
+          </nav>
         </div>
       </div>
     </header>
