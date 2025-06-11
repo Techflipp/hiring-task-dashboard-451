@@ -71,13 +71,26 @@ export interface DemographicsConfig {
 
 export interface DemographicsResult {
   id: string;
-  camera_id: string;
+  config_id: string;
+  count: number;
   gender?: Gender;
   age?: AgeGroup;
   emotion?: Emotion;
   ethnicity?: EthnicGroup;
-  confidence: number;
-  timestamp: string;
+  created_at: string;
+}
+
+export interface DemographicsAnalytics {
+  gender_distribution: Record<string, number>;
+  age_distribution: Record<string, number>;
+  emotion_distribution: Record<string, number>;
+  ethnicity_distribution: Record<string, number>;
+  total_count: number;
+}
+
+export interface DemographicsResultsResponse {
+  items: DemographicsResult[];
+  analytics: DemographicsAnalytics;
 }
 
 export interface PaginatedResponse<T> {

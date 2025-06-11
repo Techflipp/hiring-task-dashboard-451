@@ -11,9 +11,12 @@ export const CameraSearch: React.FC<CameraSearchProps> = ({ onSearch }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const debouncedSearch = useCallback(
-    debounce((value: string) => {
-      onSearch(value);
-    }, 300),
+    (value: string) => {
+      const debouncedFn = debounce((val: string) => {
+        onSearch(val);
+      }, 300);
+      debouncedFn(value);
+    },
     [onSearch]
   );
 
@@ -30,7 +33,7 @@ export const CameraSearch: React.FC<CameraSearchProps> = ({ onSearch }) => {
       </div>
       <Input
         type="text"
-        placeholder="Search cameras by name..."
+        placeholder="Search by name..."
         value={searchTerm}
         onChange={handleChange}
         className="pl-10"

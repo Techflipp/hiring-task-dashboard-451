@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useCameras } from '@/lib/hooks/useCameras';
 import { CameraCard } from './CameraCard';
 import { CameraSearch } from './CameraSearch';
@@ -8,9 +9,16 @@ import { Skeleton } from '../ui/Skeleton';
 import { Camera as CameraIcon } from 'lucide-react';
 
 export const CameraList: React.FC = () => {
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(12);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
   const [searchTerm, setSearchTerm] = useState('');
+  
+  const pageParam = searchParams?.get('page');
+  const perPageParam = searchParams?.get('per_page');
+  
+  const page = pageParam ? Math.max(1, parseInt(pageParam, 10)) : 1;
+  const pageSize = perPageParam ? Math.max(12, parseInt(perPageParam, 10)) : 12;
 
   const { data, isLoading, error } = useCameras({
     page,
@@ -24,6 +32,22 @@ export const CameraList: React.FC = () => {
     { value: '48', label: '48 per page' },
   ];
 
+  const updateUrl = (newPage: number, newPageSize: number) => {
+    const params = new URLSearchParams(searchParams?.toString() || '');
+    params.set('page', newPage.toString());
+    params.set('per_page', newPageSize.toString());
+    router.push(`/cameras?${params.toString()}`);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    updateUrl(newPage, pageSize);
+  };
+
+  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newPageSize = Number(e.target.value);
+    updateUrl(1, newPageSize);
+  };
+
   if (error) {
     return (
       <div className="text-center py-12">
@@ -36,20 +60,20 @@ export const CameraList: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center space-x-3">
-        <CameraIcon className="w-8 h-8 text-blue-600" />
+          <CameraIcon className="w-8 h-8 text-blue-600" />
           <h1 className="text-2xl font-bold text-gray-900">Cameras</h1>
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-          <CameraSearch onSearch={setSearchTerm} />
-          <Select
-            value={pageSize.toString()}
-            onChange={(e) => {
-              setPageSize(Number(e.target.value));
-              setPage(1);
-            }}
-            options={pageSizeOptions}
-            className="w-full sm:w-40"
-          />
+          <div className="w-full sm:w-[calc(50%-8px)]">
+            <CameraSearch onSearch={setSearchTerm} />
+          </div>
+          <div className="w-full sm:w-[calc(50%-8px)]">
+            <Select
+              value={pageSize.toString()}
+              onChange={handlePageSizeChange}
+              options={pageSizeOptions}
+            />
+          </div>
         </div>
       </div>
 
@@ -108,7 +132,7 @@ export const CameraList: React.FC = () => {
             <Pagination
               currentPage={page}
               totalPages={data.pages}
-              onPageChange={setPage}
+              onPageChange={handlePageChange}
             />
           )}
         </>

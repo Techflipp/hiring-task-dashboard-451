@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Camera } from '@/lib/types';
 import { Card } from '../ui/Card';
 import { StatusBadge } from '../ui/StatusBadge';
 import { TagList } from '../ui/TagList';
-import { AlertCircle, Camera as CameraIcon } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { SafeImage } from '../ui/SafeImage';
 
 interface CameraCardProps {
@@ -13,8 +12,6 @@ interface CameraCardProps {
 }
 
 export const CameraCard: React.FC<CameraCardProps> = ({ camera }) => {
-  const [imageError, setImageError] = useState(false);
-  const [imageLoading, setImageLoading] = useState(true);
 
   return (
     <Link href={`/cameras/${camera.id}`}>

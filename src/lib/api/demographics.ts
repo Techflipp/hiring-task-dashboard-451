@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import { DemographicsConfig, DemographicsResult } from '../types';
+import { DemographicsConfig, DemographicsResultsResponse } from '../types';
 
 export interface CreateDemographicsConfigData {
   camera_id: string;
@@ -14,7 +14,7 @@ export interface CreateDemographicsConfigData {
   frame_skip_interval?: number;
 }
 
-export interface UpdateDemographicsConfigData extends Omit<CreateDemographicsConfigData, 'camera_id'> {}
+export type UpdateDemographicsConfigData = Omit<CreateDemographicsConfigData, 'camera_id'>;
 
 export interface DemographicsResultsParams {
   camera_id: string;
@@ -37,8 +37,16 @@ export const demographicsApi = {
     return response.data;
   },
 
-  getResults: async (params: DemographicsResultsParams): Promise<DemographicsResult[]> => {
-    const response = await apiClient.get('/demographics/results', { params });
+  getResults: async (params: DemographicsResultsParams): Promise<DemographicsResultsResponse> => {
+    // Filter out empty string parameters
+    const cleanParams = Object.entries(params).reduce((acc, [key, value]) => {
+      if (value !== '' && value !== undefined && value !== null) {
+        acc[key] = value;
+      }
+      return acc;
+    }, {} as Record<string, string>);
+
+    const response = await apiClient.get('/demographics/results', { params: cleanParams });
     return response.data;
   },
 };

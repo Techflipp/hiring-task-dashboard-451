@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Camera, Tag } from '@/lib/types';
@@ -44,7 +44,6 @@ export const CameraUpdateForm: React.FC<CameraUpdateFormProps> = ({
   const {
     register,
     handleSubmit,
-    control,
     formState: { errors },
   } = useForm<UpdateCameraFormData>({
     resolver: zodResolver(updateCameraSchema),

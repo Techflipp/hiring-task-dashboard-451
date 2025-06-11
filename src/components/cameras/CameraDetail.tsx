@@ -39,10 +39,10 @@ export const CameraDetail: React.FC<CameraDetailProps> = ({ camera }) => {
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
           <div className="flex-1">
-            <div className="flex items-start justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">{camera.name}</h1>
-                <div className="flex items-center mt-2 space-x-4">
+                <div className="flex flex-wrap items-center gap-4 mt-2">
                   <StatusBadge 
                     status={camera.is_active ? 'active' : 'inactive'} 
                     size="md"
@@ -59,7 +59,7 @@ export const CameraDetail: React.FC<CameraDetailProps> = ({ camera }) => {
                 </div>
               </div>
               {activeTab === 'details' && !isEditing && (
-                <Button onClick={() => setIsEditing(true)}>Edit Camera</Button>
+                <Button onClick={() => setIsEditing(true)} className="w-full sm:w-auto">Edit Camera</Button>
               )}
             </div>
             
@@ -121,7 +121,7 @@ export const CameraDetail: React.FC<CameraDetailProps> = ({ camera }) => {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as 'details' | 'demographics' | 'analytics')}
                 className={`
                   flex items-center py-2 px-1 border-b-2 font-medium text-sm
                   ${activeTab === tab.id
