@@ -1,4 +1,4 @@
-# TechFlipp Frontend Task
+<!-- # TechFlipp Frontend Task
 
 ## Overview
 
@@ -233,4 +233,48 @@ Your submission will be evaluated based on:
 - UI/UX design and responsiveness
 - Performance optimizations
 - Unit test coverage
-- Error handling
+- Error handling -->
+
+
+
+# Camera Management System
+
+A responsive frontend application for managing cameras and viewing demographic analytics data.
+
+## Features
+
+- 📷 **Camera Management**: View, search, and update camera configurations
+- 🖼️ **Visual Interface**: Camera snapshots with status indicators
+- 🏷️ **Tag System**: Organize cameras with color-coded tags
+- 📊 **Demographics Configuration**: Configure analytics parameters per camera
+- 📈 **Real-time Analytics**: View demographic insights with interactive charts
+- 🔍 **Advanced Filtering**: Filter analytics by gender, age, emotion, and ethnicity
+- 📱 **Responsive Design**: Works seamlessly on desktop and mobile devices
+- ⚡ **Performance Optimized**: Skeleton loading states and efficient data caching
+- 🔄 **Real-time Updates**: Live status monitoring with visual feedback
+
+## Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **State Management:** React Query (TanStack Query)
+- **Forms:** React Hook Form + Zod validation
+- **Charts:** Recharts
+- **Icons:** Lucide React
+- **HTTP Client:** Axios
+- **Image Optimization:** Next.js Image component
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/deveshmaurya1996/hiring-task-dashboard-451
+cd camera-management-app
