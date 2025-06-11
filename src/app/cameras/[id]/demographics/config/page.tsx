@@ -163,7 +163,7 @@ export default function DemographicsConfigPage({
             <CameraIcon className="h-12 w-12 text-gray-400" />
           </div>
           <h2 className="text-xl font-semibold text-gray-900 mb-2">Camera Not Found</h2>
-          <p className="text-gray-500 mb-6">The camera you're looking for doesn't exist or has been removed.</p>
+          <p className="text-gray-500 mb-6">The camera you&apos;re looking for doesn&apos;t exist or has been removed.</p>
           <Link href="/cameras">
             <Button variant="outline" className="w-full">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -286,7 +286,7 @@ export default function DemographicsConfigPage({
       <Card className="p-4 bg-gray-50">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="text-sm text-gray-600">
-            <strong>After {isEditMode ? 'updating' : 'creating'}:</strong> You'll be redirected to the demographics analytics page
+            <strong>After {isEditMode ? 'updating' : 'creating'}:</strong> You&apos;ll be redirected to the demographics analytics page.
           </div>
           
           <div className="flex flex-wrap gap-2">

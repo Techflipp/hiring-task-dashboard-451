@@ -9,11 +9,8 @@ import { Input } from '../ui/input';
 import { Card } from '../ui/card';
 import { 
   Settings, 
-  Clock, 
   Target, 
-  BarChart3, 
   Users, 
-  Timer,
   Save,
   RotateCcw,
   Info
@@ -66,7 +63,6 @@ interface DemographicsConfigFormProps {
 
 export function DemographicsConfigForm({ 
   config, 
-  cameraId, 
   onSubmit, 
   isLoading,
   isEditMode = false
@@ -76,7 +72,6 @@ export function DemographicsConfigForm({
     handleSubmit,
     formState: { errors },
     watch,
-    setValue,
     reset,
   } = useForm<DemographicsConfigFormData>({
     resolver: zodResolver(demographicsConfigSchema),

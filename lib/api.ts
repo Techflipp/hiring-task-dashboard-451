@@ -1,4 +1,4 @@
-import { Camera, CameraFilters, CreateDemographicsConfigPayload, DemographicsConfig, DemographicsFilters, DemographicsResult, PaginatedResponse, Tag, UpdateDemographicsConfigPayload } from "./types";
+import { Camera, CameraFilters, CreateDemographicsConfigPayload, DemographicsConfig, DemographicsFilters, PaginatedResponse, Tag, UpdateDemographicsConfigPayload } from "./types";
 
 const API_BASE_URL = 'https://task-451-api.ryd.wafaicloud.com';
 

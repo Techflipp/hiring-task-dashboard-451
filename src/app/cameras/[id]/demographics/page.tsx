@@ -39,9 +39,9 @@ export default function CameraDemographicsPage({
   } = useQuery({
     queryKey: ['demographics', filters],
     queryFn: async () => {
-      console.log('🔍 Fetching demographics with filters:', filters);
+      // console.log('🔍 Fetching demographics with filters:', filters);
       const result = await apiClient.getDemographicsResults(filters);
-      console.log('📊 Demographics API response:', result);
+      // console.log('📊 Demographics API response:', result);
       return result;
     },
     enabled: !!filters.camera_id,
@@ -61,7 +61,7 @@ export default function CameraDemographicsPage({
 
   // Use useCallback to prevent unnecessary re-renders
   const handleFiltersChange = useCallback((newFilters: DemographicsFilters) => {
-    console.log('🔄 Filters changed:', newFilters);
+    // console.log('🔄 Filters changed:', newFilters);
     setFilters(newFilters);
   }, []);
 
@@ -98,7 +98,7 @@ export default function CameraDemographicsPage({
   }, [demographics, camera?.name]);
 
   const handleRefresh = useCallback(() => {
-    console.log('🔄 Manual refresh triggered');
+    // console.log('🔄 Manual refresh triggered');
     refetch();
   }, [refetch]);
 
@@ -175,7 +175,7 @@ export default function CameraDemographicsPage({
             Demographics Not Configured
           </h3>
           <p className="text-gray-600 mb-4">
-            This camera doesn't have demographics configuration set up yet.
+            This camera doesn&apos;t have demographics configuration set up yet.
           </p>
           <Link href={`/cameras/${camera.id}/demographics/config`}>
             <Button>

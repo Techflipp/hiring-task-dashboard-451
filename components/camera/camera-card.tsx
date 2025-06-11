@@ -22,7 +22,7 @@ export function CameraCard({ camera }: CameraCardProps) {
 
   // Merge camera list data with detailed data
   const mergedCamera = detailedCamera ? { ...camera, ...detailedCamera } : camera;
-  console.log(mergedCamera)
+  // console.log(mergedCamera)
 
   const getStatusIcon = () => {
     if (mergedCamera.is_active) {

@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { 
   Camera, 
   Mail, 
@@ -8,51 +7,11 @@ import {
   MapPin, 
   Github, 
   Twitter, 
-  Linkedin,
-  ExternalLink
-} from 'lucide-react';
+  Linkedin} from 'lucide-react';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
-  const navigationLinks = [
-    {
-      title: 'Platform',
-      links: [
-        { name: 'Dashboard', href: '/' },
-        { name: 'Cameras', href: '/cameras' },
-        { name: 'Analytics', href: '/analytics' },
-        { name: 'Demographics', href: '/demographics' },
-      ]
-    },
-    {
-      title: 'Management',
-      links: [
-        { name: 'Settings', href: '/settings' },
-        { name: 'Users', href: '/users' },
-        { name: 'Tags', href: '/tags' },
-        { name: 'Reports', href: '/reports' },
-      ]
-    },
-    {
-      title: 'Support',
-      links: [
-        { name: 'Documentation', href: '/docs' },
-        { name: 'API Reference', href: '/api-docs' },
-        { name: 'Help Center', href: '/help' },
-        { name: 'Contact Support', href: '/support' },
-      ]
-    },
-    {
-      title: 'Company',
-      links: [
-        { name: 'About Us', href: '/about' },
-        { name: 'Privacy Policy', href: '/privacy' },
-        { name: 'Terms of Service', href: '/terms' },
-        { name: 'Security', href: '/security' },
-      ]
-    }
-  ];
 
   const socialLinks = [
     { name: 'GitHub', href: '#', icon: Github },

@@ -44,7 +44,7 @@ const cameraSchema = z.object({
 
 type CameraFormData = z.infer<typeof cameraSchema>;
 
-interface CameraFormProps {
+export interface CameraFormProps {
   camera?: Camera;
   availableTags: Tag[];
   onSubmit: (data: CameraFormData & { tags: string[] }) => Promise<void>;
@@ -74,6 +74,8 @@ export function CameraForm({ camera, availableTags, onSubmit, isLoading }: Camer
       stream_fps: camera.stream_fps || 30,
       stream_skip_frames: camera.stream_skip_frames || 0,
     } : {
+      name: '',
+      rtsp_url: '',
       stream_frame_width: 1920,
       stream_frame_height: 1080,
       stream_max_length: 3600,
@@ -367,11 +369,11 @@ export function CameraForm({ camera, availableTags, onSubmit, isLoading }: Camer
               </div>
             )}
             
-            {tagSearch && filteredTags.length === 0 && (
-              <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-3 text-sm text-gray-500">
-                No tags found matching "{tagSearch}"
-              </div>
-            )}
+          {tagSearch && filteredTags.length === 0 && (
+            <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg p-3 text-sm text-gray-500">
+              No tags found matching &quot;{tagSearch}&quot;
+            </div>
+          )}
           </div>
           
           <p className="mt-2 text-xs text-gray-500">
@@ -387,7 +389,10 @@ export function CameraForm({ camera, availableTags, onSubmit, isLoading }: Camer
               disabled={isLoading} 
               className="flex-1 sm:flex-none sm:min-w-32"
             >
-              {isLoading ? 'Saving...' : camera ? 'Update Camera' : 'Create Camera'}
+              {isLoading 
+                ? (camera ? 'Updating...' : 'Creating...')
+                : (camera ? 'Update Camera' : 'Create Camera')
+              }
             </Button>
             <Button 
               type="button" 
@@ -409,3 +414,6 @@ export function CameraForm({ camera, availableTags, onSubmit, isLoading }: Camer
     </div>
   );
 }
+
+// Default export for compatibility
+export default CameraForm;

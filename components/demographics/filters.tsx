@@ -71,7 +71,28 @@ export function DemographicsFilters({
       delete newFilters[key];
     } else {
       // Proper typing for the assignment
-      (newFilters as any)[key] = value;
+      switch (key) {
+        case 'gender':
+          (newFilters as DemographicsFilters).gender = value as Gender;
+          break;
+        case 'age':
+          (newFilters as DemographicsFilters).age = value as AgeGroup;
+          break;
+        case 'emotion':
+          (newFilters as DemographicsFilters).emotion = value as Emotion;
+          break;
+        case 'ethnicity':
+          (newFilters as DemographicsFilters).ethnicity = value as EthnicGroup;
+          break;
+        case 'start_date':
+          (newFilters as DemographicsFilters).start_date = value;
+          break;
+        case 'end_date':
+          (newFilters as DemographicsFilters).end_date = value;
+          break;
+        default:
+          break;
+      }
     }
     
     // Always keep camera_id
