@@ -60,8 +60,8 @@ export default function CameraList({
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className='space-y-2 p-6'>
-      <div className='grid grid-cols-1 gap-6 p-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+    <div className='space-y-6'>
+      <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
         {data?.data?.items.map((camera) => (
           <Card key={camera.id} className='rounded-2xl shadow-md'>
             <Link href={`/${camera.id}`}>
@@ -97,7 +97,7 @@ export default function CameraList({
           </Card>
         ))}
       </div>
-      <div className='flex flex-col items-center justify-between gap-4 px-6 md:flex-row'>
+      <div className='flex flex-col items-center justify-between gap-4 md:flex-row'>
         <div className='flex items-center gap-2'>
           <span className='w-20'>Page size:</span>
           <Select value={String(size)} onValueChange={handlePageSizeChange}>
