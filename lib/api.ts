@@ -1,4 +1,4 @@
-import { Camera, CameraFilters, DemographicsConfig, DemographicsFilters, DemographicsResult, PaginatedResponse, Tag } from "./types";
+import { Camera, CameraFilters, CreateDemographicsConfigPayload, DemographicsConfig, DemographicsFilters, DemographicsResult, PaginatedResponse, Tag, UpdateDemographicsConfigPayload } from "./types";
 
 const API_BASE_URL = 'https://task-451-api.ryd.wafaicloud.com';
 
@@ -50,19 +50,20 @@ class ApiClient {
   }
 
   // Demographics endpoints
-  async createDemographicsConfig(data: Omit<DemographicsConfig, 'id'>): Promise<DemographicsConfig> {
+  async createDemographicsConfig(data: CreateDemographicsConfigPayload): Promise<DemographicsConfig> {
     return this.request<DemographicsConfig>('/demographics/config', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
-  async updateDemographicsConfig(id: string, data: Partial<DemographicsConfig>): Promise<DemographicsConfig> {
+  async updateDemographicsConfig(id: string, data: UpdateDemographicsConfigPayload): Promise<DemographicsConfig> {
     return this.request<DemographicsConfig>(`/demographics/config/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   }
+
 
   async getDemographicsResults(filters: DemographicsFilters): Promise<DemographicsResponse> {
     const params = new URLSearchParams();

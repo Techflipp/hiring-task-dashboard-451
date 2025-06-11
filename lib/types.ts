@@ -32,18 +32,47 @@ export interface Tag {
   color: string;
 }
 
+export interface CreateDemographicsConfigPayload {
+  track_history_max_length: number;
+  exit_threshold: number;
+  min_track_duration: number;
+  detection_confidence_threshold: number;
+  demographics_confidence_threshold: number;
+  min_track_updates: number;
+  box_area_threshold: number;
+  save_interval: number;
+  frame_skip_interval: number;
+  camera_id: string;
+}
+
+// API payload for updating demographics config
+export interface UpdateDemographicsConfigPayload {
+  track_history_max_length: number;
+  exit_threshold: number;
+  min_track_duration: number;
+  detection_confidence_threshold: number;
+  demographics_confidence_threshold: number;
+  min_track_updates: number;
+  box_area_threshold: number;
+  save_interval: number;
+  frame_skip_interval: number;
+}
+
+// Complete demographics config as returned by API
 export interface DemographicsConfig {
   id: string;
   camera_id: string;
-  track_history_max_length?: number;
-  exit_threshold?: number;
-  min_track_duration?: number;
-  detection_confidence_threshold?: number;
-  demographics_confidence_threshold?: number;
-  min_track_updates?: number;
-  box_area_threshold?: number;
-  save_interval?: number;
-  frame_skip_interval?: number;
+  track_history_max_length: number;
+  exit_threshold: number;
+  min_track_duration: number;
+  detection_confidence_threshold: number;
+  demographics_confidence_threshold: number;
+  min_track_updates: number;
+  box_area_threshold: number;
+  save_interval: number;
+  frame_skip_interval: number;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface DemographicsResult {

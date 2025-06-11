@@ -2,8 +2,22 @@
 
 import { Camera, PaginatedResponse } from '../../lib/types';
 import { CameraCard } from './camera-card';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '../ui/pagination';
-import { Select } from '../ui/select';
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious,
+  PaginationEllipsis
+} from '../ui/pagination';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue 
+} from '../ui/select';
 import { Skeleton } from '../ui/skeleton';
 
 interface CameraListProps {
@@ -38,7 +52,7 @@ export function CameraList({
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-48 rounded-lg" />
+            <Skeleton key={i} className="h-80 rounded-lg" />
           ))}
         </div>
       </div>
@@ -53,73 +67,134 @@ export function CameraList({
     );
   }
 
+  // Generate pagination items with ellipsis
+  const generatePaginationItems = () => {
+    const items = [];
+    const totalPages = data.pages;
+    const delta = 2; // Number of pages to show before/after current page
+
+    // Helper function to add page item
+    const addPageItem = (pageNum: number, isCurrent: boolean = false) => (
+      <PaginationItem key={pageNum}>
+        <PaginationLink
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            if (!isCurrent) onPageChange(pageNum);
+          }}
+          isActive={isCurrent}
+        >
+          {pageNum}
+        </PaginationLink>
+      </PaginationItem>
+    );
+
+    // Always show first page
+    items.push(addPageItem(1, currentPage === 1));
+
+    // Calculate range around current page
+    const rangeStart = Math.max(2, currentPage - delta);
+    const rangeEnd = Math.min(totalPages - 1, currentPage + delta);
+
+    // Add ellipsis after first page if needed
+    if (rangeStart > 2) {
+      items.push(
+        <PaginationItem key="ellipsis-start">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+    }
+
+    // Add pages in range
+    for (let i = rangeStart; i <= rangeEnd; i++) {
+      items.push(addPageItem(i, currentPage === i));
+    }
+
+    // Add ellipsis before last page if needed
+    if (rangeEnd < totalPages - 1) {
+      items.push(
+        <PaginationItem key="ellipsis-end">
+          <PaginationEllipsis />
+        </PaginationItem>
+      );
+    }
+
+    // Always show last page (if more than 1 page)
+    if (totalPages > 1) {
+      items.push(addPageItem(totalPages, currentPage === totalPages));
+    }
+
+    return items;
+  };
+
   return (
     <div>
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <p className="text-sm text-gray-600">
-        Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, data.total)} of {data.total} cameras
-        </p>
-        <Select
-        value={pageSize.toString()}
-        onValueChange={(value) => onSizeChange(parseInt(value))}
-        >
-        <option value="10">10 per page</option>
-        <option value="20">20 per page</option>
-        <option value="50">50 per page</option>
-        </Select>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        {data.items.map((camera) => (
-        <CameraCard key={camera.id} camera={camera} />
-        ))}
-      </div>
-
-      <Pagination
-        className="mt-4"
-        aria-label="Pagination"
-      >
-        <PaginationContent>
-        <PaginationItem>
-          <PaginationPrevious
-            href="#"
-            onClick={e => {
-            e.preventDefault();
-            if (currentPage > 1) onPageChange(currentPage - 1);
-            }}
-            aria-disabled={currentPage === 1}
-            tabIndex={currentPage === 1 ? -1 : 0}
-          />
-        </PaginationItem>
-        {Array.from({ length: data.pages }).map((_, idx) => (
-          <PaginationItem key={idx}>
-            <PaginationLink
-            href="#"
-            isActive={currentPage === idx + 1}
-            onClick={e => {
-              e.preventDefault();
-              if (currentPage !== idx + 1) onPageChange(idx + 1);
-            }}
+      <div className="p-6">
+        {/* Header with pagination info and page size selector */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <p className="text-sm text-gray-600">
+            Showing {((currentPage - 1) * pageSize) + 1} to {Math.min(currentPage * pageSize, data.total)} of {data.total} cameras
+          </p>
+          
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600 whitespace-nowrap">Show:</span>
+            <Select
+              value={pageSize.toString()}
+              onValueChange={(value) => onSizeChange(parseInt(value))}
             >
-            {idx + 1}
-            </PaginationLink>
-          </PaginationItem>
-        ))}
-        <PaginationItem>
-          <PaginationNext
-            href="#"
-            onClick={e => {
-            e.preventDefault();
-            if (currentPage < data.pages) onPageChange(currentPage + 1);
-            }}
-            aria-disabled={currentPage === data.pages}
-            tabIndex={currentPage === data.pages ? -1 : 0}
-          />
-        </PaginationItem>
-        </PaginationContent>
-      </Pagination>
-    </div>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10 per page</SelectItem>
+                <SelectItem value="20">20 per page</SelectItem>
+                <SelectItem value="50">50 per page</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Camera grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {data.items.map((camera) => (
+            <CameraCard key={camera.id} camera={camera} />
+          ))}
+        </div>
+
+        {/* Pagination - only show if more than 1 page */}
+        {data.pages > 1 && (
+          <Pagination>
+            <PaginationContent>
+              {/* Previous button */}
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage > 1) onPageChange(currentPage - 1);
+                  }}
+                  className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+
+              {/* Page numbers with ellipsis */}
+              {generatePaginationItems()}
+
+              {/* Next button */}
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (currentPage < data.pages) onPageChange(currentPage + 1);
+                  }}
+                  className={currentPage === data.pages ? 'pointer-events-none opacity-50' : ''}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
+      </div>
     </div>
   );
 }

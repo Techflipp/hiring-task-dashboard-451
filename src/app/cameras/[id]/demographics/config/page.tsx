@@ -1,0 +1,310 @@
+'use client';
+
+import { use } from 'react';
+import { useRouter } from 'next/navigation';
+import { useQuery } from '@tanstack/react-query';
+import { apiClient } from '../../../../../../lib/api';
+import { useCreateDemographicsConfig, useUpdateDemographicsConfig } from '../../../../../../hooks/use-demographics';
+import { CreateDemographicsConfigPayload, UpdateDemographicsConfigPayload } from '../../../../../../lib/types';
+import { DemographicsConfigForm } from '../../../../../../components/demographics/config-form';
+import { Card } from '../../../../../../components/ui/card';
+import { Badge } from '../../../../../../components/ui/badge';
+import { Skeleton } from '../../../../../../components/ui/skeleton';
+import Link from 'next/link';
+import { Button } from '../../../../../../components/ui/button';
+import { 
+  ArrowLeft, 
+  Settings, 
+  Camera as CameraIcon,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  Loader2,
+  Info
+} from 'lucide-react';
+
+export default function DemographicsConfigPage({ 
+  params 
+}: { 
+  params: Promise<{ id: string }> 
+}) {
+  const { id } = use(params);
+  const router = useRouter();
+  
+  const { data: camera, isLoading: cameraLoading, error: cameraError } = useQuery({
+    queryKey: ['camera', id],
+    queryFn: () => apiClient.getCamera(id),
+  });
+
+  const createConfigMutation = useCreateDemographicsConfig();
+  const updateConfigMutation = useUpdateDemographicsConfig();
+
+  const handleSubmit = async (data: any) => {
+    try {
+      if (camera?.demographics_config) {
+        // Update existing config - only send the config fields, no camera_id
+        const updatePayload: UpdateDemographicsConfigPayload = {
+          track_history_max_length: data.track_history_max_length,
+          exit_threshold: data.exit_threshold,
+          min_track_duration: data.min_track_duration,
+          detection_confidence_threshold: data.detection_confidence_threshold,
+          demographics_confidence_threshold: data.demographics_confidence_threshold,
+          min_track_updates: data.min_track_updates,
+          box_area_threshold: data.box_area_threshold,
+          save_interval: data.save_interval,
+          frame_skip_interval: data.frame_skip_interval,
+        };
+        
+        await updateConfigMutation.mutateAsync({
+          id: camera.demographics_config.id,
+          data: updatePayload,
+        });
+      } else {
+        // Create new config - include camera_id
+        const createPayload: CreateDemographicsConfigPayload = {
+          track_history_max_length: data.track_history_max_length,
+          exit_threshold: data.exit_threshold,
+          min_track_duration: data.min_track_duration,
+          detection_confidence_threshold: data.detection_confidence_threshold,
+          demographics_confidence_threshold: data.demographics_confidence_threshold,
+          min_track_updates: data.min_track_updates,
+          box_area_threshold: data.box_area_threshold,
+          save_interval: data.save_interval,
+          frame_skip_interval: data.frame_skip_interval,
+          camera_id: id,
+        };
+        
+        await createConfigMutation.mutateAsync(createPayload);
+      }
+      
+      router.push(`/cameras/${id}/demographics`);
+    } catch (error) {
+      console.error('Failed to save demographics config:', error);
+    }
+  };
+
+  const getStatusIcon = () => {
+    if (camera?.is_active) {
+      return <CheckCircle className="h-4 w-4 text-green-500" />;
+    }
+    return <XCircle className="h-4 w-4 text-red-500" />;
+  };
+
+  const getStatusBadge = () => {
+    if (camera?.is_active) {
+      return <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">Active</Badge>;
+    }
+    return <Badge variant="destructive">Inactive</Badge>;
+  };
+
+  const isEditMode = !!camera?.demographics_config;
+  const isLoading = createConfigMutation.isPending || updateConfigMutation.isPending;
+  const error = createConfigMutation.error || updateConfigMutation.error;
+
+  // Error state
+  if (cameraError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="p-8 max-w-md w-full text-center">
+          <div className="flex justify-center mb-4">
+            <AlertTriangle className="h-12 w-12 text-red-500" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Camera</h2>
+          <p className="text-red-600 mb-6">{(cameraError as Error).message}</p>
+          <Link href="/cameras">
+            <Button variant="outline" className="w-full">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Cameras
+            </Button>
+          </Link>
+        </Card>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (cameraLoading) {
+    return (
+      <div className="space-y-6">
+        {/* Header skeleton */}
+        <Card className="p-6">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-9 w-32" />
+            <div className="space-y-2">
+              <Skeleton className="h-8 w-64" />
+              <Skeleton className="h-4 w-48" />
+            </div>
+          </div>
+        </Card>
+        
+        {/* Form skeleton */}
+        <Card className="p-6">
+          <div className="space-y-6">
+            <Skeleton className="h-6 w-48" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+            <Skeleton className="h-10 w-32" />
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  // Camera not found
+  if (!camera) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="p-8 max-w-md w-full text-center">
+          <div className="flex justify-center mb-4">
+            <CameraIcon className="h-12 w-12 text-gray-400" />
+          </div>
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Camera Not Found</h2>
+          <p className="text-gray-500 mb-6">The camera you're looking for doesn't exist or has been removed.</p>
+          <Link href="/cameras">
+            <Button variant="outline" className="w-full">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Cameras
+            </Button>
+          </Link>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <Card className="p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <Link href={`/cameras/${camera.id}/demographics`}>
+            <Button variant="outline" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Demographics
+            </Button>
+          </Link>
+          
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-3">
+              <div className={`p-2 rounded-lg ${isEditMode ? 'bg-blue-100' : 'bg-purple-100'}`}>
+                <Settings className={`h-6 w-6 ${isEditMode ? 'text-blue-600' : 'text-purple-600'}`} />
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                  {isEditMode ? 'Edit Demographics Configuration' : 'Configure Demographics'}
+                </h1>
+                <div className="flex items-center gap-2 mt-1">
+                  <p className="text-gray-600">{camera.name}</p>
+                  {getStatusIcon()}
+                  {getStatusBadge()}
+                </div>
+              </div>
+            </div>
+            
+            {/* Configuration status */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <Badge variant={isEditMode ? "default" : "outline"} className={
+                  isEditMode 
+                    ? "bg-blue-100 text-blue-800 border-blue-200" 
+                    : "text-gray-600"
+                }>
+                  {isEditMode ? 'Configuration Active' : 'No Configuration'}
+                </Badge>
+              </div>
+              
+              {isEditMode && camera.demographics_config && (
+                <div>
+                  <span className="text-gray-500">Last Updated:</span>
+                  <p className="font-medium">
+                    {new Date(camera.demographics_config.updated_at).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </Card>
+
+      {/* Info Card */}
+      <Card className="p-4 bg-blue-50 border-blue-200">
+        <div className="flex items-start gap-3">
+          <Info className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+          <div>
+            <h3 className="font-medium text-blue-900 mb-1">
+              {isEditMode ? 'Editing Demographics Configuration' : 'Setting Up Demographics'}
+            </h3>
+            <p className="text-sm text-blue-800">
+              {isEditMode 
+                ? 'Modify the demographics analysis parameters for this camera. Changes will take effect immediately.'
+                : 'Configure demographic analysis parameters to enable people counting, age/gender detection, and analytics for this camera.'
+              }
+            </p>
+          </div>
+        </div>
+      </Card>
+
+      {/* Error Display */}
+      {error && (
+        <Card className="p-4 border-red-200 bg-red-50">
+          <div className="flex items-center gap-2">
+            <AlertTriangle className="h-4 w-4 text-red-500" />
+            <span className="text-red-800">
+              <strong>Error:</strong> {(error as Error).message}
+            </span>
+          </div>
+        </Card>
+      )}
+
+      {/* Form */}
+      <DemographicsConfigForm
+        config={camera.demographics_config}
+        cameraId={camera.id}
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
+        isEditMode={isEditMode}
+      />
+
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
+          <Card className="p-6">
+            <div className="flex items-center gap-3">
+              <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
+              <span className="font-medium">
+                {isEditMode ? 'Updating configuration...' : 'Creating configuration...'}
+              </span>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Quick Navigation */}
+      <Card className="p-4 bg-gray-50">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="text-sm text-gray-600">
+            <strong>After {isEditMode ? 'updating' : 'creating'}:</strong> You'll be redirected to the demographics analytics page
+          </div>
+          
+          <div className="flex flex-wrap gap-2">
+            <Link href={`/cameras/${camera.id}`}>
+              <Button variant="outline" size="sm">
+                <CameraIcon className="h-4 w-4 mr-2" />
+                Camera Details
+              </Button>
+            </Link>
+            
+            <Link href={`/cameras/${camera.id}/demographics`}>
+              <Button variant="outline" size="sm">
+                Demographics Analytics
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </Card>
+    </div>
+  );
+}

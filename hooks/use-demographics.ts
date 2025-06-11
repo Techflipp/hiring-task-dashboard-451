@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../lib/api';
-import { DemographicsFilters, DemographicsConfig } from '../lib/types';
+import { DemographicsFilters, DemographicsConfig, CreateDemographicsConfigPayload, UpdateDemographicsConfigPayload } from '../lib/types';
 
 export function useDemographicsResults(filters: DemographicsFilters) {
   return useQuery({
@@ -17,7 +17,7 @@ export function useCreateDemographicsConfig() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: Omit<DemographicsConfig, 'id'>) =>
+    mutationFn: (data: CreateDemographicsConfigPayload) =>
       apiClient.createDemographicsConfig(data),
     onSuccess: (config) => {
       // Invalidate camera to refresh demographics config
@@ -30,7 +30,7 @@ export function useUpdateDemographicsConfig() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<DemographicsConfig> }) =>
+    mutationFn: ({ id, data }: { id: string; data: UpdateDemographicsConfigPayload }) =>
       apiClient.updateDemographicsConfig(id, data),
     onSuccess: (config) => {
       // Invalidate camera to refresh demographics config

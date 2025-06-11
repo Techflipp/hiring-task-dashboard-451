@@ -142,14 +142,13 @@ export default function CameraDemographicsPage({
         </div>
         
         <div className="flex gap-2">
-          {!camera.demographics_config && (
-            <Link href={`/cameras/${camera.id}/demographics/config`}>
-              <Button variant="outline">
-                <Settings className="h-4 w-4 mr-2" />
-                Configure
-              </Button>
-            </Link>
-          )}
+          {/* Configuration Button */}
+          <Link href={`/cameras/${camera.id}/demographics/config`}>
+            <Button variant={camera.demographics_config ? "outline" : "default"}>
+              <Settings className="h-4 w-4 mr-2" />
+              {camera.demographics_config ? 'Edit Configuration' : 'Configure Demographics'}
+            </Button>
+          </Link>
           
           {Array.isArray(demographics) && demographics.length > 0 && (
             <Button onClick={exportData} variant="outline">

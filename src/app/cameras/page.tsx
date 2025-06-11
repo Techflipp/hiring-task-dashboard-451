@@ -44,12 +44,6 @@ export default function CamerasPage() {
           </p>
         </div>
         
-        <Link href="/cameras/create">
-          <Button className="flex items-center gap-2">
-            <Plus className="h-4 w-4" />
-            Add Camera
-          </Button>
-        </Link>
       </div>
 
       <div className="bg-white rounded-lg shadow">
