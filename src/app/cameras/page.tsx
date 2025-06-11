@@ -1,56 +1,76 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useQuery } from "@tanstack/react-query"
-import Link from "next/link"
-import { Search, Plus, Camera, Tag, Clock, AlertCircle, CheckCircle } from "lucide-react"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Skeleton } from "@/components/ui/skeleton"
-import { useDebounce } from "@/hooks/use-debounce"
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import {
+  Search,
+  Plus,
+  Camera,
+  Tag,
+  Clock,
+  AlertCircle,
+  CheckCircle,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface CameraItem {
-  id: string
-  name: string
-  rtsp_url: string
+  id: string;
+  name: string;
+  rtsp_url: string;
   tags: Array<{
-    id: string
-    name: string
-    color: string
-  }>
-  is_active: boolean
-  status_message: string
-  snapshot: string
-  created_at: string
-  updated_at: string
+    id: string;
+    name: string;
+    color: string;
+  }>;
+  is_active: boolean;
+  status_message: string;
+  snapshot: string;
+  created_at: string;
+  updated_at: string;
 }
 
 interface CamerasResponse {
-  items: CameraItem[]
-  total: number
-  page: number
-  size: number
-  pages: number
+  items: CameraItem[];
+  total: number;
+  page: number;
+  size: number;
+  pages: number;
 }
 
-async function fetchCameras(page: number, size: number, search?: string): Promise<CamerasResponse> {
+async function fetchCameras(
+  page: number,
+  size: number,
+  search?: string
+): Promise<CamerasResponse> {
   const params = new URLSearchParams({
     page: page.toString(),
     size: size.toString(),
-  })
+  });
 
   if (search) {
-    params.append("camera_name", search)
+    params.append("camera_name", search);
   }
 
-  const response = await fetch(`https://task-451-api.ryd.wafaicloud.com/cameras/?${params}`)
+  const response = await fetch(
+    `https://task-451-api.ryd.wafaicloud.com/cameras/?${params}`
+  );
   if (!response.ok) {
-    throw new Error("Failed to fetch cameras")
+    throw new Error("Failed to fetch cameras");
   }
-  return response.json()
+  return response.json();
 }
 
 function CameraSkeleton() {
@@ -77,7 +97,7 @@ function CameraSkeleton() {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 function CameraCard({ camera }: { camera: CameraItem }) {
@@ -85,7 +105,9 @@ function CameraCard({ camera }: { camera: CameraItem }) {
     <Card className="group hover:shadow-lg transition-shadow">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold truncate">{camera.name}</CardTitle>
+          <CardTitle className="text-lg font-semibold truncate">
+            {camera.name}
+          </CardTitle>
           <div className="flex items-center gap-2">
             {camera.is_active ? (
               <Badge variant="default" className="bg-green-500">
@@ -109,27 +131,40 @@ function CameraCard({ camera }: { camera: CameraItem }) {
               alt={`${camera.name} snapshot`}
               className="w-full h-32 object-cover rounded-lg bg-muted"
               onError={(e) => {
-                const target = e.target as HTMLImageElement
-                target.src = "/placeholder.svg?height=128&width=256"
+                const target = e.target as HTMLImageElement;
+                target.src = "/placeholder.svg?height=128&width=256";
               }}
             />
             <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-lg" />
           </div>
 
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground truncate">{camera.rtsp_url}</p>
-            <p className="text-sm text-muted-foreground">{camera.status_message}</p>
+            <p className="text-sm text-muted-foreground truncate">
+              {camera.rtsp_url}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {camera.status_message}
+            </p>
           </div>
 
           {camera.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {camera.tags.slice(0, 3).map((tag) => (
-                <Badge key={tag.id} variant="secondary" style={{ backgroundColor: tag.color + "20", color: tag.color }}>
+                <Badge
+                  key={tag.id}
+                  variant="secondary"
+                  style={{
+                    backgroundColor: tag.color + "20",
+                    color: tag.color,
+                  }}
+                >
                   <Tag className="w-3 h-3 mr-1" />
                   {tag.name}
                 </Badge>
               ))}
-              {camera.tags.length > 3 && <Badge variant="outline">+{camera.tags.length - 3} more</Badge>}
+              {camera.tags.length > 3 && (
+                <Badge variant="outline">+{camera.tags.length - 3} more</Badge>
+              )}
             </div>
           )}
 
@@ -147,22 +182,22 @@ function CameraCard({ camera }: { camera: CameraItem }) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default function CamerasPage() {
-  const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(12)
-  const [search, setSearch] = useState("")
-  const debouncedSearch = useDebounce(search, 300)
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(12);
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["cameras", page, pageSize, debouncedSearch],
     queryFn: () => fetchCameras(page, pageSize, debouncedSearch),
     keepPreviousData: true,
-  })
+  });
 
-  const totalPages = data?.pages || 0
+  const totalPages = data?.pages || 0;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -170,15 +205,19 @@ export default function CamerasPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Camera Management</h1>
-            <p className="text-muted-foreground">Manage and monitor your camera network</p>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Camera Management
+            </h1>
+            <p className="text-muted-foreground">
+              Manage and monitor your camera network
+            </p>
           </div>
-          <Button asChild>
+          {/* <Button asChild>
             <Link href="/cameras/new">
               <Plus className="w-4 h-4 mr-2" />
               Add Camera
             </Link>
-          </Button>
+          </Button> */}
         </div>
 
         {/* Filters */}
@@ -192,7 +231,10 @@ export default function CamerasPage() {
               className="pl-10"
             />
           </div>
-          <Select value={pageSize.toString()} onValueChange={(value) => setPageSize(Number(value))}>
+          <Select
+            value={pageSize.toString()}
+            onValueChange={(value) => setPageSize(Number(value))}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue />
             </SelectTrigger>
@@ -209,7 +251,8 @@ export default function CamerasPage() {
         {data && (
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>
-              Showing {(page - 1) * pageSize + 1} to {Math.min(page * pageSize, data.total)} of {data.total} cameras
+              Showing {(page - 1) * pageSize + 1} to{" "}
+              {Math.min(page * pageSize, data.total)} of {data.total} cameras
             </span>
             <div className="flex items-center gap-2">
               <Camera className="w-4 h-4" />
@@ -233,8 +276,12 @@ export default function CamerasPage() {
         {/* Camera Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {isLoading
-            ? Array.from({ length: pageSize }).map((_, i) => <CameraSkeleton key={i} />)
-            : data?.items.map((camera) => <CameraCard key={camera.id} camera={camera} />)}
+            ? Array.from({ length: pageSize }).map((_, i) => (
+                <CameraSkeleton key={i} />
+              ))
+            : data?.items.map((camera) => (
+                <CameraCard key={camera.id} camera={camera} />
+              ))}
         </div>
 
         {/* Empty State */}
@@ -245,7 +292,9 @@ export default function CamerasPage() {
                 <Camera className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold mb-2">No cameras found</h3>
                 <p className="text-muted-foreground mb-4">
-                  {search ? "Try adjusting your search terms" : "Get started by adding your first camera"}
+                  {search
+                    ? "Try adjusting your search terms"
+                    : "Get started by adding your first camera"}
                 </p>
                 <Button asChild>
                   <Link href="/cameras/new">
@@ -261,13 +310,17 @@ export default function CamerasPage() {
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex items-center justify-center gap-2">
-            <Button variant="outline" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+            <Button
+              variant="outline"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
               Previous
             </Button>
 
             <div className="flex items-center gap-1">
               {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                const pageNum = i + 1
+                const pageNum = i + 1;
                 return (
                   <Button
                     key={pageNum}
@@ -277,7 +330,7 @@ export default function CamerasPage() {
                   >
                     {pageNum}
                   </Button>
-                )
+                );
               })}
               {totalPages > 5 && (
                 <>
@@ -304,5 +357,5 @@ export default function CamerasPage() {
         )}
       </div>
     </div>
-  )
+  );
 }
