@@ -136,13 +136,13 @@ export default function DemographicsConfigPage({
   // Error state
   if (cameraError) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="p-8 max-w-md w-full text-center">
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="p-6 sm:p-8 max-w-md w-full text-center">
           <div className="flex justify-center mb-4">
-            <AlertTriangle className="h-12 w-12 text-red-500" />
+            <AlertTriangle className="h-10 sm:h-12 w-10 sm:w-12 text-red-500" />
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Error Loading Camera</h2>
-          <p className="text-red-600 mb-6">{(cameraError as Error).message}</p>
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Error Loading Camera</h2>
+          <p className="text-sm sm:text-base text-red-600 mb-6">{(cameraError as Error).message}</p>
           <Link href="/cameras">
             <Button variant="outline" className="w-full">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -157,29 +157,29 @@ export default function DemographicsConfigPage({
   // Loading state
   if (cameraLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
         {/* Header skeleton */}
-        <Card className="p-6">
-          <div className="flex items-center gap-4">
+        <Card className="p-4 sm:p-6">
+          <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:gap-4 sm:space-y-0">
             <Skeleton className="h-9 w-32" />
             <div className="space-y-2">
-              <Skeleton className="h-8 w-64" />
-              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-6 sm:h-8 w-48 sm:w-64" />
+              <Skeleton className="h-4 w-32 sm:w-48" />
             </div>
           </div>
         </Card>
         
         {/* Form skeleton */}
-        <Card className="p-6">
-          <div className="space-y-6">
-            <Skeleton className="h-6 w-48" />
+        <Card className="p-4 sm:p-6">
+          <div className="space-y-4 sm:space-y-6">
+            <Skeleton className="h-6 w-32 sm:w-48" />
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-20 sm:h-24 w-full" />
+              <Skeleton className="h-20 sm:h-24 w-full" />
+              <Skeleton className="h-20 sm:h-24 w-full" />
+              <Skeleton className="h-20 sm:h-24 w-full" />
             </div>
-            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-full sm:w-32" />
           </div>
         </Card>
       </div>
@@ -189,13 +189,13 @@ export default function DemographicsConfigPage({
   // Camera not found
   if (!camera) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="p-8 max-w-md w-full text-center">
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="p-6 sm:p-8 max-w-md w-full text-center">
           <div className="flex justify-center mb-4">
-            <CameraIcon className="h-12 w-12 text-gray-400" />
+            <CameraIcon className="h-10 sm:h-12 w-10 sm:w-12 text-gray-400" />
           </div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Camera Not Found</h2>
-          <p className="text-gray-500 mb-6">The camera you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">Camera Not Found</h2>
+          <p className="text-sm sm:text-base text-gray-500 mb-6">The camera you&apos;re looking for doesn&apos;t exist or has been removed.</p>
           <Link href="/cameras">
             <Button variant="outline" className="w-full">
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -208,36 +208,39 @@ export default function DemographicsConfigPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
       {/* Header */}
-      <Card className="p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+      <Card className="p-4 sm:p-6">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:gap-4 sm:space-y-0">
           <Link href={`/cameras/${camera.id}/demographics`}>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="w-fit">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Demographics
+              <span className="sm:hidden">Back</span>
+              <span className="hidden sm:inline">Back to Demographics</span>
             </Button>
           </Link>
           
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-3">
-              <div className={`p-2 rounded-lg ${isEditMode ? 'bg-blue-100' : 'bg-purple-100'}`}>
-                <Settings className={`h-6 w-6 ${isEditMode ? 'text-blue-600' : 'text-purple-600'}`} />
+            <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:gap-3 sm:space-y-0 mb-3">
+              <div className={`p-2 rounded-lg w-fit ${isEditMode ? 'bg-blue-100' : 'bg-purple-100'}`}>
+                <Settings className={`h-5 sm:h-6 w-5 sm:w-6 ${isEditMode ? 'text-blue-600' : 'text-purple-600'}`} />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 break-words">
                   {isEditMode ? 'Edit Demographics Configuration' : 'Configure Demographics'}
                 </h1>
-                <div className="flex items-center gap-2 mt-1">
-                  <p className="text-gray-600">{camera.name}</p>
-                  {getStatusIcon()}
-                  {getStatusBadge()}
+                <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:gap-2 sm:space-y-0 mt-1">
+                  <p className="text-sm sm:text-base text-gray-600">{camera.name}</p>
+                  <div className="flex items-center gap-2">
+                    {getStatusIcon()}
+                    {getStatusBadge()}
+                  </div>
                 </div>
               </div>
             </div>
             
             {/* Configuration status */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
               <div className="flex items-center gap-2">
                 <Badge variant={isEditMode ? "default" : "outline"} className={
                   isEditMode 
@@ -262,14 +265,14 @@ export default function DemographicsConfigPage({
       </Card>
 
       {/* Info Card */}
-      <Card className="p-4 bg-blue-50 border-blue-200">
+      <Card className="p-3 sm:p-4 bg-blue-50 border-blue-200">
         <div className="flex items-start gap-3">
-          <Info className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
+          <Info className="h-4 sm:h-5 w-4 sm:w-5 text-blue-600 mt-0.5 shrink-0" />
           <div>
-            <h3 className="font-medium text-blue-900 mb-1">
+            <h3 className="text-sm sm:text-base font-medium text-blue-900 mb-1">
               {isEditMode ? 'Editing Demographics Configuration' : 'Setting Up Demographics'}
             </h3>
-            <p className="text-sm text-blue-800">
+            <p className="text-xs sm:text-sm text-blue-800">
               {isEditMode 
                 ? 'Modify the demographics analysis parameters for this camera. Changes will take effect immediately.'
                 : 'Configure demographic analysis parameters to enable people counting, age/gender detection, and analytics for this camera.'
@@ -281,10 +284,10 @@ export default function DemographicsConfigPage({
 
       {/* Error Display */}
       {error && (
-        <Card className="p-4 border-red-200 bg-red-50">
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="h-4 w-4 text-red-500" />
-            <span className="text-red-800">
+        <Card className="p-3 sm:p-4 border-red-200 bg-red-50">
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 text-red-500 mt-0.5 shrink-0" />
+            <span className="text-sm sm:text-base text-red-800">
               <strong>Error:</strong> {(error as Error).message}
             </span>
           </div>
@@ -302,11 +305,11 @@ export default function DemographicsConfigPage({
 
       {/* Loading Overlay */}
       {isLoading && (
-        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
-          <Card className="p-6">
+        <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50 p-4">
+          <Card className="p-4 sm:p-6 w-full max-w-sm">
             <div className="flex items-center gap-3">
-              <Loader2 className="h-5 w-5 animate-spin text-purple-600" />
-              <span className="font-medium">
+              <Loader2 className="h-5 w-5 animate-spin text-purple-600 shrink-0" />
+              <span className="text-sm sm:text-base font-medium">
                 {isEditMode ? 'Updating configuration...' : 'Creating configuration...'}
               </span>
             </div>
@@ -315,23 +318,25 @@ export default function DemographicsConfigPage({
       )}
 
       {/* Quick Navigation */}
-      <Card className="p-4 bg-gray-50">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="text-sm text-gray-600">
+      <Card className="p-3 sm:p-4 bg-gray-50">
+        <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0 gap-4">
+          <div className="text-xs sm:text-sm text-gray-600">
             <strong>After {isEditMode ? 'updating' : 'creating'}:</strong> You&apos;ll be redirected to the demographics analytics page.
           </div>
           
-          <div className="flex flex-wrap gap-2">
-            <Link href={`/cameras/${camera.id}`}>
-              <Button variant="outline" size="sm">
+          <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:gap-2">
+            <Link href={`/cameras/${camera.id}`} className="w-full sm:w-auto">
+              <Button variant="outline" size="sm" className="w-full sm:w-auto">
                 <CameraIcon className="h-4 w-4 mr-2" />
-                Camera Details
+                <span className="sm:hidden">Camera</span>
+                <span className="hidden sm:inline">Camera Details</span>
               </Button>
             </Link>
             
-            <Link href={`/cameras/${camera.id}/demographics`}>
-              <Button variant="outline" size="sm">
-                Demographics Analytics
+            <Link href={`/cameras/${camera.id}/demographics`} className="w-full sm:w-auto">
+              <Button variant="outline" size="sm" className="w-full sm:w-auto">
+                <span className="sm:hidden">Analytics</span>
+                <span className="hidden sm:inline">Demographics Analytics</span>
               </Button>
             </Link>
           </div>

@@ -104,19 +104,19 @@ export default function CameraDemographicsPage({
 
   if (cameraLoading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-64 w-full" />
+      <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
+        <Skeleton className="h-6 sm:h-8 w-48 sm:w-64" />
+        <Skeleton className="h-48 sm:h-64 w-full" />
       </div>
     );
   }
 
   if (!camera) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">Camera not found</p>
+      <div className="text-center py-8 sm:py-12 px-4">
+        <p className="text-gray-500 text-sm sm:text-base">Camera not found</p>
         <Link href="/cameras">
-          <Button variant="outline" className="mt-4">
+          <Button variant="outline" className="mt-4 w-full sm:w-auto">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Cameras
           </Button>
@@ -126,32 +126,33 @@ export default function CameraDemographicsPage({
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+    <div className="space-y-4 sm:space-y-6 p-4 sm:p-6">
+      <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+        <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:gap-4 sm:space-y-0">
           <Link href={`/cameras/${camera.id}`}>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="w-fit">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Demographics Analytics</h1>
-            <p className="text-gray-600">{camera.name}</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 break-words">Demographics Analytics</h1>
+            <p className="text-sm sm:text-base text-gray-600">{camera.name}</p>
           </div>
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           {/* Configuration Button */}
           <Link href={`/cameras/${camera.id}/demographics/config`}>
-            <Button variant={camera.demographics_config ? "outline" : "default"}>
+            <Button variant={camera.demographics_config ? "outline" : "default"} className="w-full sm:w-auto">
               <Settings className="h-4 w-4 mr-2" />
-              {camera.demographics_config ? 'Edit Configuration' : 'Configure Demographics'}
+              <span className="sm:hidden">{camera.demographics_config ? 'Edit Config' : 'Configure'}</span>
+              <span className="hidden sm:inline">{camera.demographics_config ? 'Edit Configuration' : 'Configure Demographics'}</span>
             </Button>
           </Link>
           
           {Array.isArray(demographics) && demographics.length > 0 && (
-            <Button onClick={exportData} variant="outline">
+            <Button onClick={exportData} variant="outline" className="w-full sm:w-auto">
               <Download className="h-4 w-4 mr-2" />
               Export CSV
             </Button>
@@ -162,6 +163,7 @@ export default function CameraDemographicsPage({
             variant="outline" 
             size="sm"
             disabled={isFetching}
+            className="w-full sm:w-auto"
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isFetching ? 'animate-spin' : ''}`} />
             {isFetching ? 'Loading...' : 'Refresh'}
@@ -170,15 +172,15 @@ export default function CameraDemographicsPage({
       </div>
 
       {!camera.demographics_config ? (
-        <Card className="p-8 text-center">
+        <Card className="p-6 sm:p-8 text-center">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Demographics Not Configured
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-sm sm:text-base text-gray-600 mb-4">
             This camera doesn&apos;t have demographics configuration set up yet.
           </p>
           <Link href={`/cameras/${camera.id}/demographics/config`}>
-            <Button>
+            <Button className="w-full sm:w-auto">
               <Settings className="h-4 w-4 mr-2" />
               Set Up Demographics
             </Button>
@@ -194,9 +196,9 @@ export default function CameraDemographicsPage({
 
           {/* Debug info card (remove in production) */}
           {process.env.NODE_ENV === 'development' && (
-            <Card className="p-4 bg-gray-50 border-dashed">
+            <Card className="p-3 sm:p-4 bg-gray-50 border-dashed">
               <h4 className="text-sm font-medium mb-2">Debug Info:</h4>
-              <div className="text-xs space-y-1">
+              <div className="text-xs space-y-1 overflow-x-auto">
                 <p><strong>Current Filters:</strong> {JSON.stringify(filters, null, 2)}</p>
                 <p><strong>Loading State:</strong> {demographicsLoading ? 'Loading' : 'Loaded'}</p>
                 <p><strong>Fetching State:</strong> {isFetching ? 'Fetching' : 'Idle'}</p>
@@ -208,18 +210,18 @@ export default function CameraDemographicsPage({
           )}
 
           {demographicsLoading ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-80 rounded-lg" />
+                <Skeleton key={i} className="h-64 sm:h-80 rounded-lg" />
               ))}
             </div>
           ) : error ? (
-            <Card className="p-8 text-center">
+            <Card className="p-6 sm:p-8 text-center">
               <h3 className="text-lg font-semibold text-red-600 mb-2">Error Loading Data</h3>
-              <p className="text-red-600 mb-4">
+              <p className="text-sm sm:text-base text-red-600 mb-4">
                 {(error as Error).message || 'An unexpected error occurred'}
               </p>
-              <Button onClick={handleRefresh} variant="outline">
+              <Button onClick={handleRefresh} variant="outline" className="w-full sm:w-auto">
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Try Again
               </Button>
@@ -227,8 +229,8 @@ export default function CameraDemographicsPage({
           ) : (
             <>
               {/* Results summary */}
-              <Card className="p-4 bg-blue-50 border-blue-200">
-                <div className="flex items-center justify-between">
+              <Card className="p-3 sm:p-4 bg-blue-50 border-blue-200">
+                <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                   <div>
                     <p className="text-sm text-blue-800">
                       <strong>Showing:</strong> {demographics.length} records
@@ -251,12 +253,12 @@ export default function CameraDemographicsPage({
 
               {/* Show message when no data found */}
               {demographics.length === 0 && (
-                <Card className="p-8 text-center">
+                <Card className="p-6 sm:p-8 text-center">
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">No Data Found</h3>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-sm sm:text-base text-gray-600 mb-4">
                     No demographics data matches the current filters. Try adjusting your filters or check if data is being collected.
                   </p>
-                  <Button onClick={() => setFilters({ camera_id: id })} variant="outline">
+                  <Button onClick={() => setFilters({ camera_id: id })} variant="outline" className="w-full sm:w-auto">
                     Clear All Filters
                   </Button>
                 </Card>
@@ -264,36 +266,36 @@ export default function CameraDemographicsPage({
 
               {/* Summary stats from analytics if available */}
               {analyticsData && demographics.length > 0 && (
-                <Card className="p-6">
+                <Card className="p-4 sm:p-6">
                   <h3 className="text-lg font-semibold mb-4">Summary Statistics</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 text-center">
                     <div>
-                      <p className="text-2xl font-bold text-blue-600">{analyticsData.total_count}</p>
-                      <p className="text-sm text-gray-600">Total Count</p>
+                      <p className="text-xl sm:text-2xl font-bold text-blue-600">{analyticsData.total_count}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Total Count</p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-green-600">
+                      <p className="text-xl sm:text-2xl font-bold text-green-600">
                         {Math.max(...Object.values(analyticsData.gender_distribution || {}))}
                       </p>
-                      <p className="text-sm text-gray-600">Peak Gender Count</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Peak Gender Count</p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-purple-600">
+                      <p className="text-xl sm:text-2xl font-bold text-purple-600">
                         {Object.keys(analyticsData.age_distribution || {}).length}
                       </p>
-                      <p className="text-sm text-gray-600">Age Groups</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Age Groups</p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-orange-600">
+                      <p className="text-xl sm:text-2xl font-bold text-orange-600">
                         {Object.keys(analyticsData.emotion_distribution || {}).length}
                       </p>
-                      <p className="text-sm text-gray-600">Emotions</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Emotions</p>
                     </div>
                     <div>
-                      <p className="text-2xl font-bold text-red-600">
+                      <p className="text-xl sm:text-2xl font-bold text-red-600">
                         {Object.keys(analyticsData.ethnicity_distribution || {}).length}
                       </p>
-                      <p className="text-sm text-gray-600">Ethnicities</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Ethnicities</p>
                     </div>
                   </div>
                 </Card>
