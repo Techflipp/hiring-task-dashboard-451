@@ -1,38 +1,28 @@
-'use client';
-
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '../../../lib/api';
-import { CameraList } from '../../../components/camera/camera-list';
-import { CameraSearch } from '../../../components/camera/camera-search';
-import { Button } from '../../../components/ui/button';
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
+import { CameraSearchWrapper } from '../../../components/camera/wrapper/camera-search-wrapper';
+import { CameraListWrapper } from '../../../components/camera/wrapper/camera-list-wrapper';
 import type { CameraFilters } from '../../../lib/types';
 
-export default function CamerasPage() {
-  const [filters, setFilters] = useState<CameraFilters>({
-    page: 1,
-    size: 20,
-  });
+interface CamerasPageProps {
+  searchParams: Promise<{
+    camera_name?: string;
+    page?: string;
+    size?: string;
+  }>;
+}
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['cameras', filters],
-    queryFn: () => apiClient.getCameras(filters),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  const handleSearchChange = (camera_name: string) => {
-    setFilters(prev => ({ ...prev, camera_name, page: 1 }));
+export default async function CamerasPage({ searchParams }: CamerasPageProps) {
+  const params = await searchParams;
+  
+  // Parse search parameters with defaults
+  const filters: CameraFilters = {
+    page: parseInt(params.page || '1', 10),
+    size: parseInt(params.size || '20', 10),
+    camera_name: params.camera_name || undefined,
   };
 
-  const handlePageChange = (page: number) => {
-    setFilters(prev => ({ ...prev, page }));
-  };
-
-  const handleSizeChange = (size: number) => {
-    setFilters(prev => ({ ...prev, size, page: 1 }));
-  };
+  // Fetch data on the server
+  const data = await apiClient.getCameras(filters);
 
   return (
     <div className="space-y-6">
@@ -43,23 +33,15 @@ export default function CamerasPage() {
             Manage your camera network and configurations
           </p>
         </div>
-        
       </div>
 
       <div className="bg-white rounded-lg shadow">
         <div className="p-6 border-b">
-          <CameraSearch 
-            onSearchChange={handleSearchChange}
-            initialValue={filters.camera_name || ''}
-          />
+          <CameraSearchWrapper initialValue={filters.camera_name || ''} />
         </div>
 
-        <CameraList
+        <CameraListWrapper
           data={data}
-          isLoading={isLoading}
-          error={error}
-          onPageChange={handlePageChange}
-          onSizeChange={handleSizeChange}
           currentPage={filters.page || 1}
           pageSize={filters.size || 20}
         />

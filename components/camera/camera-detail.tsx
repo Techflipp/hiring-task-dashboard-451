@@ -1,3 +1,4 @@
+"use client";
 import { Camera } from '../../lib/types';
 import { Card } from '../ui/card';
 import { Badge } from '../ui/badge';

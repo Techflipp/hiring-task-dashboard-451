@@ -1,10 +1,6 @@
-import CamerasPage from './cameras/page';
+import { redirect } from 'next/navigation';
 
 export default function HomePage() {
-  return (
-    <div className="space-y-8">
-      <CamerasPage/>
-    </div>
-  );
+  // Simple redirect to cameras page - keeps homepage static
+  redirect('/cameras');
 }
-
