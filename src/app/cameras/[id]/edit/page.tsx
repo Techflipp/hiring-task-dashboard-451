@@ -3,6 +3,7 @@
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { apiClient } from '../../../../../lib/api';
 import { useUpdateCamera } from '../../../../../hooks/use-cameras';
 import { useTags } from '../../../../../hooks/use-tags';
@@ -42,8 +43,25 @@ export default function EditCameraPage({
   const handleSubmit = async (data: any) => {
     try {
       await updateCameraMutation.mutateAsync({ id, data });
-      router.push(`/cameras/${id}`);
+      
+      // Success toast
+      toast.success('Camera updated successfully!', {
+        description: `${camera?.name || 'Camera'} has been updated with new settings.`,
+        duration: 4000,
+      });
+      
+      // Small delay to show the toast before navigation
+      setTimeout(() => {
+        router.push(`/cameras/${id}`);
+      }, 500);
+      
     } catch (error) {
+      // Error toast
+      toast.error('Failed to update camera', {
+        description: error instanceof Error ? error.message : 'An unexpected error occurred while updating the camera.',
+        duration: 5000,
+      });
+      
       console.error('Failed to update camera:', error);
     }
   };

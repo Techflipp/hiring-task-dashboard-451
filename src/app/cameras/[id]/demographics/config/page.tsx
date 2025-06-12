@@ -3,6 +3,7 @@
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { apiClient } from '../../../../../../lib/api';
 import { useCreateDemographicsConfig, useUpdateDemographicsConfig } from '../../../../../../hooks/use-demographics';
 import { CreateDemographicsConfigPayload, UpdateDemographicsConfigPayload } from '../../../../../../lib/types';
@@ -59,6 +60,16 @@ export default function DemographicsConfigPage({
           id: camera.demographics_config.id,
           data: updatePayload,
         });
+
+        // Success toast for update
+        toast.success('Demographics configuration updated!', {
+          description: `Configuration for ${camera?.name || 'camera'} has been successfully updated.`,
+          duration: 4000,
+          action: {
+            label: 'View Analytics',
+            onClick: () => router.push(`/cameras/${id}/demographics`),
+          },
+        });
       } else {
         // Create new config - include camera_id
         const createPayload: CreateDemographicsConfigPayload = {
@@ -75,10 +86,31 @@ export default function DemographicsConfigPage({
         };
         
         await createConfigMutation.mutateAsync(createPayload);
+
+        // Success toast for create
+        toast.success('Demographics configuration created!', {
+          description: `Demographics analysis is now enabled for ${camera?.name || 'this camera'}.`,
+          duration: 4000,
+          action: {
+            label: 'View Analytics',
+            onClick: () => router.push(`/cameras/${id}/demographics`),
+          },
+        });
       }
       
-      router.push(`/cameras/${id}/demographics`);
+      // Delay navigation to show toast
+      setTimeout(() => {
+        router.push(`/cameras/${id}/demographics`);
+      }, 1500);
+
     } catch (error) {
+      // Error toast
+      const isUpdate = !!camera?.demographics_config;
+      toast.error(`Failed to ${isUpdate ? 'update' : 'create'} demographics configuration`, {
+        description: error instanceof Error ? error.message : 'An unexpected error occurred while saving the configuration.',
+        duration: 5000,
+      });
+      
       console.error('Failed to save demographics config:', error);
     }
   };
