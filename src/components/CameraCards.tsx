@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -5,10 +6,10 @@ import { useState } from "react";
 import { CloudAlert } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import Details from "./Details";
 import { Camera } from "@/constants/apitypes";
 import Spinner from "./Spinner";
 import { Skeleton } from "./ui/skeleton";
+import Link from "next/link";
 
 export default function CameraCard({
   id,
@@ -16,7 +17,6 @@ export default function CameraCard({
   name,
   tags,
   is_active,
-  status_message,
 }: Camera) {
   const [imgError, setImgError] = useState<boolean>(false);
   const [ImgLoading, setImgLoading] = useState<boolean>(true);
@@ -25,11 +25,11 @@ export default function CameraCard({
       initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       key={id}
-      className="flex flex-col relative text-white p-6 w-full  bg-slate-900 gap-4  shadow hover:shadow-lg rounded-2xl transition-shadow border-1"
+      className="relative flex h-[30rem] w-full flex-col items-start justify-end gap-6 rounded-2xl border-1 bg-stone-200 p-2 text-white shadow-xl transition-shadow"
     >
-      <div className="h-[300px] w-full  relative">
+      <div className="absolute top-0 left-0 z-0 h-full w-full">
         {ImgLoading && !imgError && (
-          <Skeleton className="w-full h-full flex flex-col flex-center gap-2">
+          <Skeleton className="flex-center flex h-full w-full flex-col gap-2">
             <Spinner />
             <span>Loading Image</span>
           </Skeleton>
@@ -39,55 +39,58 @@ export default function CameraCard({
             fill={true}
             src={snapshot}
             alt={name}
-            className="w-full object-cover rounded-xl"
+            className="w-full rounded-xl object-cover"
             onLoad={() => setImgLoading(false)}
             onError={() => setImgError(true)}
             priority
           />
         ) : (
-          <div className="w-full flex-col gap-2 z-20 rounded-xl bg-slate-500 h-full flex-center">
+          <div className="z-20 flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl bg-slate-700">
             <CloudAlert size={40} />
             <span>NO IMAGE</span>
           </div>
         )}
       </div>
-      <h2 className="text-3xl font-bold  ">{name}</h2>
-      <div className="flex-col flex gap-1">
-        <div
-          className={cn(
-            "flex items-center  gap-2  font-semibold text-xl",
-            is_active ? "text-green-500 " : "text-red-500"
-          )}
-        >
+      <div className="glassBg relative z-10 flex w-full flex-col gap-4">
+        <h2 className="text-2xl font-extrabold text-white">{name}</h2>
+        <div className="flex flex-col gap-1">
           <div
             className={cn(
-              "rounded-full size-2",
-              is_active
-                ? "bg-green-500 shadow-[0px_0px_10px_3px_rgba(11,241,176,0.9)]"
-                : "bg-red-500 shadow-[0px_0px_10px_3px_rgba(184,80,20,0.9)]"
+              "flex items-center gap-2 text-xl font-semibold",
+              is_active ? "text-green-500" : "text-red-500",
             )}
-          />
-          {is_active ? "Active" : "Inactive"}
+          >
+            <div
+              className={cn(
+                "size-2 rounded-full font-medium",
+                is_active
+                  ? "bg-green-500 shadow-[0px_0px_10px_3px_rgba(11,241,176,0.9)]"
+                  : "bg-red-500 shadow-[0px_0px_10px_3px_rgba(184,80,20,0.9)]",
+              )}
+            />
+            {is_active ? "Active" : "Inactive"}
+          </div>
         </div>
-        <p className="text-gray-300">
-          {status_message || "No description available"}
-        </p>
-      </div>
+        <div className="flex w-full flex-col gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2">
+            {tags
+              .slice(0, 3)
+              .map((tag: { id: string; name: string; color: string }) => (
+                <Badge key={tag.id} style={{ backgroundColor: tag.color }}>
+                  {tag.name}
+                </Badge>
+              ))}
 
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag: { id: string; name: string; color: string }) => (
-          <Badge key={tag.id} style={{ backgroundColor: tag.color }}>
-            {tag.name}
-          </Badge>
-        ))}
-      </div>
-      <div className="flex  gap-2 w-full mt-auto ">
-        <Details camId={id}>
-          <Button className="flex-1">View Details</Button>
-        </Details>
-        <Button className="flex-1 bg-cyan-500 hover:bg-cyan-600">
-          Live Preview
-        </Button>
+            {tags.length - 3 !== 0 && tags.length - 3 > 0 && (
+              <Badge className="bg-white">+ {tags.length - 3} more</Badge>
+            )}
+          </div>
+        </div>
+        <Link href={`/Camera/${id}`}>
+          <Button className="mx-auto mt-auto w-full max-w-sm">
+            View Details
+          </Button>
+        </Link>
       </div>
     </motion.div>
   );

@@ -1,5 +1,6 @@
 import { paths, components } from "@/types/api";
 
+//automatically generated from types from provided api using openapi-typescript to ease the typing process
 export type Camera = components["schemas"]["Camera"];
 
 export type TagsResponse =

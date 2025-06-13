@@ -2,36 +2,42 @@
 import {
   Pagination,
   PaginationContent,
+  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { useEffect } from "react";
-import Spinner from "./Spinner";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 export default function DynamicPagination({
   dynamicPage,
   totalPages,
-  setDynamicPage,
-  refetch,
-  isFetching,
 }: {
   dynamicPage: number;
-  totalPages: number;
-  refetch: () => void;
-  setDynamicPage: (page: number) => void;
-  isFetching: boolean;
+  totalPages: number | null | undefined;
 }) {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
   const handlePageChange = (page: number) => {
-    setDynamicPage(page);
+    const params = new URLSearchParams(searchParams);
+    const pageCheck: boolean = page <= Number(totalPages);
+    if (page && pageCheck && totalPages) {
+      params.set("page", page.toString());
+      replace(`${pathname}?${params.toString()}`);
+    } else {
+      params.set("page", "1");
+      replace(`${pathname}?${params.toString()}`);
+    }
   };
 
-  useEffect(() => {
-    refetch();
-  }, [dynamicPage, refetch]);
+  //handling visible buttons logic
+
+  const rangeStart = dynamicPage - 2 > 0 ? dynamicPage - 2 : 0;
+  const rangeEnd = dynamicPage === totalPages ? totalPages : dynamicPage + 2;
   return (
-    <Pagination className="w-full my-6 overflow-hidden">
-      <PaginationContent className="flex-wrap items-center justify-center">
+    <Pagination className="my-6 w-full justify-center overflow-hidden lg:justify-end">
+      <PaginationContent className="flex-wrap justify-center">
         <PaginationItem>
           <PaginationPrevious
             onClick={() => handlePageChange(dynamicPage - 1)}
@@ -40,8 +46,9 @@ export default function DynamicPagination({
             Previous
           </PaginationPrevious>
         </PaginationItem>
-        {!isFetching ? (
-          [...Array(totalPages)?.keys()].map((page) => (
+        {[...Array(totalPages)?.keys()]
+          .slice(rangeStart, rangeEnd)
+          .map((page) => (
             <PaginationItem key={page + 1}>
               <PaginationLink
                 isActive={dynamicPage === page + 1}
@@ -50,12 +57,10 @@ export default function DynamicPagination({
                 {page + 1}
               </PaginationLink>
             </PaginationItem>
-          ))
-        ) : (
-          <PaginationItem className="flex flex-center">
-            <Spinner />
-          </PaginationItem>
-        )}
+          ))}
+        <PaginationItem>
+          <PaginationEllipsis />
+        </PaginationItem>
 
         <PaginationItem>
           <PaginationNext

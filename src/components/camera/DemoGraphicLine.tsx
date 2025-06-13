@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/chart";
 import { getDemoGraphicsResultsResponse } from "@/constants/apitypes";
 
-export function DemoGraphicChart({
+export default function DemoGraphicLine({
   analytics,
   item,
   date,
@@ -25,7 +25,7 @@ export function DemoGraphicChart({
   date: string;
 }) {
   const chartData = Object.entries(
-    analytics[item as keyof typeof analytics]
+    analytics[item as keyof typeof analytics],
   ).map(([key, value]) => ({ key: key, value: value }));
 
   const chartConfig = {
@@ -36,13 +36,13 @@ export function DemoGraphicChart({
   } satisfies ChartConfig;
 
   return (
-    <Card>
+    <Card className="aspect-square h-full w-full shadow-xl">
       <CardHeader>
         <CardTitle>{item.split("_").join(" ").toUpperCase()}</CardTitle>
         <CardDescription>{`${new Date(date).toDateString()}`}</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={chartConfig} className="size-full">
           <BarChart accessibilityLayer data={chartData} layout="vertical">
             <XAxis type="number" dataKey="value" hide />
             <YAxis

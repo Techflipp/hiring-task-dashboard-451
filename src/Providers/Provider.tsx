@@ -1,7 +1,7 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
 import ReactQueryProvider from "./LenisProvider";
 import LenisProvider from "./ReactQueryProvider";
 
+//main provider
 export default function AppProvider({
   children,
 }: {
@@ -9,9 +9,7 @@ export default function AppProvider({
 }) {
   return (
     <ReactQueryProvider>
-      <SidebarProvider>
-        <LenisProvider>{children}</LenisProvider>
-      </SidebarProvider>
+      <LenisProvider>{children}</LenisProvider>
     </ReactQueryProvider>
   );
 }

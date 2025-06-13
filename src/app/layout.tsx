@@ -1,22 +1,19 @@
 import type { Metadata } from "next";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Ubuntu_Condensed, Ubuntu_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
-import AppProvider from "@/providers/Provider";
-import AppSidebar from "@/components/AppSidebar";
-import { Suspense } from "react";
+import AppProvider from "@/Providers/Provider";
 import "./globals.css";
 
-const main = Ubuntu_Condensed({
-  variable: "--font-u-main",
+const main = Geist({
+  variable: "--font-main-ui",
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["600", "700", "800", "900"],
 });
 
-const mono = Ubuntu_Mono({
-  variable: "--font-u-mono",
+const open = Geist_Mono({
+  variable: "--font-open-ui",
   subsets: ["latin"],
-  weight: ["700"],
+  weight: ["500"],
 });
 
 export const metadata: Metadata = {
@@ -30,16 +27,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className={`${mono.variable} ${main.variable} antialiased`}>
+    <html lang="en">
+      <body className={`${open.variable} ${main.variable} antialiased`}>
         <AppProvider>
-          <Suspense>
-            <AppSidebar />
-          </Suspense>
-          <main className="w-full">
-            <SidebarTrigger />
-            {children}
-          </main>
+          <main className="w-full">{children}</main>
           <Toaster />
         </AppProvider>
       </body>

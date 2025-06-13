@@ -1,23 +1,17 @@
 import {
   getCameraByIdResponse,
-  getDemoGraphicsResultsResponse,
   updateDemoGraphicsRequest,
   updateDemoGraphicsResponse,
 } from "@/constants/apitypes";
 
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import {
-  getCameraById,
-  getDemographicsResults,
-  updateDemoGraphics,
-} from "@/services";
+import { getCameraById, updateDemoGraphics } from "@/services";
 import { useState, useEffect } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "sonner";
-import { Skeleton } from "./ui/skeleton";
 import {
   Form,
   FormControl,
@@ -26,8 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Slider } from "./ui/slider";
-import { DemoGraphicChart } from "./DemoGraphicChart";
+import { Slider } from "../ui/slider";
 
 //defining schema
 const formSchema = z.object({
@@ -69,25 +62,16 @@ const formSchema = z.object({
     .max(5, { message: "wrong range" }),
 });
 
-export default function DemoGraphicsDetails({ camId }: { camId: string }) {
-  const [graphError, setGraphError] = useState<boolean>(false);
+export default function DemoGraphicsForm({ id }: { id: string }) {
   const [configId, setConfigId] = useState<string>("");
+  const camId = id;
 
   const queryClient = useQueryClient();
 
   const { data, isSuccess } = useQuery<getCameraByIdResponse, Error>({
     queryKey: ["camera", { id: camId }],
-    queryFn: () => getCameraById(camId),
-    enabled: !!camId,
-  });
-
-  const { data: demoGraphicResult } = useQuery<
-    getDemoGraphicsResultsResponse,
-    Error
-  >({
-    queryKey: ["demographics", { id: camId }],
-    queryFn: () => getDemographicsResults({ camera_id: camId }),
-    enabled: !!camId,
+    queryFn: () => getCameraById(id),
+    enabled: !!id,
   });
 
   const mutation = useMutation<
@@ -134,7 +118,7 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
     mutation.mutate(values);
   }
 
-  //set inputs with the current value for better ux
+  //filling the form with the current data for a better ux
   useEffect(() => {
     if (isSuccess && data.demographics_config !== undefined) {
       form.reset({
@@ -156,18 +140,14 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
           ?.frame_skip_interval as number,
       });
 
-      if (data.demographics_config?.id === "") {
-        setGraphError(true);
-      } else {
-        setGraphError(false);
-      }
       setConfigId(data?.demographics_config?.id as string);
+      queryClient.invalidateQueries({ queryKey: ["camera", { id: camId }] });
     }
-  }, [isSuccess, data, form]);
+  }, [isSuccess, data, form, queryClient, camId]);
   if (!data) {
     return (
-      <div className="size-full flex flex-center">
-        <h2 className="font-bold text-3xl">please wait</h2>
+      <div className="flex-center flex size-full">
+        <h2 className="text-3xl font-bold">please wait</h2>
       </div>
     );
   }
@@ -176,17 +156,11 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-center h-full flex-col-reverse lg:flex-row w-full gap-15"
+        className="flex-center flex h-full w-full flex-col-reverse gap-15 lg:flex-row"
       >
-        <div className="w-full flex-2 flex-col max-w-4xl flex gap-4">
-          <span className="text-xs">
-            {"config_id: " + data?.demographics_config?.id || "no id"}
-          </span>
-          <h3 className="text-2xl font-semibold my-2">
-            DemoGraphics Configuration
-          </h3>
-          <div className="w-full flex flex-center flex-col gap-6">
-            <div className="grid grid-col-1 md:grid-cols-2 w-full gap-10">
+        <div className="flex w-full max-w-4xl flex-2 flex-col gap-4">
+          <div className="flex-center flex w-full flex-col gap-6">
+            <div className="grid-col-1 grid w-full gap-10 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="track_history_max_length"
@@ -478,33 +452,9 @@ export default function DemoGraphicsDetails({ camId }: { camId: string }) {
                 )}
               />
             </div>
-            <Button type="submit" className="max-w-40 w-full">
+            <Button type="submit" className="w-full max-w-40">
               update
             </Button>
-          </div>
-        </div>
-        <div className="w-full flex-3  flex flex-col gap-2 ">
-          <div className=" w-full grid grid-cols-1 md:grid-cols-2 gap-5 relative">
-            {!graphError && demoGraphicResult?.analytics
-              ? Object.keys(demoGraphicResult.analytics)
-                  .slice(0, -1)
-                  .map((key) => (
-                    <DemoGraphicChart
-                      key={key}
-                      item={key}
-                      analytics={demoGraphicResult.analytics}
-                      date={demoGraphicResult.items[0].created_at}
-                    />
-                  ))
-              : [...Array(4).keys()].map((i, index) => (
-                  <div className="flex flex-col space-y-3" key={index}>
-                    <Skeleton className="h-[250px] w-full rounded-xl" />
-                    <div className="space-y-2">
-                      <Skeleton className="h-4 w-[250px]" />
-                      <Skeleton className="h-4 w-[200px]" />
-                    </div>
-                  </div>
-                ))}
           </div>
         </div>
       </form>

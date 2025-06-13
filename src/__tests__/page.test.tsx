@@ -12,10 +12,17 @@ jest.mock("next/router", () => ({
 
 describe("Page", () => {
   it("renders a heading", () => {
-    render(<Page />);
+    const mockSearchParams = {
+      search: "highway",
+      size: "10",
+      page: "1",
+    };
+
+    render(<Page searchParams={Promise.resolve(mockSearchParams)} />);
 
     const heading = screen.getByRole("heading", { level: 1 });
 
+    expect(screen.getByText("Query: highway")).toBeInTheDocument();
     expect(heading).toBeInTheDocument();
   });
 });

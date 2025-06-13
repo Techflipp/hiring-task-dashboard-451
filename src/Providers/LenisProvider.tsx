@@ -4,6 +4,8 @@ import type { LenisRef } from "lenis/react";
 import { cancelFrame, frame } from "framer-motion";
 import { useEffect, useRef } from "react";
 
+//used for smooth scrolling effect
+
 export default function LenisProvider({
   children,
 }: {
