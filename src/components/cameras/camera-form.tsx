@@ -7,7 +7,7 @@ import { useState } from 'react'
 
 import type { Camera, Tag } from '@/lib/types'
 import { useUpdateCamera } from '@/hooks/use-cameras'
-import { cameraFormSchema, type CameraFormValues } from '@/lib/schemas'
+import { cameraFormSchema, type CameraFormValues } from '@/schemas/cameraForm.schema'
 
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
