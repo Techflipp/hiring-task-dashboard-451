@@ -1,210 +1,134 @@
-# TechFlipp Frontend Task
+# TechFlipp Frontend Task — Camera Management Dashboard
 
-## Overview
+A camera management dashboard built with Next.js 15 (App Router), Tailwind CSS v4, React Query, Axios, React Hook Form, Zod, and ShadCN UI components.
 
-👋 This is a NextJS interview challenge. Please fork this repo, and push your code to a branch in your forked repo (following the instructions below).
+## 📦 Setup Instructions
 
-You are tasked with building a responsive frontend application that interfaces with our Camera Management API. The application will allow users to manage cameras and view demographic analytics data collected by these cameras.
+1. **Clone the repo**
 
-## Submission
-
-Please fork this repository and submit your solution as a pull request. Include in your README:
-- Setup instructions
-- Overview of your implementation
-- Any assumptions or design decisions
-- Screenshots of the UI
-
-If you have any questions or need assistance, feel free to open an issue in the main repository. We're here to help!
-
-## Requirements
-
-### 1. Camera List Page
-- Implement a paginated view of cameras
-- Allow users to control how many items appear per page
-- Provide a way to search for cameras by name
-- Display relevant camera information in a user-friendly manner
-
-### 2. Camera Detail Page
-- Create a view showing comprehensive camera information 
-- Design an intuitive layout for camera details
-
-### 3. Camera Update Functionality
-- Develop a user interface for updating camera details
-- Implement appropriate validation with meaningful feedback
-- Consider the user experience during form submission
-
-### 4. Demographics Configuration
-- Enable users to create or edit demographics configuration for cameras - one to one relationship with camera
-- Design form controls appropriate for each configuration parameter
-- Ensure proper validation of configuration values
-
-### 5. Demographics Results & Analytics
-- Implement filtering capabilities for the data
-- Create informative visualizations that convey demographic insights like charts, graphs, tables, etc.
-
-## Technical Requirements
-
-- Build the application using Next.js, following its best practices for routing, data fetching, and component organization
-- Implement responsive design that works well across different devices
-- Let your imagination make the design of the task responsive.
-
-
-## Nice-to-Have Technical Features
-
-The following features would enhance your solution:
-- Different rendering ways as needed (SSR, ISR, SSG, etc.)
-- Skeleton loading states to improve perceived performance
-- Seamless data refresh mechanisms
-- Render error messages in form fields
-- Optimistic UI updates for a better user experience
-- Organized state management
-- Use React Query (TanStack Query) for fetching and caching data.
-- Creative and intuitive UI/UX design
-- SEO and performance optimizations
-- Unit tests for key components
-
-## API Specification
-
-**Base URL**: https://task-451-api.ryd.wafaicloud.com/
-**Schema**: https://task-451-api.ryd.wafaicloud.com/docs
-
-### Enum Definitions
-
-#### Genders
-```
-MALE = "male"
-FEMALE = "female"
+```bash
+git clone https://github.com/MhassanAv/hiring-task-dashboard-451.git
+cd hiring-task-dashboard-451
 ```
 
-#### Ages
-```
-ZERO_EIGHTEEN = "0-18"
-NINETEEN_THIRTY = "19-30"
-THIRTYONE_FORTYFIVE = "31-45"
-FORTYSIX_SIXTY = "46-60"
-SIXTYPLUS = "60+"
+2. **Install dependencies**
+
+```bash
+yarn install
 ```
 
-#### Emotions
-```
-ANGRY = "angry"
-FEAR = "fear"
-HAPPY = "happy"
-NEUTRAL = "neutral"
-SAD = "sad"
-SURPRISE = "surprise"
+3. **Run development server**
+
+```bash
+yarn dev
 ```
 
-#### Ethnic Groups
-```
-WHITE = "white"
-AFRICAN = "african"
-SOUTH_ASIAN = "south_asian"
-EAST_ASIAN = "east_asian"
-MIDDLE_EASTERN = "middle_eastern"
-```
+4. **Open your browser**
 
-### Tags Endpoint
+Navigate to <http://localhost:3000>
 
-#### 1. List All Tags
-```
-GET /tags/
-```
+5. **API Base URL**
 
-Response: List of all available tags
+Uses a public API: <https://task-451-api.ryd.wafaicloud.com>
 
-### Camera Endpoints
+## 🚀 Overview of Implementation
 
-#### 1. List Cameras
-```
-GET /cameras/
-Query Parameters:
-- page: int (default=1) - Page number
-- size: int (default=20) - Items per page
-- camera_name: string (optional) - Filter by camera name
-```
+- Uses the Next.js 15 App Router with the app/ directory for routing and layouts.
 
-Response: Paginated list of cameras
+- Sidebar component contains search input and size input for filtering cameras.
 
-#### 2. Get Camera Details
-```
-GET /cameras/{camera_id}
-```
+- Cameras page fetches and displays paginated camera data using React Query + Axios.
 
-Response: Detailed camera information including demographics config if it exists
+- Camera details and edit forms implemented using modals with prefetching.
 
-#### 3. Update Camera
-```
-PUT /cameras/{camera_id}
-Body: {
-  "name": string,
-  "rtsp_url": string,
-  "stream_frame_width": int (optional, min=1, max=2560),
-  "stream_frame_height": int (optional, min=1, max=2560),
-  "stream_max_length": int (optional, min=0, max=10000),
-  "stream_quality": int (optional, min=80, max=100),
-  "stream_fps": int (optional, min=1, max=120),
-  "stream_skip_frames": int (optional, min=0, max=100),
-  "tags": array of tag ids (optional)
-}
-```
+- Forms use React Hook Form with Zod for validation and schema-based type safety.
 
-### Demographics Endpoints
+- Modern Animations using framer-motion to improve the UX.
 
-#### 1. Create Demographics Configuration
-```
-POST /demographics/config
-Body: {
-  "camera_id": string,
-  "track_history_max_length": int (optional, min=1, max=100),
-  "exit_threshold": int (optional, min=1, max=300),
-  "min_track_duration": int (optional, min=1, max=60),
-  "detection_confidence_threshold": float (optional, min=0.1, max=1.0),
-  "demographics_confidence_threshold": float (optional, min=0.1, max=1.0),
-  "min_track_updates": int (optional, min=1, max=100),
-  "box_area_threshold": float (optional, min=0.05, max=1.0),
-  "save_interval": int (optional, min=300, max=1800),
-  "frame_skip_interval": float (optional, min=0.1, max=5.0)
-}
-```
+- Smooth Scrolling functionality using Lenis.
 
-#### 2. Update Demographics Configuration
-```
-PUT /demographics/config/{config_id}
-Body: {
-  "track_history_max_length": int (optional, min=1, max=100),
-  "exit_threshold": int (optional, min=1, max=300),
-  "min_track_duration": int (optional, min=1, max=60),
-  "detection_confidence_threshold": float (optional, min=0.1, max=1.0),
-  "demographics_confidence_threshold": float (optional, min=0.1, max=1.0),
-  "min_track_updates": int (optional, min=1, max=100),
-  "box_area_threshold": float (optional, min=0.05, max=1.0),
-  "save_interval": int (optional, min=300, max=1800),
-  "frame_skip_interval": float (optional, min=0.1, max=5.0)
-}
-```
+- Tag selection supports multi-select with toggling logic and synchronizes with form state.
 
-#### 3. Get Demographics Results
-```
-GET /demographics/results
-Query Parameters:
-- camera_id: string (required)
-- gender: string (optional) - Filter by gender
-- age: string (optional) - Filter by age group
-- emotion: string (optional) - Filter by emotion
-- ethnicity: string (optional) - Filter by ethnicity
-- start_date: datetime (optional) - Filter by start date
-- end_date: datetime (optional) - Filter by end date
-```
+- Controlled components used for sliders (ShadCN UI) integrated with form.
 
-Response: List of demographics results and analytics data
+- Error and success feedback handled via Sonner toast notifications.
 
-## Evaluation Criteria
+- Tailwind CSS v4 for styling with conditional classes based on data state.
 
-Your submission will be evaluated based on:
-- Feature completeness according to requirements
-- Code quality and organization
-- UI/UX design and responsiveness
-- Performance optimizations
-- Unit test coverage
-- Error handling
+- Skeleton loaders and loading indicators to improve UX during async data fetches.
+
+- Pagination and search are controlled via URL query parameters for easy sharing and navigation.
+
+- No global state library used; React Query handles all server state and caching.
+
+## 💡 Assumptions and Design Decisions
+
+- the UI is fully responsive as modern dashboard should be,the integrated sidebar and filtering functionalities makes it the UI/UX much better.
+
+- As a Dashboard, I developed it to be an SPA (Single Page Application),I thought their is no need for SSR or ISR and leveraged the power of client side rendering to not make things feel slow, The SEO isn't a concern for this kind of projects but I took care of it to maximize the potential.
+
+## 📷 Screenshots
+
+### Cameras Home Page
+
+![Camera List](./screenshots/Home_Page.png)
+
+### Camera Details
+
+![Camera Edit](./screenshots/Camera_Details.png)
+
+### Camera Edit mode
+
+![Add Camera](./screenshots/Camera_Details_Edit_Form.png)
+
+### Demographics Details & Edit mode
+
+![Add Camera](./screenshots/Demographics_Details_and_Edit_Form.png)
+
+### Home Page Mobile
+
+![Add Camera](./screenshots/Home_Page_Mobile.png)
+
+## ✅ Completed Requirements
+
+### ✅ 1. Camera List Page
+
+- ✅ Implement a paginated view of cameras
+- ✅ Allow users to control how many items appear per page
+- ✅ Provide a way to search for cameras by name
+- ✅ Display relevant camera information in a user-friendly manner
+
+### ✅ 2. Camera Detail Page
+
+- ✅ Create a view showing comprehensive camera information
+- ✅Design an intuitive layout for camera details
+
+### ✅ 3. Camera Update Functionality
+
+- ✅ Develop a user interface for updating camera details
+- ✅ Implement appropriate validation with meaningful feedback
+- ✅ Consider the user experience during form submission
+
+### ✅ 4. Demographics Configuration
+
+- ✅ Enable users to create or edit demographics configuration for cameras - one to one relationship with camera
+- ✅ Design form controls appropriate for each configuration parameter
+- ✅ Ensure proper validation of configuration values
+
+### ✅ 5. Demographics Results & Analytics
+
+- ❌ Implement filtering capabilities for the data
+- ✅ Create informative visualizations that convey demographic insights like charts, graphs, tables, etc.
+
+## ✅ Completed Nice-to-Have Technical Features
+
+- ✅ Different rendering ways as needed (SSR, ISR, SSG, etc.)
+- ✅ Skeleton loading states to improve perceived performance
+- ✅ Seamless data refresh mechanisms
+- ✅ Render error messages in form fields
+- ✅ Optimistic UI updates for a better user experience
+- ✅ Organized state management
+- ✅ Use React Query (TanStack Query) for fetching and caching data.
+- ✅ Creative and intuitive UI/UX design
+- ✅ SEO and performance optimizations
+- ❌ Unit tests for key components
