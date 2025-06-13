@@ -105,5 +105,3 @@ export interface PaginatedResponse<T> {
   size: number;
   pages: number;
 }
-
-export type SortOption = 'name_asc' | 'name_desc' | 'created_desc' | 'created_asc'; 
