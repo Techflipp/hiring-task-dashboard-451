@@ -52,7 +52,7 @@ export default function CameraCard({
         )}
       </div>
       <div className="glassBg relative z-10 flex w-full flex-col gap-4">
-        <h2 className="text-2xl font-extrabold text-white">{name}</h2>
+        <h2 className="text-2xl font-extrabold">{name}</h2>
         <div className="flex flex-col gap-1">
           <div
             className={cn(
