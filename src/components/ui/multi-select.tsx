@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { X } from 'lucide-react'
+import { Check, X } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Command, CommandGroup, CommandItem } from '@/components/ui/command'
 import { Command as CommandPrimitive } from 'cmdk'
@@ -41,10 +41,14 @@ export function MultiSelect({
     setInputValue('')
   }
 
+  const handleBlur = () => {
+    setTimeout(() => {
+      setOpen(false)
+    }, 150)
+  }
+
   return (
-    <Command
-      className={`overflow-visible bg-transparent ${className}`}
-    >
+    <Command className={`overflow-visible bg-transparent ${className}`}>
       <div className="group border-input ring-offset-background focus-within:ring-ring rounded-md border px-3 py-2 text-sm focus-within:ring-2 focus-within:ring-offset-2">
         <div className="flex flex-wrap gap-1">
           {selected.map((value) => {
@@ -57,7 +61,6 @@ export function MultiSelect({
                 {option?.label}
                 <button
                   className="ring-offset-background focus:ring-ring ml-1 rounded-full outline-none focus:ring-2 focus:ring-offset-2"
-                  // Removed keyboard shortcut: no onKeyDown
                   onClick={() => handleUnselect(value)}
                 >
                   <X className="text-muted-foreground hover:text-foreground h-3 w-3" />
@@ -69,7 +72,7 @@ export function MultiSelect({
             ref={inputRef}
             value={inputValue}
             onValueChange={setInputValue}
-            onBlur={() => setOpen(false)}
+            onBlur={handleBlur}
             onFocus={() => setOpen(true)}
             placeholder={selected.length === 0 ? placeholder : undefined}
             className="placeholder:text-muted-foreground ml-2 flex-1 bg-transparent outline-none"
@@ -85,14 +88,21 @@ export function MultiSelect({
                 return (
                   <CommandItem
                     key={option.value}
-                    onSelect={() => handleSelect(option.value)}
-                    className={`flex items-center gap-2 ${isSelected ? 'bg-accent' : ''}`}
+                    onMouseDown={(e) => {
+                      e.preventDefault()
+                      handleSelect(option.value)
+                    }}
+                    className={`flex items-center gap-2 cursor-pointer ${isSelected ? 'bg-accent' : ''}`}
                   >
                     <div
-                      className={`mr-2 flex h-4 w-4 items-center justify-center rounded-sm border ${isSelected ? 'bg-primary border-primary text-primary-foreground' : 'opacity-50'
+                      className={`mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-input ${isSelected
+                        ? 'bg-primary border-primary text-primary-foreground'
+                        : 'bg-background'
                         }`}
                     >
-                      {isSelected && <span className="h-2 w-2">✓</span>}
+                      {isSelected && (
+                        <Check className="h-3 w-3 text-muted-foreground" />
+                      )}
                     </div>
                     {option.label}
                   </CommandItem>

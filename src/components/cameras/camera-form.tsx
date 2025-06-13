@@ -3,7 +3,6 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
 
 import type { Camera, Tag } from '@/lib/types'
 import { useUpdateCamera } from '@/hooks/use-cameras'
@@ -17,7 +16,6 @@ import { MultiSelect } from '@/components/ui/multi-select'
 export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) => {
   const router = useRouter()
   const { mutate: updateCamera, isPending } = useUpdateCamera()
-  const [selectedTags, setSelectedTags] = useState<Tag[]>(camera.tags || [])
 
   const form = useForm<CameraFormValues>({
     resolver: zodResolver(cameraFormSchema),
@@ -38,13 +36,13 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
   const { reset } = form
 
   const onSubmit = (values: CameraFormValues) => {
-    const { ...restValues } = values
     updateCamera(
       {
         id: camera.id,
         data: {
-          ...restValues,
-          tags: selectedTags.map((tag) => tag.id),
+          name: values.name,
+          rtsp_url: values.rtsp_url,
+          tags: values.tags?.map((tag) => tag.id) || [],
           stream_frame_width: values.stream_frame_width ?? undefined,
           stream_frame_height: values.stream_frame_height ?? undefined,
           stream_max_length: values.stream_max_length ?? undefined,
@@ -83,7 +81,7 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                 />
               </FormControl>
               <FormDescription>Enter a unique name for this camera</FormDescription>
-              <FormMessage className="text-xs text-red-600 mt-1" />
+              <FormMessage className="mt-1 text-xs text-red-600" />
             </FormItem>
           )}
         />
@@ -101,7 +99,7 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                 />
               </FormControl>
               <FormDescription>RTSP stream URL for the camera</FormDescription>
-              <FormMessage className="text-xs text-red-600 mt-1" />
+              <FormMessage className="mt-1 text-xs text-red-600" />
             </FormItem>
           )}
         />
@@ -123,7 +121,7 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                   />
                 </FormControl>
                 <FormDescription>Width in pixels (1-2560)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormMessage className="mt-1 text-xs text-red-600" />
               </FormItem>
             )}
           />
@@ -144,7 +142,7 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                   />
                 </FormControl>
                 <FormDescription>Height in pixels (1-2560)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormMessage className="mt-1 text-xs text-red-600" />
               </FormItem>
             )}
           />
@@ -167,7 +165,7 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                   />
                 </FormControl>
                 <FormDescription>Frames per second (1-120)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormMessage className="mt-1 text-xs text-red-600" />
               </FormItem>
             )}
           />
@@ -188,7 +186,7 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                   />
                 </FormControl>
                 <FormDescription>Stream quality (80-100)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormMessage className="mt-1 text-xs text-red-600" />
               </FormItem>
             )}
           />
@@ -211,7 +209,7 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                   />
                 </FormControl>
                 <FormDescription>Maximum stream length (0-10000)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormMessage className="mt-1 text-xs text-red-600" />
               </FormItem>
             )}
           />
@@ -232,7 +230,7 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                   />
                 </FormControl>
                 <FormDescription>Number of frames to skip (0-100)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormMessage className="mt-1 text-xs text-red-600" />
               </FormItem>
             )}
           />
@@ -241,7 +239,7 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
         <FormField
           control={form.control}
           name="tags"
-          render={() => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Tags</FormLabel>
               <FormControl>
@@ -250,16 +248,18 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                     value: tag.id,
                     label: tag.name,
                   }))}
-                  selected={selectedTags.map((tag) => tag.id)}
+                  selected={field.value?.map((tag) => tag.id) || []}
                   onChange={(tagIds) => {
-                    const newTags = tagIds.map((id) => tags.find((tag) => tag.id === id)!).filter(Boolean)
-                    setSelectedTags(newTags)
+                    const selectedTags = tagIds
+                      .map((id) => tags.find((tag) => tag.id === id))
+                      .filter((tag): tag is Tag => tag !== undefined)
+                    field.onChange(selectedTags)
                   }}
                   placeholder="Select tags"
                 />
               </FormControl>
               <FormDescription>Select tags for this camera</FormDescription>
-              <FormMessage className="text-xs text-red-600 mt-1" />
+              <FormMessage className="mt-1 text-xs text-red-600" />
             </FormItem>
           )}
         />
