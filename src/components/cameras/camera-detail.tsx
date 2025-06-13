@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Edit, Settings, BarChart, ArrowLeft } from 'lucide-react'
+import { Edit, Settings, BarChart } from 'lucide-react'
 
 import type { Camera } from '@/lib/types'
 
@@ -9,20 +9,12 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Navbar } from '../navbar'
 
 export const CameraDetail = ({ camera }: { camera: Camera }) => {
   return (
     <div className="space-y-6">
-      <Button
-        variant="outline"
-        className="w-fit"
-        asChild
-      >
-        <Link href="/">
-          <ArrowLeft className="h-4 w-4" />
-          Back to Cameras
-        </Link>
-      </Button>
+      <Navbar />
 
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div className="flex flex-col gap-4">

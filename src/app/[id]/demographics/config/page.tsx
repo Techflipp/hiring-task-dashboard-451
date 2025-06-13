@@ -4,6 +4,7 @@ import { getCamera } from '@/lib/api'
 import { ConfigForm } from '@/components/demographics/config-form'
 import type { Metadata } from 'next'
 import { FormSkeleton } from '@/components/cameras/form-skeleton'
+import { Navbar } from '@/components/navbar'
 
 type ConfigPageProps = {
   params: Promise<{ id: string }>
@@ -31,6 +32,8 @@ const Page = async ({ params }: ConfigPageProps) => {
 
   return (
     <main className="mx-auto max-w-2xl px-3 py-6 md:px-0">
+      <Navbar />
+
       <h1 className="mb-2 text-3xl font-bold">Demographics Configuration</h1>
       <p className="text-muted-foreground mb-6">
         {camera.demographics_config

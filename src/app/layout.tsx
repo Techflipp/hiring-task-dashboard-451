@@ -3,8 +3,9 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import { Toaster } from 'sonner'
 
 import './globals.css'
-import { Provider } from './provider'
+import { ReactQueryProvider } from '@/providers/react-query-provider'
 import { cn } from '@/lib/utils'
+import { ThemeProvider } from '@/providers/theme-provider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,12 +27,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html
-      lang="en"
-      className="dark"
-    >
-      <body className={cn('bg-zinc-950 text-slate-50 antialiased', geistSans.variable, geistMono.variable)}>
-        <Provider>{children}</Provider>
+    <html lang="en">
+      <body className={cn('bg-background text-foreground antialiased', geistSans.variable, geistMono.variable)}>
+        <ReactQueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </ReactQueryProvider>
 
         <Toaster
           position="top-center"

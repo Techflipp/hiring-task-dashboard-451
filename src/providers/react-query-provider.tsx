@@ -8,7 +8,7 @@ import { useState } from 'react'
 /**
  * Client-side query client provider
  */
-export const Provider = ({ children }: { children: ReactNode }) => {
+export const ReactQueryProvider = ({ children }: { children: ReactNode }) => {
   const [queryClient] = useState(
     () =>
       new QueryClient({

@@ -6,6 +6,7 @@ import { getCamera, getTags } from '@/lib/api'
 
 import { CameraForm } from '@/components/cameras/camera-form'
 import { FormSkeleton } from '@/components/cameras/form-skeleton'
+import { Navbar } from '@/components/navbar'
 
 type CameraDetailPageProps = {
   params: Promise<{ id: string }>
@@ -33,6 +34,8 @@ const Page = async ({ params }: CameraDetailPageProps) => {
 
   return (
     <main className="mx-auto max-w-2xl px-3 py-6 md:px-0">
+      <Navbar />
+
       <h1 className="mb-6 text-3xl font-bold">Edit Camera</h1>
       <Suspense fallback={<FormSkeleton />}>
         <CameraForm

@@ -1,8 +1,10 @@
 import { Suspense } from 'react'
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+
 import { getCamera } from '@/lib/api'
 import { EmptyState } from '@/components/ui/empty-list'
-import type { Metadata } from 'next'
+import { Navbar } from '@/components/navbar'
 
 type LayoutProps = {
   children: React.ReactNode
@@ -25,7 +27,7 @@ export const generateMetadata = async ({ params }: LayoutProps): Promise<Metadat
 export default async function DemographicsResultsLayout({ children, params }: LayoutProps) {
   const resolvedParams = await params
   const camera = await getCamera(resolvedParams.id)
-  
+
   if (!camera) {
     notFound()
   }
@@ -45,12 +47,12 @@ export default async function DemographicsResultsLayout({ children, params }: La
 
   return (
     <main className="container mx-auto px-3 py-6 md:px-0">
+      <Navbar />
+
       <h1 className="mb-2 text-3xl font-bold">Demographics Results</h1>
       <p className="text-muted-foreground mb-6">Analytics and insights for {camera.name}</p>
-      
-      <Suspense>
-        {children}
-      </Suspense>
+
+      <Suspense>{children}</Suspense>
     </main>
   )
-} 
+}

@@ -5,6 +5,7 @@ import { CameraListSkeleton } from '@/components/cameras/camera-list-skeleton'
 import { CameraList } from '@/components/cameras/camera-list'
 import { getCameras } from '@/lib/api'
 import { createServerQueryClient } from '@/lib/query-client'
+import { ToggleTheme } from '@/components/toggle-theme'
 
 type PageProps = {
   searchParams: Promise<{ page?: string; size?: string; camera_name?: string }>
@@ -27,7 +28,11 @@ const Page = async ({ searchParams }: PageProps) => {
 
   return (
     <main className="container mx-auto px-3 py-6 md:px-0">
-      <h1 className="mb-6 text-3xl font-bold">Cameras</h1>
+      <div className="flex w-full items-center justify-between">
+        <h1 className="mb-6 text-3xl font-bold">Cameras</h1>
+
+        <ToggleTheme />
+      </div>
       <HydrationBoundary state={dehydratedState}>
         <Suspense fallback={<CameraListSkeleton />}>
           <CameraList
