@@ -14,9 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Calendar } from '@/components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 
-export const ResultsFilter = ({ cameraId }: {
-  cameraId: string
-}) => {
+export const ResultsFilter = ({ cameraId }: { cameraId: string }) => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -73,7 +71,7 @@ export const ResultsFilter = ({ cameraId }: {
   return (
     <div className="bg-card rounded-lg border p-4 shadow-sm">
       <h3 className="mb-4 text-lg font-medium">Filter Results</h3>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="flex flex-wrap gap-4">
         <div className="space-y-2">
           <Label className="text-sm font-medium">Gender</Label>
           <Select

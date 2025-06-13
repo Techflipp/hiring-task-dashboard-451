@@ -7,7 +7,6 @@ import {
   DynamicAgeChart,
   DynamicEmotionChart,
   DynamicEthnicityChart,
-  DynamicTimeSeriesChart,
 } from '@/components/demographics/charts/dynamic-charts'
 import type { Age, DemographicsFilters, Emotion, EthnicGroup, Gender } from '@/lib/types'
 
@@ -38,7 +37,6 @@ export default function DemographicsResultsPage() {
           <DynamicEmotionChart filters={filters} />
           <DynamicEthnicityChart filters={filters} />
         </div>
-        <DynamicTimeSeriesChart filters={filters} />
       </div>
     </div>
   )

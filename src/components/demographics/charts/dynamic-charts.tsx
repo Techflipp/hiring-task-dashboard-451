@@ -7,7 +7,6 @@ import { GenderChart } from './gender-chart'
 import { AgeChart } from './age-chart'
 import { EmotionChart } from './emotion-chart'
 import { EthnicityChart } from './ethnicity-chart'
-import { TimeSeriesChart } from './time-series-chart'
 import type { DemographicsFilters } from '@/lib/types'
 
 interface DynamicChartProps {
@@ -101,25 +100,3 @@ export function DynamicEthnicityChart({ filters }: DynamicChartProps) {
 
   return <EthnicityChart analytics={resultsData.analytics} />
 }
-
-export function DynamicTimeSeriesChart({ filters }: DynamicChartProps) {
-  const { data: resultsData, isLoading, error } = useDemographicsResults(filters)
-
-  if (isLoading) {
-    return <Skeleton className="h-[400px] rounded-lg" />
-  }
-
-  if (error || !resultsData) {
-    return (
-      <div className="h-[400px] flex items-center justify-center border rounded-lg">
-        <EmptyState
-          title="Failed to Load"
-          description="Unable to load time series chart data"
-          icon="file"
-        />
-      </div>
-    )
-  }
-
-  return <TimeSeriesChart analytics={resultsData.analytics} />
-} 
