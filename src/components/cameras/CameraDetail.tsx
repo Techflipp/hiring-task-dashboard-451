@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import { formatDate } from '@/lib/utils';
+import toast from 'react-hot-toast';
 
 interface CameraDetailProps {
   camera: Camera;
@@ -33,6 +34,15 @@ export const CameraDetail: React.FC<CameraDetailProps> = ({ camera }) => {
     { id: 'demographics', label: 'Demographics Config', icon: Settings },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
   ];
+
+  const handleSaveSettings = async () => {
+    try {
+      // Implement settings save logic here
+      toast.success('Camera settings saved successfully');
+    } catch (error) {
+      toast.error('Failed to save camera settings');
+    }
+  };
 
   return (
     <div className="space-y-6">

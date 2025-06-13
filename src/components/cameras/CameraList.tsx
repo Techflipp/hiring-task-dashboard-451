@@ -59,15 +59,11 @@ export const CameraList: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="flex items-center space-x-3">
-          <CameraIcon className="w-8 h-8 text-blue-600" />
-          <h1 className="text-2xl font-bold text-gray-900">Cameras</h1>
-        </div>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-          <div className="w-full sm:w-[calc(50%-8px)]">
+        <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 w-full">
+          <div className="w-full sm:w-64">
             <CameraSearch onSearch={setSearchTerm} />
           </div>
-          <div className="w-full sm:w-[calc(50%-8px)]">
+          <div className="w-full sm:w-40">
             <Select
               value={pageSize.toString()}
               onChange={handlePageSizeChange}
@@ -76,36 +72,6 @@ export const CameraList: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Stats Bar */}
-      {data && (
-        <div className="bg-white rounded-lg shadow-sm p-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div>
-              <p className="text-2xl font-bold text-gray-900">{data.total}</p>
-              <p className="text-sm text-gray-500">Total Cameras</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-green-600">
-                {data.items.filter(cam => cam.is_active).length}
-              </p>
-              <p className="text-sm text-gray-500">Active</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-red-600">
-                {data.items.filter(cam => !cam.is_active).length}
-              </p>
-              <p className="text-sm text-gray-500">Inactive</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-blue-600">
-                {data.items.filter(cam => cam.demographics_config).length}
-              </p>
-              <p className="text-sm text-gray-500">With Demographics</p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

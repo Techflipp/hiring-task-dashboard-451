@@ -12,6 +12,12 @@ const nextConfig = {
         hostname: 'picsum.photos',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'picsum.phot',
+        pathname: '/**',
+      },
+     
     ],
     minimumCacheTTL: 60,
     dangerouslyAllowSVG: true,

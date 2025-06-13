@@ -39,16 +39,18 @@ export interface Tag {
 export interface Camera {
   id: string;
   name: string;
+  location?: string;
+  ip_address?: string;
   rtsp_url: string;
+  is_active: boolean;
+  status_message?: string;
   stream_frame_width?: number;
   stream_frame_height?: number;
-  stream_max_length?: number;
-  stream_quality?: number;
   stream_fps?: number;
+  stream_quality?: number;
+  stream_max_length?: number;
   stream_skip_frames?: number;
   tags?: Tag[];
-  is_active: boolean;
-  status_message: string;
   snapshot: string;
   demographics_config?: DemographicsConfig;
   created_at: string;
@@ -67,6 +69,9 @@ export interface DemographicsConfig {
   box_area_threshold?: number;
   save_interval?: number;
   frame_skip_interval?: number;
+  detection_interval: number;
+  min_confidence: number;
+  enabled: boolean;
 }
 
 export interface DemographicsResult {
@@ -100,3 +105,5 @@ export interface PaginatedResponse<T> {
   size: number;
   pages: number;
 }
+
+export type SortOption = 'name_asc' | 'name_desc' | 'created_desc' | 'created_asc'; 

@@ -5,6 +5,9 @@ export const useCameras = (params: CameraListParams = {}) => {
   return useQuery({
     queryKey: ['cameras', params],
     queryFn: () => camerasApi.list(params),
+    retry: 1,
+    retryDelay: 1000,
+    placeholderData: (previousData) => previousData,
   });
 };
 

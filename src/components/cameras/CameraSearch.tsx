@@ -1,40 +1,33 @@
-import React, { useState, useCallback } from 'react';
-import { Search } from 'lucide-react';
+// components/cameras/CameraSearch.tsx
+import React, { useState, useEffect } from 'react';
 import { Input } from '../ui/Input';
-import { debounce } from 'lodash';
+import { Search } from 'lucide-react';
 
 interface CameraSearchProps {
-  onSearch: (searchTerm: string) => void;
+  onSearch: (value: string) => void;
+  initialValue?: string;
 }
 
-export const CameraSearch: React.FC<CameraSearchProps> = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+export const CameraSearch: React.FC<CameraSearchProps> = ({ onSearch, initialValue = '' }) => {
+  const [value, setValue] = useState(initialValue);
 
-  const debouncedSearch = useCallback(
-    (value: string) => {
-      const debouncedFn = debounce((val: string) => {
-        onSearch(val);
-      }, 300);
-      debouncedFn(value);
-    },
-    [onSearch]
-  );
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchTerm(value);
-    debouncedSearch(value);
+    const newValue = e.target.value;
+    setValue(newValue);
+    onSearch(newValue);
   };
 
   return (
     <div className="relative">
-      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <Search className="h-5 w-5 text-gray-400" />
-      </div>
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
       <Input
-        type="text"
-        placeholder="Search by name..."
-        value={searchTerm}
+        type="search"
+        placeholder="Search cameras..."
+        value={value}
         onChange={handleChange}
         className="pl-10"
       />

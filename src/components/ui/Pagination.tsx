@@ -14,8 +14,10 @@ export const Pagination: React.FC<PaginationProps> = ({
   onPageChange,
   className = '',
 }) => {
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  if (totalPages <= 1) return null;
+
   const maxVisiblePages = 5;
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
   
   let visiblePages = pages;
   if (totalPages > maxVisiblePages) {
@@ -29,7 +31,8 @@ export const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        aria-label="Previous page"
       >
         <ChevronLeft className="w-5 h-5" />
       </button>
@@ -38,11 +41,14 @@ export const Pagination: React.FC<PaginationProps> = ({
         <>
           <button
             onClick={() => onPageChange(1)}
-            className="px-3 py-1 rounded-lg hover:bg-gray-100"
+            className="px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="Go to first page"
           >
             1
           </button>
-          {visiblePages[0] > 2 && <span className="px-2">...</span>}
+          {visiblePages[0] > 2 && (
+            <span className="px-2 text-gray-500" aria-hidden="true">...</span>
+          )}
         </>
       )}
 
@@ -50,11 +56,13 @@ export const Pagination: React.FC<PaginationProps> = ({
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`px-3 py-1 rounded-lg ${
+          className={`px-3 py-1 rounded-lg transition-colors ${
             currentPage === page
-              ? 'bg-blue-600 text-white'
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
               : 'hover:bg-gray-100'
           }`}
+          aria-label={`Go to page ${page}`}
+          aria-current={currentPage === page ? 'page' : undefined}
         >
           {page}
         </button>
@@ -63,11 +71,12 @@ export const Pagination: React.FC<PaginationProps> = ({
       {visiblePages[visiblePages.length - 1] < totalPages && (
         <>
           {visiblePages[visiblePages.length - 1] < totalPages - 1 && (
-            <span className="px-2">...</span>
+            <span className="px-2 text-gray-500" aria-hidden="true">...</span>
           )}
           <button
             onClick={() => onPageChange(totalPages)}
-            className="px-3 py-1 rounded-lg hover:bg-gray-100"
+            className="px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="Go to last page"
           >
             {totalPages}
           </button>
@@ -77,7 +86,8 @@ export const Pagination: React.FC<PaginationProps> = ({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        aria-label="Next page"
       >
         <ChevronRight className="w-5 h-5" />
       </button>

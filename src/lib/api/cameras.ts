@@ -7,6 +7,7 @@ export interface CameraListParams {
   camera_name?: string;
 }
 
+
 export interface UpdateCameraData {
   name: string;
   rtsp_url: string;
@@ -24,7 +25,7 @@ export const camerasApi = {
     const { data } = await apiClient.get('/cameras/', { params });
     return data;
   },
-
+  
   getById: async (id: string): Promise<Camera> => {
     const { data } = await apiClient.get(`/cameras/${id}`);
     return data;
