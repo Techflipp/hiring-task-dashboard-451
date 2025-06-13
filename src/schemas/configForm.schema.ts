@@ -63,3 +63,15 @@ export const configFormSchema = z.object({
 })
 
 export type ConfigFormValues = z.infer<typeof configFormSchema>
+
+export const createDemographicsConfigSchema = configFormSchema.extend({
+  camera_id: z.string().min(1, 'Camera ID is required'),
+})
+
+export type CreateDemographicsConfigValues = z.infer<typeof createDemographicsConfigSchema>
+
+export const updateDemographicsConfigSchema = configFormSchema.extend({
+  id: z.string().min(1, 'Config ID is required'),
+})
+
+export type UpdateDemographicsConfigValues = z.infer<typeof updateDemographicsConfigSchema>

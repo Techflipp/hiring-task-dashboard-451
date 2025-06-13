@@ -6,16 +6,26 @@ import type {
   DemographicsFilters,
   DemographicsResultsResponse,
   Tag,
+  UpdateCameraValues,
+  CreateDemographicsConfigValues,
+  UpdateDemographicsConfigValues,
 } from './types'
+import {
+  CameraSchema,
+  CameraListResponseSchema,
+  DemographicsConfigSchema,
+  DemographicsResultsResponseSchema,
+} from '@/schemas/camera.schema'
+import { ApiErrorSchema } from '@/schemas/api.schema'
 
 /**
- * Makes an API request to the specified endpoint.
- * @template T - The expected response type.
- * @param {string} endpoint - The API endpoint to call.
- * @param {RequestInit} [options={}] - Optional fetch options.
- * @returns {Promise<T | null>} The response data or null if the request failed.
+ * Makes an API request with validation
  */
-const apiRequest = async <T>(endpoint: string, options: RequestInit = {}): Promise<T | null> => {
+const apiRequest = async <T>(
+  endpoint: string,
+  schema: z.ZodType<T>,
+  options: RequestInit = {}
+): Promise<T> => {
   const url = `${API_BASE_URL}${endpoint}`
   const response = await fetch(url, {
     ...options,
@@ -27,111 +37,92 @@ const apiRequest = async <T>(endpoint: string, options: RequestInit = {}): Promi
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}))
-    // Format the error details properly
-    if (error.detail && Array.isArray(error.detail)) {
-      const errorMessages = error.detail.map((err: unknown) => {
-        if (typeof err === 'object' && err !== null) {
-          return Object.entries(err)
-            .map(([key, value]) => `${key}: ${value}`)
-            .join(', ')
-        }
-        return String(err)
-      })
-      throw new Error(errorMessages.join('\n'))
+    // Validate error response
+    const validatedError = ApiErrorSchema.safeParse(error)
+    if (validatedError.success) {
+      throw new Error(JSON.stringify(validatedError.data))
     }
-    throw new Error(error.detail || 'Failed to update camera')
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`)
   }
 
-  return response.json()
+  const data = await response.json()
+  const result = schema.parse(data) // This will throw if validation fails
+  return result
 }
 
 /**
- * Fetches a paginated list of cameras, optionally filtered by camera name.
- * @param {number} [page=1] - The page number.
- * @param {number} [size=20] - The number of items per page.
- * @param {string} [cameraName] - Optional camera name filter.
- * @returns {Promise<CameraListResponse | null>} The camera list response or null.
+ * Fetches a paginated list of cameras with validation
  */
-export const getCameras = async (page = 1, size = 20, cameraName?: string): Promise<CameraListResponse | null> => {
+export const getCameras = async (
+  page = 1,
+  size = 20,
+  cameraName?: string
+): Promise<CameraListResponse> => {
   let endpoint = `/cameras/?page=${page}&size=${size}`
   if (cameraName) {
     endpoint += `&camera_name=${encodeURIComponent(cameraName)}`
   }
-  return apiRequest<CameraListResponse | null>(endpoint)
+  return apiRequest(endpoint, CameraListResponseSchema)
 }
 
 /**
- * Fetches a single camera by its ID.
- * @param {string} id - The camera ID.
- * @returns {Promise<Camera | null>} The camera object or null.
+ * Fetches a single camera with validation
  */
-export const getCamera = async (id: string): Promise<Camera | null> => {
-  return apiRequest<Camera | null>(`/cameras/${id}`)
+export const getCamera = async (id: string): Promise<Camera> => {
+  return apiRequest(`/cameras/${id}`, CameraSchema)
 }
 
 /**
- * Updates a camera by its ID.
- * @param {string} id - The camera ID.
- * @param {Partial<Omit<Camera, 'tags'>> & { tags?: string[] }} data - The camera data to update.
- * @returns {Promise<Camera | null>} The updated camera object or null.
+ * Updates a camera with validation
  */
 export const updateCamera = async (
   id: string,
-  data: Partial<Omit<Camera, 'tags'>> & { tags?: string[] }
-): Promise<Camera | null> => {
-  console.log('Updating camera', id, data)
-  return apiRequest<Camera | null>(`/cameras/${id}`, {
+  data: UpdateCameraValues
+): Promise<Camera> => {
+  return apiRequest(`/cameras/${id}`, CameraSchema, {
     method: 'PUT',
     body: JSON.stringify(data),
   })
 }
 
 /**
- * Fetches all tags.
- * @returns {Promise<Tag[] | null>} The list of tags or null.
+ * Fetches all tags with validation
  */
-export const getTags = async (): Promise<Tag[] | null> => {
-  return apiRequest<Tag[] | null>('/tags/')
+export const getTags = async (): Promise<Tag[]> => {
+  return apiRequest('/tags/', z.array(TagSchema))
 }
 
 /**
- * Creates a new demographics configuration for a camera.
- * @param {Partial<DemographicsConfig> & { camera_id: string }} data - The demographics config data.
- * @returns {Promise<DemographicsConfig | null>} The created demographics config or null.
+ * Creates a demographics configuration with validation
  */
 export const createDemographicsConfig = async (
-  data: Partial<DemographicsConfig> & { camera_id: string }
-): Promise<DemographicsConfig | null> => {
-  return apiRequest<DemographicsConfig | null>('/demographics/config', {
+  data: CreateDemographicsConfigValues
+): Promise<DemographicsConfig> => {
+  return apiRequest('/demographics/config', DemographicsConfigSchema, {
     method: 'POST',
     body: JSON.stringify(data),
   })
 }
 
 /**
- * Updates an existing demographics configuration by its ID.
- * @param {string} id - The demographics config ID.
- * @param {Partial<DemographicsConfig>} data - The demographics config data to update.
- * @returns {Promise<DemographicsConfig | null>} The updated demographics config or null.
+ * Updates a demographics configuration with validation
  */
 export const updateDemographicsConfig = async (
   id: string,
-  data: Partial<DemographicsConfig>
-): Promise<DemographicsConfig | null> => {
-  return apiRequest<DemographicsConfig | null>(`/demographics/config/${id}`, {
+  data: Partial<UpdateDemographicsConfigValues>
+): Promise<DemographicsConfig> => {
+  return apiRequest(`/demographics/config/${id}`, DemographicsConfigSchema, {
     method: 'PUT',
     body: JSON.stringify(data),
   })
 }
 
 /**
- * Fetches demographics results based on provided filters.
- * @param {DemographicsFilters} filters - The filters to apply.
- * @returns {Promise<DemographicsResultsResponse | null>} The demographics results or null.
+ * Fetches demographics results with validation
  */
 export const getDemographicsResults = async (
   filters: DemographicsFilters
-): Promise<DemographicsResultsResponse | null> => {
+): Promise<DemographicsResultsResponse> => {
   const queryParams = new URLSearchParams()
 
   for (const [key, value] of Object.entries(filters)) {
@@ -140,5 +131,8 @@ export const getDemographicsResults = async (
     }
   }
 
-  return apiRequest<DemographicsResultsResponse | null>(`/demographics/results?${queryParams.toString()}`)
+  return apiRequest(
+    `/demographics/results?${queryParams.toString()}`,
+    DemographicsResultsResponseSchema
+  )
 }

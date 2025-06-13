@@ -1,7 +1,8 @@
 import { z } from 'zod'
+import { TagSchema } from './camera.schema'
 
 export const cameraFormSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
+  name: z.string().min(1, 'Camera name is required'),
   rtsp_url: z.string().min(1, 'RTSP URL is required'),
   stream_frame_width: z.coerce
     .number()
@@ -45,7 +46,7 @@ export const cameraFormSchema = z.object({
     .max(100, 'Skip frames must be at most 100')
     .optional()
     .nullable(),
-  tags: z.array(z.object({ id: z.string(), name: z.string() })).optional(),
+  tags: z.array(TagSchema).optional(),
 })
 
 export type CameraFormValues = z.infer<typeof cameraFormSchema>

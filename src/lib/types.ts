@@ -1,44 +1,38 @@
-export type Camera = {
-  id: string
-  name: string
-  rtsp_url: string
-  stream_frame_width?: number
-  stream_frame_height?: number
-  stream_max_length?: number
-  stream_quality?: number
-  stream_fps?: number
-  stream_skip_frames?: number
-  tags?: Tag[]
-  demographics_config?: DemographicsConfig
-}
+import { z } from 'zod'
 
-export type CameraListResponse = {
-  items: Camera[]
-  total: number
-  page: number
-  size: number
-  pages: number
-}
+// Re-export all types from schemas to maintain consistency
+export type {
+  Camera,
+  Tag,
+  DemographicsConfig,
+  CameraListResponse,
+} from '@/schemas/camera.schema'
 
-export type Tag = {
-  id: string
-  name: string
-}
+export type {
+  CameraFormValues,
+  UpdateCameraValues,
+} from '@/schemas/cameraForm.schema'
 
-export type DemographicsConfig = {
-  id: string
-  camera_id: string
-  track_history_max_length?: number
-  exit_threshold?: number
-  min_track_duration?: number
-  detection_confidence_threshold?: number
-  demographics_confidence_threshold?: number
-  min_track_updates?: number
-  box_area_threshold?: number
-  save_interval?: number
-  frame_skip_interval?: number
-}
+export type {
+  ConfigFormValues,
+  CreateDemographicsConfigValues,
+  UpdateDemographicsConfigValues,
+} from '@/schemas/configForm.schema'
 
+export type {
+  ApiError,
+  Gender,
+  Age,
+  Emotion,
+  EthnicGroup,
+  DemographicsResult,
+  DemographicsFilters,
+  TimeSeriesData,
+  DemographicsAnalytics,
+  DemographicsResultsResponse,
+} from '@/schemas/api.schema'
+
+// Keep the enums for backward compatibility
 export enum Gender {
   MALE = 'male',
   FEMALE = 'female',
@@ -69,41 +63,12 @@ export enum EthnicGroup {
   MIDDLE_EASTERN = 'middle_eastern',
 }
 
-export type DemographicsResult = {
-  id: string
-  camera_id: string
-  timestamp: string
-  gender: Gender
-  age: Age
-  emotion: Emotion
-  ethnicity: EthnicGroup
-}
-
-export type DemographicsFilters = {
-  camera_id: string
-  gender?: Gender
-  age?: Age
-  emotion?: Emotion
-  ethnicity?: EthnicGroup
-  start_date?: string
-  end_date?: string
-}
-
-export type DemographicsAnalytics = {
-  total_count: number
-  gender_distribution: Record<Gender, number>
-  age_distribution: Record<Age, number>
-  emotion_distribution: Record<Emotion, number>
-  ethnicity_distribution: Record<EthnicGroup, number>
-  time_series_data: TimeSeriesData[]
-}
-
-export type TimeSeriesData = {
-  timestamp: string
-  count: number
-}
-
-export type DemographicsResultsResponse = {
-  results: DemographicsResult[]
-  analytics: DemographicsAnalytics
+// Additional helper types
+export type PaginationMeta = {
+  total: number
+  page: number
+  size: number
+  pages: number
+  has_next: boolean
+  has_prev: boolean
 }

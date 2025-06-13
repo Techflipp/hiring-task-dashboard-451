@@ -21,6 +21,7 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
 
   const form = useForm<CameraFormValues>({
     resolver: zodResolver(cameraFormSchema),
+    mode: 'onChange',
     defaultValues: {
       name: camera.name,
       rtsp_url: camera.rtsp_url,
@@ -81,7 +82,8 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormDescription>Enter a unique name for this camera</FormDescription>
+              <FormMessage className="text-xs text-red-600 mt-1" />
             </FormItem>
           )}
         />
@@ -98,7 +100,8 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+              <FormDescription>RTSP stream URL for the camera</FormDescription>
+              <FormMessage className="text-xs text-red-600 mt-1" />
             </FormItem>
           )}
         />
@@ -116,10 +119,11 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                     placeholder="Width (1-2560)"
                     {...field}
                     value={field.value?.toString() || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </FormControl>
                 <FormDescription>Width in pixels (1-2560)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -136,10 +140,11 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                     placeholder="Height (1-2560)"
                     {...field}
                     value={field.value?.toString() || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </FormControl>
                 <FormDescription>Height in pixels (1-2560)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -158,10 +163,11 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                     placeholder="FPS (1-120)"
                     {...field}
                     value={field.value?.toString() || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </FormControl>
                 <FormDescription>Frames per second (1-120)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -178,10 +184,11 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                     placeholder="Quality (80-100)"
                     {...field}
                     value={field.value?.toString() || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </FormControl>
                 <FormDescription>Stream quality (80-100)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -200,10 +207,11 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                     placeholder="Max length (0-10000)"
                     {...field}
                     value={field.value?.toString() || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </FormControl>
                 <FormDescription>Maximum stream length (0-10000)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -220,10 +228,11 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                     placeholder="Skip frames (0-100)"
                     {...field}
                     value={field.value?.toString() || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </FormControl>
                 <FormDescription>Number of frames to skip (0-100)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -250,7 +259,7 @@ export const CameraForm = ({ camera, tags }: { camera: Camera; tags: Tag[] }) =>
                 />
               </FormControl>
               <FormDescription>Select tags for this camera</FormDescription>
-              <FormMessage />
+              <FormMessage className="text-xs text-red-600 mt-1" />
             </FormItem>
           )}
         />

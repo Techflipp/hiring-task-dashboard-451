@@ -19,6 +19,7 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
 
   const form = useForm<ConfigFormValues>({
     resolver: zodResolver(configFormSchema),
+    mode: 'onChange', // Enable real-time validation
     defaultValues: {
       track_history_max_length: config?.track_history_max_length || 50,
       exit_threshold: config?.exit_threshold || 30,
@@ -114,11 +115,12 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                       max={1.0}
                       {...field}
                       value={field.value?.toString() || ''}
+                      onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                     />
                   </div>
                 </FormControl>
                 <FormDescription>Threshold for detection confidence (0.1-1.0)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -145,11 +147,12 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                       max={1.0}
                       {...field}
                       value={field.value?.toString() || ''}
+                      onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                     />
                   </div>
                 </FormControl>
                 <FormDescription>Threshold for demographics confidence (0.1-1.0)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -168,10 +171,11 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                     placeholder="1-100"
                     {...field}
                     value={field.value?.toString() || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </FormControl>
                 <FormDescription>Maximum length of track history (1-100)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -188,10 +192,11 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                     placeholder="1-300"
                     {...field}
                     value={field.value?.toString() || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </FormControl>
                 <FormDescription>Exit threshold in frames (1-300)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -210,10 +215,11 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                     placeholder="1-60"
                     {...field}
                     value={field.value?.toString() || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </FormControl>
                 <FormDescription>Minimum track duration in seconds (1-60)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -230,10 +236,11 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                     placeholder="1-100"
                     {...field}
                     value={field.value?.toString() || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </FormControl>
                 <FormDescription>Minimum track updates (1-100)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -262,11 +269,12 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                       max={1.0}
                       {...field}
                       value={field.value?.toString() || ''}
+                      onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                     />
                   </div>
                 </FormControl>
                 <FormDescription>Box area threshold (0.05-1.0)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -283,10 +291,11 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                     placeholder="300-1800"
                     {...field}
                     value={field.value?.toString() || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </FormControl>
                 <FormDescription>Save interval in seconds (300-1800)</FormDescription>
-                <FormMessage />
+                <FormMessage className="text-xs text-red-600 mt-1" />
               </FormItem>
             )}
           />
@@ -314,11 +323,12 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                     max={5.0}
                     {...field}
                     value={field.value?.toString() || ''}
+                    onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
                   />
                 </div>
               </FormControl>
               <FormDescription>Frame skip interval in seconds (0.1-5.0)</FormDescription>
-              <FormMessage />
+              <FormMessage className="text-xs text-red-600 mt-1" />
             </FormItem>
           )}
         />
