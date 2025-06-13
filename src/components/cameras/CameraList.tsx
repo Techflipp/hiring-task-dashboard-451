@@ -15,13 +15,14 @@ export const CameraList: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  const [searchTerm, setSearchTerm] = useState('');
+  const pageParam = searchParams?.get('page');
+  const perPageParam = searchParams?.get('per_page');
+  const searchParam = searchParams?.get('search') || '';
+  
+  const [searchTerm, setSearchTerm] = useState(searchParam);
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
-  
-  const pageParam = searchParams?.get('page');
-  const perPageParam = searchParams?.get('per_page');
   
   const page = pageParam ? Math.max(1, parseInt(pageParam, 10)) : 1;
   const pageSize = perPageParam ? Math.max(12, parseInt(perPageParam, 10)) : 12;
@@ -29,6 +30,7 @@ export const CameraList: React.FC = () => {
   const { data, isLoading, error } = useCameras({
     page,
     size: pageSize,
+    camera_name: searchTerm,
   });
 
   const sortOptions = [
@@ -92,20 +94,30 @@ export const CameraList: React.FC = () => {
     { value: '48', label: '48 per page' },
   ];
 
-  const updateUrl = (newPage: number, newPageSize: number) => {
-    const params = new URLSearchParams(searchParams?.toString() || '');
-    params.set('page', newPage.toString());
-    params.set('per_page', newPageSize.toString());
-    router.push(`/cameras?${params.toString()}`);
+  const updateUrl = (params: Record<string, string>) => {
+    const newParams = new URLSearchParams(searchParams?.toString() || '');
+    Object.entries(params).forEach(([key, value]) => {
+      if (value) {
+        newParams.set(key, value);
+      } else {
+        newParams.delete(key);
+      }
+    });
+    router.push(`/cameras?${newParams.toString()}`);
   };
 
   const handlePageChange = (newPage: number) => {
-    updateUrl(newPage, pageSize);
+    updateUrl({ page: newPage.toString() });
   };
 
   const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newPageSize = Number(e.target.value);
-    updateUrl(1, newPageSize);
+    const newPageSize = e.target.value;
+    updateUrl({ page: '1', per_page: newPageSize });
+  };
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    updateUrl({ search: value, page: '1' });
   };
 
   if (error) {
@@ -121,7 +133,7 @@ export const CameraList: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4 w-full">
           <div className="w-full sm:w-64">
-            <CameraSearch onSearch={setSearchTerm} />
+            <CameraSearch onSearch={handleSearch} initialValue={searchParam} />
           </div>
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <Select
