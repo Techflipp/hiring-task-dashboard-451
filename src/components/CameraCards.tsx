@@ -86,7 +86,7 @@ export default function CameraCard({
             )}
           </div>
         </div>
-        <Link href={`/Camera/${id}`}>
+        <Link href={`/camera/${id}`}>
           <Button className="mx-auto mt-auto w-full max-w-sm">
             View Details
           </Button>
