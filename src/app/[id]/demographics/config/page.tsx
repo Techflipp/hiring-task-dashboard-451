@@ -43,7 +43,7 @@ const Page = async ({ params }: ConfigPageProps) => {
       <Suspense fallback={<FormSkeleton />}>
         <ConfigForm
           camera={camera}
-          config={camera.demographics_config}
+          config={camera.demographics_config || undefined}
         />
       </Suspense>
     </main>

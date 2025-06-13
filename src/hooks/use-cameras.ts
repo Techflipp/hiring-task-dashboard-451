@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
-import type { Camera } from '@/lib/types'
+import type { UpdateCameraValues } from '@/schemas/cameraForm.schema'
 import { getCameras, getCamera, updateCamera } from '@/lib/api'
 import { errorToastStyle, successToastStyle } from '@/components/toast-styles'
 
@@ -26,7 +26,7 @@ export const useUpdateCamera = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Omit<Camera, 'tags'>> & { tags?: string[] } }) =>
+    mutationFn: ({ id, data }: { id: string; data: UpdateCameraValues }) =>
       updateCamera(id, data),
     onSuccess: (updatedCamera) => {
       queryClient.invalidateQueries({ queryKey: ['cameras'] })

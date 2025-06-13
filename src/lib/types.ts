@@ -1,17 +1,7 @@
-import { z } from 'zod'
-
 // Re-export all types from schemas to maintain consistency
-export type {
-  Camera,
-  Tag,
-  DemographicsConfig,
-  CameraListResponse,
-} from '@/schemas/camera.schema'
+export type { Camera, Tag, DemographicsConfig, CameraListResponse } from '@/schemas/camera.schema'
 
-export type {
-  CameraFormValues,
-  UpdateCameraValues,
-} from '@/schemas/cameraForm.schema'
+export type { CameraFormValues } from '@/schemas/cameraForm.schema'
 
 export type {
   ConfigFormValues,
@@ -21,10 +11,6 @@ export type {
 
 export type {
   ApiError,
-  Gender,
-  Age,
-  Emotion,
-  EthnicGroup,
   DemographicsResult,
   DemographicsFilters,
   TimeSeriesData,

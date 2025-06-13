@@ -6,26 +6,18 @@ import type {
   DemographicsFilters,
   DemographicsResultsResponse,
   Tag,
-  UpdateCameraValues,
   CreateDemographicsConfigValues,
   UpdateDemographicsConfigValues,
 } from './types'
-import {
-  CameraSchema,
-  CameraListResponseSchema,
-  DemographicsConfigSchema,
-  DemographicsResultsResponseSchema,
-} from '@/schemas/camera.schema'
-import { ApiErrorSchema } from '@/schemas/api.schema'
+import { CameraSchema, CameraListResponseSchema, DemographicsConfigSchema, TagSchema } from '@/schemas/camera.schema'
+import { ApiErrorSchema, DemographicsResultsResponseSchema } from '@/schemas/api.schema'
+import { z } from 'zod'
+import { UpdateCameraValues } from '@/schemas/cameraForm.schema'
 
 /**
  * Makes an API request with validation
  */
-const apiRequest = async <T>(
-  endpoint: string,
-  schema: z.ZodType<T>,
-  options: RequestInit = {}
-): Promise<T> => {
+const apiRequest = async <T>(endpoint: string, schema: z.ZodType<T>, options: RequestInit = {}): Promise<T> => {
   const url = `${API_BASE_URL}${endpoint}`
   const response = await fetch(url, {
     ...options,
@@ -53,11 +45,7 @@ const apiRequest = async <T>(
 /**
  * Fetches a paginated list of cameras with validation
  */
-export const getCameras = async (
-  page = 1,
-  size = 20,
-  cameraName?: string
-): Promise<CameraListResponse> => {
+export const getCameras = async (page = 1, size = 20, cameraName?: string): Promise<CameraListResponse> => {
   let endpoint = `/cameras/?page=${page}&size=${size}`
   if (cameraName) {
     endpoint += `&camera_name=${encodeURIComponent(cameraName)}`
@@ -75,10 +63,7 @@ export const getCamera = async (id: string): Promise<Camera> => {
 /**
  * Updates a camera with validation
  */
-export const updateCamera = async (
-  id: string,
-  data: UpdateCameraValues
-): Promise<Camera> => {
+export const updateCamera = async (id: string, data: UpdateCameraValues): Promise<Camera> => {
   return apiRequest(`/cameras/${id}`, CameraSchema, {
     method: 'PUT',
     body: JSON.stringify(data),
@@ -95,9 +80,7 @@ export const getTags = async (): Promise<Tag[]> => {
 /**
  * Creates a demographics configuration with validation
  */
-export const createDemographicsConfig = async (
-  data: CreateDemographicsConfigValues
-): Promise<DemographicsConfig> => {
+export const createDemographicsConfig = async (data: CreateDemographicsConfigValues): Promise<DemographicsConfig> => {
   return apiRequest('/demographics/config', DemographicsConfigSchema, {
     method: 'POST',
     body: JSON.stringify(data),
@@ -120,9 +103,7 @@ export const updateDemographicsConfig = async (
 /**
  * Fetches demographics results with validation
  */
-export const getDemographicsResults = async (
-  filters: DemographicsFilters
-): Promise<DemographicsResultsResponse> => {
+export const getDemographicsResults = async (filters: DemographicsFilters): Promise<DemographicsResultsResponse> => {
   const queryParams = new URLSearchParams()
 
   for (const [key, value] of Object.entries(filters)) {
@@ -131,8 +112,5 @@ export const getDemographicsResults = async (
     }
   }
 
-  return apiRequest(
-    `/demographics/results?${queryParams.toString()}`,
-    DemographicsResultsResponseSchema
-  )
+  return apiRequest(`/demographics/results?${queryParams.toString()}`, DemographicsResultsResponseSchema)
 }
