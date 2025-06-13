@@ -16,38 +16,44 @@ export const CameraDetail = ({ camera }: { camera: Camera }) => {
     <div className="space-y-6">
       <Navbar />
 
-      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-        <div className="flex flex-col gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">{camera.name}</h1>
-            <p className="text-muted-foreground mt-1">{camera.rtsp_url}</p>
-          </div>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-2">
+          <h1 className="text-2xl font-bold sm:text-3xl">{camera.name}</h1>
+          <p className="text-muted-foreground text-sm sm:text-base break-all">{camera.rtsp_url}</p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
           <Button
             variant="outline"
+            size="sm"
             asChild
+            className="w-full sm:w-auto"
           >
             <Link href={`/${camera.id}/edit`}>
               <Edit className="mr-2 h-4 w-4" />
-              Edit Camera
+              <span className="sm:inline">Edit Camera</span>
             </Link>
           </Button>
           <Button
             variant="outline"
+            size="sm"
             asChild
+            className="w-full sm:w-auto"
           >
             <Link href={`/${camera.id}/demographics/config`}>
               <Settings className="mr-2 h-4 w-4" />
-              Demographics Config
+              <span className="sm:inline">Demographics Config</span>
             </Link>
           </Button>
           {camera.demographics_config && (
-            <Button asChild>
+            <Button 
+              size="sm" 
+              asChild
+              className="w-full sm:w-auto"
+            >
               <Link href={`/${camera.id}/demographics/results`}>
                 <BarChart className="mr-2 h-4 w-4" />
-                View Analytics
+                <span className="sm:inline">View Analytics</span>
               </Link>
             </Button>
           )}
@@ -55,9 +61,9 @@ export const CameraDetail = ({ camera }: { camera: Camera }) => {
       </div>
 
       <Tabs defaultValue="details">
-        <TabsList>
-          <TabsTrigger value="details">Camera Details</TabsTrigger>
-          <TabsTrigger value="config">Demographics Config</TabsTrigger>
+        <TabsList className="grid grid-cols-2">
+          <TabsTrigger value="details" className="text-xs sm:text-sm">Camera Details</TabsTrigger>
+          <TabsTrigger value="config" className="text-xs sm:text-sm">Demographics Config</TabsTrigger>
         </TabsList>
         <TabsContent
           value="details"
@@ -65,26 +71,26 @@ export const CameraDetail = ({ camera }: { camera: Camera }) => {
         >
           <Card>
             <CardHeader>
-              <CardTitle>Camera Information</CardTitle>
+              <CardTitle className="text-lg sm:text-xl">Camera Information</CardTitle>
               <CardDescription>Technical details about this camera</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <div>
                   <h3 className="mb-2 font-medium">Stream Settings</h3>
-                  <dl className="grid grid-cols-2 gap-2">
+                  <dl className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     <dt className="text-muted-foreground text-sm font-medium">Resolution</dt>
-                    <dd>
+                    <dd className="text-sm sm:text-base">
                       {camera.stream_frame_width || '-'}x{camera.stream_frame_height || '-'}
                     </dd>
                     <dt className="text-muted-foreground text-sm font-medium">FPS</dt>
-                    <dd>{camera.stream_fps || '-'}</dd>
+                    <dd className="text-sm sm:text-base">{camera.stream_fps || '-'}</dd>
                     <dt className="text-muted-foreground text-sm font-medium">Quality</dt>
-                    <dd>{camera.stream_quality || '-'}</dd>
+                    <dd className="text-sm sm:text-base">{camera.stream_quality || '-'}</dd>
                     <dt className="text-muted-foreground text-sm font-medium">Max Length</dt>
-                    <dd>{camera.stream_max_length || '-'}</dd>
+                    <dd className="text-sm sm:text-base">{camera.stream_max_length || '-'}</dd>
                     <dt className="text-muted-foreground text-sm font-medium">Skip Frames</dt>
-                    <dd>{camera.stream_skip_frames || '-'}</dd>
+                    <dd className="text-sm sm:text-base">{camera.stream_skip_frames || '-'}</dd>
                   </dl>
                 </div>
                 <div>
@@ -95,6 +101,7 @@ export const CameraDetail = ({ camera }: { camera: Camera }) => {
                         <Badge
                           key={tag.id}
                           variant="secondary"
+                          className="text-xs"
                         >
                           {tag.name}
                         </Badge>
@@ -115,37 +122,37 @@ export const CameraDetail = ({ camera }: { camera: Camera }) => {
           {camera.demographics_config ? (
             <Card>
               <CardHeader>
-                <CardTitle>Demographics Configuration</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">Demographics Configuration</CardTitle>
                 <CardDescription>Current demographics processing settings</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                   <div>
                     <h3 className="mb-2 font-medium">Detection Settings</h3>
-                    <dl className="grid grid-cols-2 gap-2">
+                    <dl className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       <dt className="text-muted-foreground text-sm font-medium">Detection Confidence</dt>
-                      <dd>{camera.demographics_config.detection_confidence_threshold || '-'}</dd>
+                      <dd className="text-sm sm:text-base">{camera.demographics_config.detection_confidence_threshold || '-'}</dd>
                       <dt className="text-muted-foreground text-sm font-medium">Demographics Confidence</dt>
-                      <dd>{camera.demographics_config.demographics_confidence_threshold || '-'}</dd>
+                      <dd className="text-sm sm:text-base">{camera.demographics_config.demographics_confidence_threshold || '-'}</dd>
                       <dt className="text-muted-foreground text-sm font-medium">Box Area Threshold</dt>
-                      <dd>{camera.demographics_config.box_area_threshold || '-'}</dd>
+                      <dd className="text-sm sm:text-base">{camera.demographics_config.box_area_threshold || '-'}</dd>
                     </dl>
                   </div>
                   <div>
                     <h3 className="mb-2 font-medium">Tracking Settings</h3>
-                    <dl className="grid grid-cols-2 gap-2">
+                    <dl className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                       <dt className="text-muted-foreground text-sm font-medium">Track History Max Length</dt>
-                      <dd>{camera.demographics_config.track_history_max_length || '-'}</dd>
+                      <dd className="text-sm sm:text-base">{camera.demographics_config.track_history_max_length || '-'}</dd>
                       <dt className="text-muted-foreground text-sm font-medium">Exit Threshold</dt>
-                      <dd>{camera.demographics_config.exit_threshold || '-'}</dd>
+                      <dd className="text-sm sm:text-base">{camera.demographics_config.exit_threshold || '-'}</dd>
                       <dt className="text-muted-foreground text-sm font-medium">Min Track Duration</dt>
-                      <dd>{camera.demographics_config.min_track_duration || '-'}</dd>
+                      <dd className="text-sm sm:text-base">{camera.demographics_config.min_track_duration || '-'}</dd>
                       <dt className="text-muted-foreground text-sm font-medium">Min Track Updates</dt>
-                      <dd>{camera.demographics_config.min_track_updates || '-'}</dd>
+                      <dd className="text-sm sm:text-base">{camera.demographics_config.min_track_updates || '-'}</dd>
                       <dt className="text-muted-foreground text-sm font-medium">Save Interval</dt>
-                      <dd>{camera.demographics_config.save_interval || '-'}</dd>
+                      <dd className="text-sm sm:text-base">{camera.demographics_config.save_interval || '-'}</dd>
                       <dt className="text-muted-foreground text-sm font-medium">Frame Skip Interval</dt>
-                      <dd>{camera.demographics_config.frame_skip_interval || '-'}</dd>
+                      <dd className="text-sm sm:text-base">{camera.demographics_config.frame_skip_interval || '-'}</dd>
                     </dl>
                   </div>
                 </div>
@@ -154,11 +161,11 @@ export const CameraDetail = ({ camera }: { camera: Camera }) => {
           ) : (
             <Card>
               <CardHeader>
-                <CardTitle>No Demographics Configuration</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">No Demographics Configuration</CardTitle>
                 <CardDescription>This camera does not have demographics configuration set up yet.</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button asChild>
+                <Button asChild className="w-full sm:w-auto">
                   <Link href={`/${camera.id}/demographics/config`}>
                     <Settings className="mr-2 h-4 w-4" />
                     Create Configuration

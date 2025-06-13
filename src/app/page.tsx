@@ -27,12 +27,12 @@ const Page = async ({ searchParams }: PageProps) => {
   })
 
   return (
-    <main className="container mx-auto px-3 py-6 md:px-0">
-      <div className="flex w-full items-center justify-between">
-        <h1 className="mb-6 text-3xl font-bold">Cameras</h1>
-
+    <main className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <div className="flex gap-4 mb-6 sm:items-center sm:justify-between">
+        <h1 className="text-2xl font-bold sm:text-3xl">Cameras</h1>
         <ToggleTheme />
       </div>
+
       <HydrationBoundary state={dehydratedState}>
         <Suspense fallback={<CameraListSkeleton />}>
           <CameraList

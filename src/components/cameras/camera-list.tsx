@@ -95,10 +95,10 @@ export const CameraList = ({ page, size, cameraName }: CameraListProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col justify-between gap-4 sm:flex-row">
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
         <form
           onSubmit={handleSearch}
-          className="flex w-full gap-2 sm:max-w-sm"
+          className="flex flex-col gap-2 sm:flex-row sm:max-w-sm w-full"
         >
           <Input
             placeholder="Search cameras..."
@@ -106,18 +106,18 @@ export const CameraList = ({ page, size, cameraName }: CameraListProps) => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="flex-1"
           />
-          <Button type="submit">
+          <Button type="submit" className="w-full sm:w-auto">
             <Search className="mr-2 h-4 w-4" />
             Search
           </Button>
         </form>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <span className="text-muted-foreground text-sm whitespace-nowrap">Show:</span>
           <Select
             value={size.toString()}
             onValueChange={handleSizeChange}
           >
-            <SelectTrigger className="w-[100px]">
+            <SelectTrigger className="w-full sm:w-[120px]">
               <SelectValue placeholder="20 items" />
             </SelectTrigger>
             <SelectContent>
@@ -129,7 +129,7 @@ export const CameraList = ({ page, size, cameraName }: CameraListProps) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {data.items.map((camera) => (
           <CameraCard
             key={camera.id}
@@ -138,22 +138,26 @@ export const CameraList = ({ page, size, cameraName }: CameraListProps) => {
         ))}
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="text-muted-foreground text-sm">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-muted-foreground text-sm text-center sm:text-left">
           Showing {(page - 1) * size + 1}-{Math.min(page * size, data.total)} of {data.total} cameras
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 justify-center sm:justify-end">
           <Button
             variant="outline"
+            size="sm"
             onClick={() => handlePageChange(page - 1)}
             disabled={page <= 1}
+            className="flex-1 sm:flex-none"
           >
             Previous
           </Button>
           <Button
             variant="outline"
+            size="sm"
             onClick={() => handlePageChange(page + 1)}
             disabled={page >= data.pages}
+            className="flex-1 sm:flex-none"
           >
             Next
           </Button>

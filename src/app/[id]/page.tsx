@@ -30,7 +30,7 @@ const Page = async ({ params }: CameraDetailPageProps) => {
   }
 
   return (
-    <main className="container mx-auto px-3 py-6 md:px-0">
+    <main className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
       <Suspense fallback={<CameraDetailSkeleton />}>
         <CameraDetail camera={camera} />
       </Suspense>

@@ -14,13 +14,10 @@ type LayoutProps = {
 export const generateMetadata = async ({ params }: LayoutProps): Promise<Metadata> => {
   const resolvedParams = await params
   const camera = await getCamera(resolvedParams.id)
-  if (!camera) {
-    notFound()
-  }
 
   return {
-    title: `Demographics Results for ${camera.name} | Camera Management System`,
-    description: `View demographics analytics for camera ${camera.name}`,
+    title: `Demographics Results - ${camera?.name || 'Camera'} | Camera Management System`,
+    description: `Analytics and insights for ${camera?.name || 'camera'}`,
   }
 }
 
@@ -34,8 +31,8 @@ export default async function DemographicsResultsLayout({ children, params }: La
 
   if (!camera.demographics_config) {
     return (
-      <div className="container py-6">
-        <h1 className="mb-6 text-3xl font-bold">Demographics Results</h1>
+      <div className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+        <h1 className="mb-6 text-2xl font-bold sm:text-3xl">Demographics Results</h1>
         <EmptyState
           title="No Demographics Configuration"
           description="This camera does not have demographics configuration set up yet."
@@ -46,11 +43,13 @@ export default async function DemographicsResultsLayout({ children, params }: La
   }
 
   return (
-    <main className="container mx-auto px-3 py-6 md:px-0">
+    <main className="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
       <Navbar />
 
-      <h1 className="mb-2 text-3xl font-bold">Demographics Results</h1>
-      <p className="text-muted-foreground mb-6">Analytics and insights for {camera.name}</p>
+      <div className="mb-6">
+        <h1 className="mb-2 text-2xl font-bold sm:text-3xl">Demographics Results</h1>
+        <p className="text-muted-foreground text-sm sm:text-base">Analytics and insights for {camera.name}</p>
+      </div>
 
       <Suspense>{children}</Suspense>
     </main>

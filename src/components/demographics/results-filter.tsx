@@ -70,15 +70,15 @@ export const ResultsFilter = ({ cameraId }: { cameraId: string }) => {
 
   return (
     <div className="bg-card rounded-lg border p-4 shadow-sm">
-      <h3 className="mb-4 text-lg font-medium">Filter Results</h3>
-      <div className="flex flex-wrap gap-4">
+      <h3 className="mb-4 text-base font-medium sm:text-lg">Filter Results</h3>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
         <div className="space-y-2">
           <Label className="text-sm font-medium">Gender</Label>
           <Select
             value={gender}
             onValueChange={(value) => setGender(value as Gender | 'all')}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="All genders" />
             </SelectTrigger>
             <SelectContent>
@@ -95,7 +95,7 @@ export const ResultsFilter = ({ cameraId }: { cameraId: string }) => {
             value={age}
             onValueChange={(value) => setAge(value as Age | 'all')}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="All ages" />
             </SelectTrigger>
             <SelectContent>
@@ -115,7 +115,7 @@ export const ResultsFilter = ({ cameraId }: { cameraId: string }) => {
             value={emotion}
             onValueChange={(value) => setEmotion(value as Emotion | 'all')}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="All emotions" />
             </SelectTrigger>
             <SelectContent>
@@ -136,7 +136,7 @@ export const ResultsFilter = ({ cameraId }: { cameraId: string }) => {
             value={ethnicity}
             onValueChange={(value) => setEthnicity(value as EthnicGroup | 'all')}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="All ethnicities" />
             </SelectTrigger>
             <SelectContent>
@@ -156,13 +156,15 @@ export const ResultsFilter = ({ cameraId }: { cameraId: string }) => {
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className={cn('w-full justify-start text-left font-normal', !startDate && 'text-muted-foreground')}
+                className={cn('w-full justify-start text-left font-normal text-xs sm:text-sm', !startDate && 'text-muted-foreground')}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {startDate ? format(startDate, 'PPP') : 'Pick a date'}
+                <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                <span className="truncate">
+                  {startDate ? format(startDate, 'MMM dd, yyyy') : 'Pick a date'}
+                </span>
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
+            <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
                 selected={startDate}
@@ -179,13 +181,15 @@ export const ResultsFilter = ({ cameraId }: { cameraId: string }) => {
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className={cn('w-full justify-start text-left font-normal', !endDate && 'text-muted-foreground')}
+                className={cn('w-full justify-start text-left font-normal text-xs sm:text-sm', !endDate && 'text-muted-foreground')}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {endDate ? format(endDate, 'PPP') : 'Pick a date'}
+                <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                <span className="truncate">
+                  {endDate ? format(endDate, 'MMM dd, yyyy') : 'Pick a date'}
+                </span>
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
+            <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
                 selected={endDate}
@@ -196,14 +200,17 @@ export const ResultsFilter = ({ cameraId }: { cameraId: string }) => {
         </div>
       </div>
 
-      <div className="mt-6 flex justify-end gap-2">
+      <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">
         <Button
           variant="outline"
           onClick={resetFilters}
+          className="w-full sm:w-auto"
         >
           Reset
         </Button>
-        <Button onClick={applyFilters}>Apply Filters</Button>
+        <Button onClick={applyFilters} className="w-full sm:w-auto">
+          Apply Filters
+        </Button>
       </div>
     </div>
   )
