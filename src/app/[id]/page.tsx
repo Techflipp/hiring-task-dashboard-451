@@ -10,22 +10,21 @@ type CameraDetailPageProps = {
 }
 
 export const generateMetadata = async ({ params }: CameraDetailPageProps): Promise<Metadata> => {
-  try {
-    const resolvedParams = await params
-    const camera = await getCamera(resolvedParams?.id)
-    return {
-      title: `${camera?.name} | Camera Management System`,
-      description: `Details for camera ${camera?.name}`,
-    }
-  } catch {
+  const resolvedParams = await params
+  const camera = await getCamera(resolvedParams?.id)
+  if (!camera) {
     notFound()
+  }
+
+  return {
+    title: `${camera?.name} | Camera Management System`,
+    description: `Details for camera ${camera?.name}`,
   }
 }
 
 const Page = async ({ params }: CameraDetailPageProps) => {
   const resolvedParams = await params
   const camera = await getCamera(resolvedParams.id)
-
   if (!camera) {
     notFound()
   }

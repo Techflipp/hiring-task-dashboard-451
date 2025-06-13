@@ -5,6 +5,9 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import type { ReactNode } from 'react'
 import { useState } from 'react'
 
+/**
+ * Client-side query client provider
+ */
 export const Provider = ({ children }: { children: ReactNode }) => {
   const [queryClient] = useState(
     () =>
@@ -13,7 +16,11 @@ export const Provider = ({ children }: { children: ReactNode }) => {
           queries: {
             // With SSR, we usually want to set some default staleTime
             // above 0 to avoid refetching immediately on the client
-            staleTime: 30 * 1000,
+            staleTime: 60 * 1000, // 1 minute
+            gcTime: 5 * 60 * 1000, // 5 minutes (previously cacheTime)
+            refetchOnWindowFocus: false,
+            refetchOnMount: false,
+            retry: 1,
           },
           dehydrate: {
             shouldDehydrateQuery: (query) => defaultShouldDehydrateQuery(query) || query.state.status === 'pending',
