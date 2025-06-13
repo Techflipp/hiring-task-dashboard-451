@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { CameraListSkeleton } from './camera-list-skeleton'
 import { CameraCard } from './camera-card'
+import { EmptyState } from '../ui/empty-list'
 
 type CameraListProps = {
   page: number
@@ -34,7 +35,7 @@ export const CameraList = ({ page, size, cameraName }: CameraListProps) => {
         params: {
           camera_name: searchQuery || null,
           page: 1, // Reset to first page on new search
-        }
+        },
       })}`
     )
   }
@@ -76,7 +77,7 @@ export const CameraList = ({ page, size, cameraName }: CameraListProps) => {
     )
   }
 
-  if (data?.items.length === 0) {
+  if (data.items.length === 0) {
     return (
       <div className="py-12">
         <EmptyState

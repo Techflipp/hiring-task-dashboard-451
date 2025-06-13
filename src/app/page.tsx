@@ -15,7 +15,7 @@ const Page = async ({ searchParams }: PageProps) => {
   const cameraName = resolvedSearchParams.camera_name
 
   return (
-    <div className="container mx-auto py-6">
+    <main className="container mx-auto px-3 py-6 md:px-0">
       <h1 className="mb-6 text-3xl font-bold">Cameras</h1>
       <Suspense fallback={<CameraListSkeleton />}>
         <CameraList
@@ -24,7 +24,7 @@ const Page = async ({ searchParams }: PageProps) => {
           cameraName={cameraName}
         />
       </Suspense>
-    </div>
+    </main>
   )
 }
 

@@ -48,13 +48,13 @@ export function CameraCard({ camera }: { camera: Camera }) {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="flex justify-end gap-3">
         <Button
           variant="outline"
           size="sm"
           asChild
         >
-          <Link href={`/cameras/${camera.id}`}>
+          <Link href={`/${camera.id}`}>
             <Eye className="mr-2 h-4 w-4" />
             View
           </Link>
@@ -64,7 +64,7 @@ export function CameraCard({ camera }: { camera: Camera }) {
           size="sm"
           asChild
         >
-          <Link href={`/cameras/${camera.id}/edit`}>
+          <Link href={`/${camera.id}/edit`}>
             <Edit className="mr-2 h-4 w-4" />
             Edit
           </Link>
@@ -74,7 +74,7 @@ export function CameraCard({ camera }: { camera: Camera }) {
           size="sm"
           asChild
         >
-          <Link href={`/cameras/${camera.id}/demographics/config`}>
+          <Link href={`/${camera.id}/demographics/config`}>
             <Settings className="mr-2 h-4 w-4" />
             Config
           </Link>

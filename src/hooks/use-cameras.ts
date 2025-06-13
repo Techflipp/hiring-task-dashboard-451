@@ -26,18 +26,18 @@ export const useUpdateCamera = () => {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<Camera> }) => updateCamera(id, data),
+    mutationFn: ({ id, data }: { id: string; data: Partial<Omit<Camera, 'tags'>> & { tags?: string[] } }) =>
+      updateCamera(id, data),
     onSuccess: (updatedCamera) => {
       queryClient.invalidateQueries({ queryKey: ['cameras'] })
-      queryClient.invalidateQueries({ queryKey: ['camera', (updatedCamera as Camera).id] })
-      toast.success('Camera updated', {
-        description: 'The camera has been updated successfully.',
+      queryClient.invalidateQueries({ queryKey: ['camera', updatedCamera?.id] })
+      toast.success('The camera has been updated successfully', {
         style: successToastStyle,
       })
     },
     onError: (error) => {
-      toast.error('Error', {
-        description: error instanceof Error ? error.message : 'Failed to update camera',
+      console.error('Error updating camera:', error)
+      toast.error('Failed to update camera', {
         style: errorToastStyle,
       })
     },
