@@ -24,10 +24,16 @@ export const useCreateDemographicsConfig = () => {
     mutationFn: (data: Partial<DemographicsConfig> & { camera_id: string }) => createDemographicsConfig(data),
     onSuccess: (config) => {
       queryClient.invalidateQueries({ queryKey: ['camera', config?.camera_id] })
-      toast.success('Demographics configuration has been created successfully', { style: successToastStyle })
+      toast.success('Demographics configuration has been created successfully', { 
+        description: 'The new demographic settings are now active.',
+        style: successToastStyle 
+      })
     },
     onError: (error) => {
-      toast.error('Failed to create configuration', { style: errorToastStyle })
+      toast.error('Failed to create configuration', { 
+        description: 'Please verify your settings and try again.',
+        style: errorToastStyle 
+      })
       console.log(error)
     },
   })
@@ -41,10 +47,16 @@ export const useUpdateDemographicsConfig = () => {
     onSuccess: (config) => {
       queryClient.invalidateQueries({ queryKey: ['demographics-results'] })
       queryClient.invalidateQueries({ queryKey: ['camera', config?.camera_id] })
-      toast.success('Demographics configuration has been updated successfully', { style: successToastStyle })
+      toast.success('Demographics configuration has been updated successfully', { 
+        description: 'Your changes have been saved and applied.',
+        style: successToastStyle 
+      })
     },
     onError: (error) => {
-      toast.error('Failed to update configuration', { style: errorToastStyle })
+      toast.error('Failed to update configuration', { 
+        description: 'Please check your connection and try again.',
+        style: errorToastStyle 
+      })
       console.log(error)
     },
   })

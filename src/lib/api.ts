@@ -1,5 +1,3 @@
-import { z } from 'zod'
-
 import { API_BASE_URL } from './constants'
 import {
   Camera,
@@ -25,8 +23,7 @@ import {
   Emotion,
   EthnicGroup,
 } from './types'
-import { CameraSchema, CameraListResponseSchema, DemographicsConfigSchema, TagSchema } from '@/schemas/camera.schema'
-import { ApiErrorSchema, DemographicsResultsResponseSchema } from '@/schemas/api.schema'
+import { ApiErrorSchema } from '@/schemas/api.schema'
 import type { UpdateCameraValues } from '@/schemas/cameraForm.schema'
 
 /**
@@ -88,7 +85,7 @@ export const updateCamera = async (id: string, data: UpdateCameraValues): Promis
  * Fetches all tags with validation
  */
 export const getTags = async (): Promise<Tag[]> => {
-  return apiRequest('/tags/', z.array(TagSchema))
+  return apiRequest('/tags/')
 }
 
 /**
@@ -129,7 +126,10 @@ export async function getDemographicsResults(filters: DemographicsFilters): Prom
     }
   })
 
-  const response = await apiRequest(
+  const response = await apiRequest<{
+    results: DemographicsResult[]
+    analytics: DemographicsAnalytics
+  }>(
     `/demographics/results?${queryParams.toString()}`
   )
 

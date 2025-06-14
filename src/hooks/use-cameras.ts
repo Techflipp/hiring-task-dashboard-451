@@ -32,12 +32,14 @@ export const useUpdateCamera = () => {
       queryClient.invalidateQueries({ queryKey: ['cameras'] })
       queryClient.invalidateQueries({ queryKey: ['camera', updatedCamera?.id] })
       toast.success('The camera has been updated successfully', {
+        description: 'All camera settings have been saved and applied.',
         style: successToastStyle,
       })
     },
     onError: (error) => {
       console.error('Error updating camera:', error)
       toast.error('Failed to update camera', {
+        description: 'Please check your connection and try again.',
         style: errorToastStyle,
       })
     },

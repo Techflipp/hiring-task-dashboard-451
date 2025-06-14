@@ -10,12 +10,18 @@ export const successToastStyle = {
   ...baseToastStyle,
   background: '#4CAF50',
   color: 'white',
+  '& [data-description]': {
+    color: 'white',
+  },
 }
 
 export const errorToastStyle = {
   ...baseToastStyle,
   background: '#F44336',
   color: 'white',
+  '& [data-description]': {
+    color: 'white',
+  },
 }
 
 export const infoToastStyle = {
