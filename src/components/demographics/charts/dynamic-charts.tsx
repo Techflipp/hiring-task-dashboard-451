@@ -7,7 +7,7 @@ import { GenderChart } from './gender-chart'
 import { AgeChart } from './age-chart'
 import { EmotionChart } from './emotion-chart'
 import { EthnicityChart } from './ethnicity-chart'
-import type { DemographicsFilters } from '@/lib/types'
+import type { DemographicsFilters, DemographicsAnalytics } from '@/lib/types'
 
 interface DynamicChartProps {
   filters: DemographicsFilters
@@ -32,7 +32,7 @@ export function DynamicGenderChart({ filters }: DynamicChartProps) {
     )
   }
 
-  return <GenderChart analytics={resultsData.analytics} />
+  return <GenderChart analytics={resultsData.analytics as unknown as DemographicsAnalytics} />
 }
 
 export function DynamicAgeChart({ filters }: DynamicChartProps) {
@@ -54,7 +54,7 @@ export function DynamicAgeChart({ filters }: DynamicChartProps) {
     )
   }
 
-  return <AgeChart analytics={resultsData.analytics} />
+  return <AgeChart analytics={resultsData.analytics as unknown as DemographicsAnalytics} />
 }
 
 export function DynamicEmotionChart({ filters }: DynamicChartProps) {
@@ -76,7 +76,7 @@ export function DynamicEmotionChart({ filters }: DynamicChartProps) {
     )
   }
 
-  return <EmotionChart analytics={resultsData.analytics} />
+  return <EmotionChart analytics={resultsData.analytics as unknown as DemographicsAnalytics} />
 }
 
 export function DynamicEthnicityChart({ filters }: DynamicChartProps) {
@@ -98,5 +98,5 @@ export function DynamicEthnicityChart({ filters }: DynamicChartProps) {
     )
   }
 
-  return <EthnicityChart analytics={resultsData.analytics} />
+  return <EthnicityChart analytics={resultsData.analytics as unknown as DemographicsAnalytics} />
 }

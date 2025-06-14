@@ -12,6 +12,7 @@ export const useDemographicsResults = (filters: DemographicsFilters) => {
   return useQuery({
     queryKey: ['demographics-results', filters],
     queryFn: () => getDemographicsResults(filters),
+    staleTime: 5 * 60 * 1000, // 5 minutes
     enabled: !!filters.camera_id,
   })
 }

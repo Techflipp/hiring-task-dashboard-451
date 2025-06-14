@@ -2,24 +2,30 @@
 
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
+
 import type { Camera, DemographicsConfig } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { useCreateDemographicsConfig, useUpdateDemographicsConfig } from '@/hooks/use-demographics'
-import { useRouter } from 'next/navigation'
 import { Slider } from '@/components/ui/slider'
 import { configFormSchema, type ConfigFormValues } from '@/schemas/configForm.schema'
+import { cn } from '@/lib/utils'
 
 export const ConfigForm = ({ camera, config }: { camera: Camera; config?: DemographicsConfig }) => {
   const router = useRouter()
   const { mutate: createConfig, isPending: isCreating } = useCreateDemographicsConfig()
   const { mutate: updateConfig, isPending: isUpdating } = useUpdateDemographicsConfig()
   const isPending = isCreating || isUpdating
+  const [submitAttempted, setSubmitAttempted] = useState(false)
 
   const form = useForm<ConfigFormValues>({
     resolver: zodResolver(configFormSchema),
-    mode: 'onChange', // Enable real-time validation
+    mode: 'onChange',
+    reValidateMode: 'onChange',
     defaultValues: {
       track_history_max_length: config?.track_history_max_length || 50,
       exit_threshold: config?.exit_threshold || 30,
@@ -32,29 +38,37 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
       frame_skip_interval: config?.frame_skip_interval || 1.0,
     },
   })
-  const { reset } = form
+
+  const { reset, formState: { errors, isValid, touchedFields } } = form
+
+  const getFieldValidationState = (fieldName: keyof ConfigFormValues) => {
+    const hasError = errors[fieldName]
+    const isTouched = touchedFields[fieldName]
+
+    if (hasError && (isTouched || submitAttempted)) return 'error'
+    return 'default'
+  }
 
   const onSubmit = async (values: ConfigFormValues) => {
+    setSubmitAttempted(true)
+
+    const submitData = {
+      track_history_max_length: values.track_history_max_length ?? undefined,
+      exit_threshold: values.exit_threshold ?? undefined,
+      min_track_duration: values.min_track_duration ?? undefined,
+      detection_confidence_threshold: values.detection_confidence_threshold ?? undefined,
+      demographics_confidence_threshold: values.demographics_confidence_threshold ?? undefined,
+      min_track_updates: values.min_track_updates ?? undefined,
+      box_area_threshold: values.box_area_threshold ?? undefined,
+      save_interval: values.save_interval ?? undefined,
+      frame_skip_interval: values.frame_skip_interval ?? undefined,
+    }
+
     if (config) {
       updateConfig(
+        { id: config.id, data: submitData },
         {
-          id: config.id,
-          data: {
-            track_history_max_length: values.track_history_max_length ?? undefined,
-            exit_threshold: values.exit_threshold ?? undefined,
-            min_track_duration: values.min_track_duration ?? undefined,
-            detection_confidence_threshold: values.detection_confidence_threshold ?? undefined,
-            demographics_confidence_threshold: values.demographics_confidence_threshold ?? undefined,
-            min_track_updates: values.min_track_updates ?? undefined,
-            box_area_threshold: values.box_area_threshold ?? undefined,
-            save_interval: values.save_interval ?? undefined,
-            frame_skip_interval: values.frame_skip_interval ?? undefined,
-          },
-        },
-        {
-          onSuccess: () => {
-            router.push(`/${camera.id}`)
-          },
+          onSuccess: () => router.push(`/${camera.id}`),
           onError: (error) => {
             console.error('Error updating config:', error)
           },
@@ -62,22 +76,9 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
       )
     } else {
       createConfig(
+        { camera_id: camera.id, ...submitData },
         {
-          camera_id: camera.id,
-          track_history_max_length: values.track_history_max_length ?? undefined,
-          exit_threshold: values.exit_threshold ?? undefined,
-          min_track_duration: values.min_track_duration ?? undefined,
-          detection_confidence_threshold: values.detection_confidence_threshold ?? undefined,
-          demographics_confidence_threshold: values.demographics_confidence_threshold ?? undefined,
-          min_track_updates: values.min_track_updates ?? undefined,
-          box_area_threshold: values.box_area_threshold ?? undefined,
-          save_interval: values.save_interval ?? undefined,
-          frame_skip_interval: values.frame_skip_interval ?? undefined,
-        },
-        {
-          onSuccess: () => {
-            router.push(`/${camera.id}`)
-          },
+          onSuccess: () => router.push(`/${camera.id}`),
           onError: (error) => {
             console.error('Error creating config:', error)
           },
@@ -90,9 +91,10 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8"
+        className="space-y-6"
+        noValidate
       >
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
           <FormField
             control={form.control}
             name="detection_confidence_threshold"
@@ -100,13 +102,14 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
               <FormItem>
                 <FormLabel>Detection Confidence Threshold</FormLabel>
                 <FormControl>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Slider
                       min={0.1}
                       max={1.0}
                       step={0.01}
                       value={[field.value || 0.5]}
                       onValueChange={(value) => field.onChange(value[0])}
+                      className="w-full"
                     />
                     <Input
                       type="number"
@@ -116,11 +119,19 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                       {...field}
                       value={field.value?.toString() || ''}
                       onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                      className={cn(
+                        getFieldValidationState('detection_confidence_threshold') === 'error' && 'border-red-500 focus:border-red-500'
+                      )}
                     />
+                    <div className="text-xs text-muted-foreground">
+                      Current value: {field.value || 0.5}
+                    </div>
                   </div>
                 </FormControl>
-                <FormDescription>Threshold for detection confidence (0.1-1.0)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormDescription>
+                  Threshold for detection confidence (0.1-1.0). Higher values require more confident detections.
+                </FormDescription>
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />
@@ -132,13 +143,14 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
               <FormItem>
                 <FormLabel>Demographics Confidence Threshold</FormLabel>
                 <FormControl>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Slider
                       min={0.1}
                       max={1.0}
                       step={0.01}
                       value={[field.value || 0.5]}
                       onValueChange={(value) => field.onChange(value[0])}
+                      className="w-full"
                     />
                     <Input
                       type="number"
@@ -148,17 +160,25 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                       {...field}
                       value={field.value?.toString() || ''}
                       onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                      className={cn(
+                        getFieldValidationState('demographics_confidence_threshold') === 'error' && 'border-red-500 focus:border-red-500'
+                      )}
                     />
+                    <div className="text-xs text-muted-foreground">
+                      Current value: {field.value || 0.5}
+                    </div>
                   </div>
                 </FormControl>
-                <FormDescription>Threshold for demographics confidence (0.1-1.0)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormDescription>
+                  Threshold for demographics confidence (0.1-1.0).
+                </FormDescription>
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
           <FormField
             control={form.control}
             name="track_history_max_length"
@@ -172,10 +192,15 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                     {...field}
                     value={field.value?.toString() || ''}
                     onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                    className={cn(
+                      getFieldValidationState('track_history_max_length') === 'error' && 'border-red-500 focus:border-red-500'
+                    )}
+                    min={1}
+                    max={100}
                   />
                 </FormControl>
                 <FormDescription>Maximum length of track history (1-100)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />
@@ -193,16 +218,21 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                     {...field}
                     value={field.value?.toString() || ''}
                     onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                    className={cn(
+                      getFieldValidationState('exit_threshold') === 'error' && 'border-red-500 focus:border-red-500'
+                    )}
+                    min={1}
+                    max={300}
                   />
                 </FormControl>
                 <FormDescription>Exit threshold in frames (1-300)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
           <FormField
             control={form.control}
             name="min_track_duration"
@@ -216,10 +246,15 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                     {...field}
                     value={field.value?.toString() || ''}
                     onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                    className={cn(
+                      getFieldValidationState('min_track_duration') === 'error' && 'border-red-500 focus:border-red-500'
+                    )}
+                    min={1}
+                    max={60}
                   />
                 </FormControl>
                 <FormDescription>Minimum track duration in seconds (1-60)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />
@@ -237,16 +272,21 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                     {...field}
                     value={field.value?.toString() || ''}
                     onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                    className={cn(
+                      getFieldValidationState('min_track_updates') === 'error' && 'border-red-500 focus:border-red-500'
+                    )}
+                    min={1}
+                    max={100}
                   />
                 </FormControl>
                 <FormDescription>Minimum track updates (1-100)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />
         </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
           <FormField
             control={form.control}
             name="box_area_threshold"
@@ -254,13 +294,14 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
               <FormItem>
                 <FormLabel>Box Area Threshold</FormLabel>
                 <FormControl>
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Slider
                       min={0.05}
                       max={1.0}
                       step={0.01}
                       value={[field.value || 0.1]}
                       onValueChange={(value) => field.onChange(value[0])}
+                      className="w-full"
                     />
                     <Input
                       type="number"
@@ -270,11 +311,17 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                       {...field}
                       value={field.value?.toString() || ''}
                       onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                      className={cn(
+                        getFieldValidationState('box_area_threshold') === 'error' && 'border-red-500 focus:border-red-500'
+                      )}
                     />
+                    <div className="text-xs text-muted-foreground">
+                      Current value: {field.value || 0.1}
+                    </div>
                   </div>
                 </FormControl>
                 <FormDescription>Box area threshold (0.05-1.0)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />
@@ -292,10 +339,15 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                     {...field}
                     value={field.value?.toString() || ''}
                     onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                    className={cn(
+                      getFieldValidationState('save_interval') === 'error' && 'border-red-500 focus:border-red-500'
+                    )}
+                    min={300}
+                    max={1800}
                   />
                 </FormControl>
-                <FormDescription>Save interval in seconds (300-1800)</FormDescription>
-                <FormMessage className="text-xs text-red-600 mt-1" />
+                <FormDescription>Save interval in seconds (300-1800 / 5-30 minutes)</FormDescription>
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />
@@ -308,13 +360,14 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
             <FormItem>
               <FormLabel>Frame Skip Interval</FormLabel>
               <FormControl>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <Slider
                     min={0.1}
                     max={5.0}
                     step={0.1}
                     value={[field.value || 1.0]}
                     onValueChange={(value) => field.onChange(value[0])}
+                    className="w-full"
                   />
                   <Input
                     type="number"
@@ -324,28 +377,47 @@ export const ConfigForm = ({ camera, config }: { camera: Camera; config?: Demogr
                     {...field}
                     value={field.value?.toString() || ''}
                     onChange={(e) => field.onChange(e.target.value ? Number(e.target.value) : null)}
+                    className={cn(
+                      getFieldValidationState('frame_skip_interval') === 'error' && 'border-red-500 focus:border-red-500'
+                    )}
                   />
+                  <div className="text-xs text-muted-foreground">
+                    Current value: {field.value || 1.0}
+                  </div>
                 </div>
               </FormControl>
               <FormDescription>Frame skip interval in seconds (0.1-5.0)</FormDescription>
-              <FormMessage className="text-xs text-red-600 mt-1" />
+              <FormMessage className="text-red-600" />
             </FormItem>
           )}
         />
 
-        <div className="flex justify-end gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:justify-end">
           <Button
             type="button"
             variant="outline"
-            onClick={() => reset()}
+            onClick={() => {
+              reset()
+              setSubmitAttempted(false)
+            }}
+            className="w-full sm:w-auto"
+            disabled={isPending}
           >
             Cancel
           </Button>
           <Button
             type="submit"
-            disabled={isPending}
+            disabled={isPending || !isValid}
+            className="w-full sm:w-auto"
           >
-            {isPending ? 'Saving...' : config ? 'Update Configuration' : 'Create Configuration'}
+            {isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              config ? 'Update Configuration' : 'Create Configuration'
+            )}
           </Button>
         </div>
       </form>
