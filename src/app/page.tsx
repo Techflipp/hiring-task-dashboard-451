@@ -7,8 +7,7 @@ import {
   Activity, 
   TrendingUp, 
   Zap, 
-  Shield, 
-  Globe,
+  Shield,
   ArrowRight,
   Play,
   Eye

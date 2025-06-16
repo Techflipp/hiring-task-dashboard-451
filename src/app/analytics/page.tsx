@@ -14,8 +14,7 @@ import {
   Globe,
   Calendar,
   Eye,
-  UserCheck,
-  Zap
+  UserCheck
 } from 'lucide-react';
 import { 
   useCameras, 
