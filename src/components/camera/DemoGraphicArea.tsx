@@ -16,15 +16,18 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { getDemoGraphicsResultsResponse } from "@/constants/apitypes";
+import CameraViewLoading from "./CameraViewLoading";
 
 export default function DemoGraphicArea({
   analytics,
   item,
   date,
+  loading,
 }: {
   analytics: getDemoGraphicsResultsResponse["analytics"];
   item: string;
   date: string;
+  loading: boolean;
 }) {
   const chartData = Object.entries(
     analytics[item as keyof typeof analytics],
@@ -43,8 +46,10 @@ export default function DemoGraphicArea({
         <CardTitle>{item.split("_").join(" ").toUpperCase()}</CardTitle>
         <CardDescription>{`${new Date(date).toDateString()}`}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <CardContent>
+      <CardContent className="h-full w-full">
+        {loading ? (
+          <CameraViewLoading />
+        ) : (
           <ChartContainer config={chartConfig} className="size-full">
             <AreaChart
               accessibilityLayer
@@ -78,7 +83,7 @@ export default function DemoGraphicArea({
               <ChartLegend content={<ChartLegendContent />} />
             </AreaChart>
           </ChartContainer>
-        </CardContent>
+        )}
       </CardContent>
     </Card>
   );

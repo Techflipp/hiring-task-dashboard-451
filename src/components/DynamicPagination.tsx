@@ -46,6 +46,9 @@ export default function DynamicPagination({
             Previous
           </PaginationPrevious>
         </PaginationItem>
+        <PaginationItem className={`${dynamicPage === 1 ? "hidden" : "block"}`}>
+          <PaginationEllipsis />
+        </PaginationItem>
         {[...Array(totalPages)?.keys()]
           .slice(rangeStart, rangeEnd)
           .map((page) => (
@@ -58,7 +61,9 @@ export default function DynamicPagination({
               </PaginationLink>
             </PaginationItem>
           ))}
-        <PaginationItem>
+        <PaginationItem
+          className={`${dynamicPage === totalPages ? "hidden" : "block"}`}
+        >
           <PaginationEllipsis />
         </PaginationItem>
 

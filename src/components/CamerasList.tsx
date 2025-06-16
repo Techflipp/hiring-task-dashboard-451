@@ -15,10 +15,7 @@ export default function CamerasList({
   cameras: getCamerasResponse["items"];
 }) {
   return (
-    <section
-      id="cameras"
-      className="max-container flex-center flex w-full flex-col p-0 py-10 lg:p-4"
-    >
+    <section id="cameras" className="flex-center flex w-full flex-col py-10">
       <div className="flex w-full flex-col items-center justify-between lg:flex-row">
         <CamerasFilters />
         <DynamicPagination

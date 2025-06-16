@@ -26,7 +26,7 @@ export default function Details({
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-h-[50vh] w-full min-w-[50vw] overflow-y-auto p-8 sm:max-h-[85vh]">
+      <DialogContent className="min-h-[65vh] w-full min-w-[50vw] overflow-y-auto p-8 sm:max-h-[85vh]">
         <DialogHeader className="text-2xl">
           <DialogTitle className="text-2xl capitalize">
             {form} Settings

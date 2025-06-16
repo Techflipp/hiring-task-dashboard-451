@@ -15,16 +15,13 @@ export default async function Home({
   const params = await searchParams;
   const res = await fetch(
     `${ENDPOINTS.getCameras}?camera_name=${params.search || ""}&page=${Number(params.page) || 1}&size=${Number(params.size) || 50}`,
-    { cache: "no-cache" },
+    { cache: "no-store" },
   );
   const data: getCamerasResponse = await res.json();
 
   return (
-    <div className="mainPx min-h-svh w-full">
+    <div className="mainPx min-h-svh w-full py-10">
       <div className="max-container w-full">
-        <h1 className="mt-10 text-center text-6xl font-bold">
-          Cameras Overview
-        </h1>
         <Suspense
           key={params.page + params.size}
           fallback={<CamerasListSkeleton size={Number(params.size)} />}

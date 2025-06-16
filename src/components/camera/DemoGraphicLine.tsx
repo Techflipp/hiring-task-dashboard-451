@@ -1,5 +1,5 @@
 "use client";
-import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -14,15 +14,18 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { getDemoGraphicsResultsResponse } from "@/constants/apitypes";
+import CameraViewLoading from "./CameraViewLoading";
 
 export default function DemoGraphicLine({
   analytics,
   item,
   date,
+  loading,
 }: {
   analytics: getDemoGraphicsResultsResponse["analytics"];
   item: string;
   date: string;
+  loading: boolean;
 }) {
   const chartData = Object.entries(
     analytics[item as keyof typeof analytics],
@@ -41,25 +44,28 @@ export default function DemoGraphicLine({
         <CardTitle>{item.split("_").join(" ").toUpperCase()}</CardTitle>
         <CardDescription>{`${new Date(date).toDateString()}`}</CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="size-full">
-          <BarChart accessibilityLayer data={chartData} layout="vertical">
-            <XAxis type="number" dataKey="value" hide />
-            <YAxis
-              dataKey="key"
-              type="category"
-              tickLine={false}
-              tickMargin={10}
-              axisLine={false}
-              tickFormatter={(val) => val.split("_").join(" ")}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Bar dataKey="value" fill="var(--color-value)" radius={5} />
-          </BarChart>
-        </ChartContainer>
+      <CardContent className="h-full w-full">
+        {loading ? (
+          <CameraViewLoading />
+        ) : (
+          <ChartContainer config={chartConfig}>
+            <BarChart accessibilityLayer data={chartData}>
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="key"
+                tickLine={false}
+                tickMargin={10}
+                axisLine={false}
+                tickFormatter={(value) => value.slice(0, 3)}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Bar dataKey="value" fill="var(--color-value)" radius={8} />
+            </BarChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   );

@@ -28,3 +28,8 @@ export type getDemoGraphicsResultsParams =
   paths["/demographics/results"]["get"]["parameters"]["query"];
 export type getDemoGraphicsResultsResponse =
   paths["/demographics/results"]["get"]["responses"]["200"]["content"]["application/json"];
+
+export type AgeEnum = components["schemas"]["AgeEnum"];
+export type GenderEnum = components["schemas"]["GenderEnum"];
+export type EmotionEnum = components["schemas"]["EmotionEnum"];
+export type EthnicGroupEnum = components["schemas"]["EthnicGroupEnum"];

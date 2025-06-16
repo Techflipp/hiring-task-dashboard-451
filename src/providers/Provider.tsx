@@ -1,5 +1,6 @@
 import ReactQueryProvider from "./LenisProvider";
 import LenisProvider from "./ReactQueryProvider";
+import { ThemeProvider } from "./ThemeProvider";
 
 //main provider
 export default function AppProvider({
@@ -9,7 +10,16 @@ export default function AppProvider({
 }) {
   return (
     <ReactQueryProvider>
-      <LenisProvider>{children}</LenisProvider>
+      <LenisProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </LenisProvider>
     </ReactQueryProvider>
   );
 }

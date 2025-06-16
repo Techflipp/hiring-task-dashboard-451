@@ -1,6 +1,12 @@
 import { getQueryClient } from "@/clients/getQueryClient";
 import CameraView from "@/components/camera/CameraView";
 import CameraViewLoading from "@/components/camera/CameraViewLoading";
+import {
+  AgeEnum,
+  EmotionEnum,
+  EthnicGroupEnum,
+  GenderEnum,
+} from "@/constants/apitypes";
 import { getCameraById, getDemographicsResults } from "@/services";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Metadata } from "next";
@@ -23,10 +29,20 @@ export async function generateMetadata({
 
 export default async function CameraPage({
   params,
+  searchParams,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{
+    id: string;
+  }>;
+  searchParams: Promise<{
+    age?: AgeEnum;
+    gender?: GenderEnum;
+    group?: EthnicGroupEnum;
+    emotion?: EmotionEnum;
+  }>;
 }) {
   const { id } = await params;
+  const { age, gender, group, emotion } = await searchParams;
 
   // prefetching the data on server to serve non-empty html and use ssr properly
   // the react query client will handle the caching for this page
@@ -41,15 +57,28 @@ export default async function CameraPage({
 
   await queryClient.prefetchQuery({
     queryKey: ["demographics"],
-    queryFn: () => getDemographicsResults({ camera_id: id }),
+    queryFn: () =>
+      getDemographicsResults({
+        camera_id: id,
+        gender: gender,
+        age: age,
+        emotion: emotion,
+        ethnicity: group,
+      }),
   });
 
   return (
-    <div className="mainPx w-full py-5 xl:py-20">
-      <div className="max-container w-full rounded-2xl p-2 lg:p-6">
+    <div className="mainPx w-full py-5 xl:py-10">
+      <div className="max-container w-full rounded-2xl">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <Suspense key={id} fallback={<CameraViewLoading />}>
-            <CameraView id={id} />
+            <CameraView
+              camera_id={id}
+              age={age}
+              gender={gender}
+              emotion={emotion}
+              ethnicity={group}
+            />
           </Suspense>
         </HydrationBoundary>
       </div>

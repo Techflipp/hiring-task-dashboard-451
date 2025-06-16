@@ -23,6 +23,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { updateCameraAction } from "@/actions/updateCameras";
+import { Tags } from "lucide-react";
 
 //defining formSchema
 const formSchema = z.object({
@@ -191,6 +192,7 @@ export default function CameraForm({ id }: { id: string }) {
                         )
                       }
                     >
+                      <Tags />
                       {tag.name}
                     </Badge>
                   ),

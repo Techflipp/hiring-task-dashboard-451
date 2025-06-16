@@ -2,16 +2,17 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import AppProvider from "@/providers/Provider";
+import Nav from "@/components/Nav";
 import "./globals.css";
 
 const main = Geist({
-  variable: "--font-main-ui",
+  variable: "--font-sans-ui",
   subsets: ["latin"],
   weight: ["600", "700", "800", "900"],
 });
 
-const open = Geist_Mono({
-  variable: "--font-open-ui",
+const mono = Geist_Mono({
+  variable: "--font-mono-ui",
   subsets: ["latin"],
   weight: ["500"],
 });
@@ -27,9 +28,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${open.variable} ${main.variable} antialiased`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${main.variable} ${mono.variable} antialiased`}>
         <AppProvider>
+          <Nav />
           <main className="w-full">{children}</main>
           <Toaster />
         </AppProvider>
