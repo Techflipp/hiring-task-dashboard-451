@@ -35,15 +35,21 @@ Uses a public API: <https://task-451-api.ryd.wafaicloud.com>
 
 - Uses the Next.js 15 App Router with the app/ directory for routing and layouts.
 
-- Sidebar component contains search input and size input for filtering cameras.
+- SSR pages to handle the cameras pages and revalidate on mutation with server actions
 
-- Cameras page fetches and displays paginated camera data using React Query + Axios.
+- Search input and size input for filtering cameras.
 
-- Camera details and edit forms implemented using modals with prefetching.
+- Cameras page fetches and displays paginated camera data.
+
+- Camera details and edit forms implemented using React Query's prefetching.
+
+- Implementing React Query logic in server components with hydration boundaries and serve non empty SSR pages
 
 - Forms use React Hook Form with Zod for validation and schema-based type safety.
 
 - Modern Animations using framer-motion to improve the UX.
+
+- Light and Dark modes with system preference detection using Next-Themes.
 
 - Smooth Scrolling functionality using Lenis.
 
@@ -77,17 +83,21 @@ Uses a public API: <https://task-451-api.ryd.wafaicloud.com>
 
 ![Camera Edit](./screenshots/Camera_Details.png)
 
-### Camera Edit mode
+### Camera Edit
 
 ![Add Camera](./screenshots/Camera_Details_Edit_Form.png)
 
-### Demographics Details & Edit mode
+### Demographics Details & Edit
 
 ![Add Camera](./screenshots/Demographics_Details_and_Edit_Form.png)
 
-### Home Page Mobile
+### Cameras Home Page Dark Mode
 
-![Add Camera](./screenshots/Home_Page_Mobile.png)
+![Camera List](./screenshots/Home_Page_Dark.png)
+
+### Camera Details Dark Mode
+
+![Camera Edit](./screenshots/Camera_Details_Dark.png)
 
 ## ✅ Completed Requirements
 
@@ -117,7 +127,7 @@ Uses a public API: <https://task-451-api.ryd.wafaicloud.com>
 
 ### ✅ 5. Demographics Results & Analytics
 
-- ❌ Implement filtering capabilities for the data
+- ✅ Implement filtering capabilities for the data
 - ✅ Create informative visualizations that convey demographic insights like charts, graphs, tables, etc.
 
 ## ✅ Completed Nice-to-Have Technical Features
@@ -131,4 +141,3 @@ Uses a public API: <https://task-451-api.ryd.wafaicloud.com>
 - ✅ Use React Query (TanStack Query) for fetching and caching data.
 - ✅ Creative and intuitive UI/UX design
 - ✅ SEO and performance optimizations
-- ❌ Unit tests for key components
