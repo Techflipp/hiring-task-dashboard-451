@@ -69,9 +69,9 @@ Uses a public API: <https://task-451-api.ryd.wafaicloud.com>
 
 ## 💡 Assumptions and Design Decisions
 
-- the UI is fully responsive as modern dashboard should be,the integrated sidebar and filtering functionalities makes it the UI/UX much better.
+- the UI is fully responsive as modern dashboard should be.
 
-- As a Dashboard, I developed it to be an SPA (Single Page Application),I thought their is no need for SSR or ISR and leveraged the power of client side rendering to not make things feel slow, The SEO isn't a concern for this kind of projects but I took care of it to maximize the potential.
+- As a Dashboard, I developed it to be a hybrid app,The client side is managed by React Query to handle form submissions and optimistic updates after mutations, In addition to SSR to leveraged the power of server side rendering,ISR can be used to generate the pages and revalidate on demand.
 
 ## 📷 Screenshots
 
