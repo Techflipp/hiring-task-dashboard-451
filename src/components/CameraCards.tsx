@@ -1,14 +1,11 @@
 "use client";
-import Image from "next/image";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { useState } from "react";
-import { CloudAlert, Tags } from "lucide-react";
+import { Tags } from "lucide-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import { Camera } from "@/constants/apitypes";
-import Spinner from "./Spinner";
-import { Skeleton } from "./ui/skeleton";
+
 import Link from "next/link";
 
 import {
@@ -19,6 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import AsyncImage from "./AsyncImage";
 
 export default function CameraCard({
   id,
@@ -28,16 +26,14 @@ export default function CameraCard({
   is_active,
   created_at,
 }: Camera) {
-  const [imgError, setImgError] = useState<boolean>(false);
-  const [ImgLoading, setImgLoading] = useState<boolean>(true);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
       key={id}
-      className="relative"
+      className="relative h-full w-full"
     >
-      <Card>
+      <Card className="h-full w-full">
         <CardHeader>
           <CardTitle>{name}</CardTitle>
           <CardDescription>
@@ -62,28 +58,7 @@ export default function CameraCard({
               />
               {is_active ? "Active" : "Inactive"}
             </div>
-            {ImgLoading && !imgError && (
-              <Skeleton className="flex-center flex h-full w-full flex-col gap-2">
-                <Spinner />
-                <span>Loading Image</span>
-              </Skeleton>
-            )}
-            {!imgError ? (
-              <Image
-                fill={true}
-                src={snapshot}
-                alt={name}
-                className="w-full rounded-md"
-                onLoad={() => setImgLoading(false)}
-                onError={() => setImgError(true)}
-                priority
-              />
-            ) : (
-              <div className="z-20 flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl bg-slate-700">
-                <CloudAlert size={40} />
-                <span>NO IMAGE</span>
-              </div>
-            )}
+            <AsyncImage snapshot={snapshot} name={name} />
           </div>
           <div className="flex w-full flex-wrap items-center gap-2">
             {tags
@@ -100,7 +75,7 @@ export default function CameraCard({
             )}
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="mt-auto">
           <Link href={`/camera/${id}`}>
             <Button className="w-full" variant={"secondary"}>
               View Details

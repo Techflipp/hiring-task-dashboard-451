@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { RefreshCw } from "lucide-react";
+import { Filter, RefreshCw } from "lucide-react";
 import {
   AgeEnum,
   EmotionEnum,
@@ -97,7 +97,7 @@ export default function DemoGraphicsFilters() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="bg-card border-border grid w-full grid-cols-2 gap-4 rounded-2xl border-1 p-2 xl:grid-cols-5 xl:flex-row"
+        className="bg-card border-border grid w-full grid-cols-2 gap-4 rounded-2xl border-1 p-3 xl:grid-cols-5 xl:flex-row"
       >
         <FormField
           control={form.control}
@@ -193,7 +193,8 @@ export default function DemoGraphicsFilters() {
         />
         <div className="flex gap-2">
           <Button type="submit" className="flex-5">
-            Submit
+            <Filter />
+            Filter
           </Button>
           <Button
             variant={"secondary"}

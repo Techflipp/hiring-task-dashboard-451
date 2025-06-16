@@ -3,7 +3,7 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 60 * 1000, // to overwrite react query's default to make working with ssr easier
+        staleTime: 60 * 1000, // to overwrite react query's default stale time to make it easier for ssr
       },
     },
   });

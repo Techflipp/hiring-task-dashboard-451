@@ -10,7 +10,7 @@ export default async function Home({
 }: {
   searchParams: Promise<{ search: string; size: string; page: string }>;
 }) {
-  //fetching cameras - using normal fetch to leverage the no-cache option and keep the data always up to date
+  //fetching cameras - using normal fetch to leverage the no-store option and keep the data always up to date
 
   const params = await searchParams;
   const res = await fetch(

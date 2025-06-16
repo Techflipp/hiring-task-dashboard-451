@@ -71,7 +71,7 @@ export default function CameraForm({ id }: { id: string }) {
     updateCameraRequest
   >({
     mutationKey: ["camera", { id: camId }],
-    mutationFn: (vals) => updateCameraAction(camId, vals),
+    mutationFn: (vals) => updateCameraAction(camId, vals), // using server actions to revalidate home page after mutation
     onError: () => {
       toast.error("something went wrong");
     },

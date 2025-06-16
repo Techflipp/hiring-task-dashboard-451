@@ -36,7 +36,7 @@ export default function DemoGraphicArea({
   const chartConfig = {
     value: {
       label: "Value",
-      color: "var(--color-sky-600)",
+      color: "var(--color-primary)",
     },
   } satisfies ChartConfig;
 

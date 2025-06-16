@@ -35,10 +35,9 @@ export default function DemoGraphicCircle({
   const chartConfig = {
     value: {
       label: "Value",
-      color: "var(--color-sky-600)",
+      color: "var(--color-primary)",
     },
   } satisfies ChartConfig;
-  console.log(loading);
 
   return (
     <Card className="aspect-square h-full w-full shadow-xl">

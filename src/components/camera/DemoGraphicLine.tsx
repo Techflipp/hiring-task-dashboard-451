@@ -34,7 +34,7 @@ export default function DemoGraphicLine({
   const chartConfig = {
     value: {
       label: "Value",
-      color: "var(--color-sky-600)",
+      color: "var(--color-primary)",
     },
   } satisfies ChartConfig;
 

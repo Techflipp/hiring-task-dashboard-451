@@ -15,7 +15,7 @@ import DemoGraphicLine from "./DemoGraphicLine";
 import Details from "../Details";
 import DemoGraphicArea from "./DemoGraphicArea";
 import DemoGraphicCircle from "./DemoGraphicsCircle";
-import { Tags } from "lucide-react";
+import { Camera, ChartNetworkIcon, Tags } from "lucide-react";
 import DemoGraphicsFilters from "./DemoGraphicFilters";
 
 export default function CameraView({
@@ -51,8 +51,6 @@ export default function CameraView({
         emotion: demoEmotion,
       }),
   });
-
-  console.log(isFetching);
 
   if (!data) {
     return (
@@ -122,10 +120,16 @@ export default function CameraView({
         </div>
         <div className="flex w-full flex-col gap-4 lg:flex-row">
           <Details form="camera" camId={camId}>
-            <Button>Edit Camera</Button>
+            <Button>
+              <Camera />
+              Edit Camera
+            </Button>
           </Details>
           <Details form="demographics" camId={camId}>
-            <Button>Edit Demographics</Button>
+            <Button>
+              <ChartNetworkIcon />
+              Edit Demographics
+            </Button>
           </Details>
         </div>
       </div>

@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 
 export default function Nav() {
   const pathname = usePathname();
-  console.log(pathname);
 
   return (
     <header className="mainPx absolute top-4 h-12 w-full">
@@ -21,7 +20,7 @@ export default function Nav() {
             <span className="hidden lg:inline">Dashboard</span>
           </Button>
         </Link>
-        <h1>TechFlipp</h1>
+        <h1 className="font-extrabold">TechFlipp</h1>
         <ThemeToggle />
       </nav>
     </header>

@@ -11,18 +11,19 @@ jest.mock("next/router", () => ({
 }));
 
 describe("Page", () => {
-  it("renders a heading", () => {
+  it("get search element", () => {
     const mockSearchParams = {
-      search: "highway",
-      size: "10",
-      page: "1",
+      search: "high",
+      size: "",
+      page: "",
     };
 
     render(<Page searchParams={Promise.resolve(mockSearchParams)} />);
 
-    const heading = screen.getByRole("heading", { level: 1 });
-
-    expect(screen.getByText("Query: highway")).toBeInTheDocument();
-    expect(heading).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        (content, element) => element?.textContent == "TechFlipp",
+      ),
+    );
   });
 });

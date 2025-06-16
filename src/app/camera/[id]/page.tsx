@@ -6,20 +6,24 @@ import {
   EmotionEnum,
   EthnicGroupEnum,
   GenderEnum,
+  getCameraByIdResponse,
 } from "@/constants/apitypes";
 import { getCameraById, getDemographicsResults } from "@/services";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Metadata } from "next";
 import { Suspense } from "react";
 
-//seo
+//ISR can be used to fetch all the pages data and generate static pages , while doing SSR on demand
+//it's better to make it SSR so the data is always fresh on request
+
+//SEO Metadata
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const camera = await getCameraById(id);
+  const camera: getCameraByIdResponse = await getCameraById(id);
 
   return {
     title: camera.name,
@@ -47,6 +51,7 @@ export default async function CameraPage({
   // prefetching the data on server to serve non-empty html and use ssr properly
   // the react query client will handle the caching for this page
   // this is how you can implement react query in server components
+  // we need realtime fetching and revalidation for the demographics and forms to provide optimistic updates
 
   const queryClient = getQueryClient();
 

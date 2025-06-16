@@ -3,6 +3,7 @@
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
+//providing theming functionality to the app
 export function ThemeProvider({
   children,
   ...props

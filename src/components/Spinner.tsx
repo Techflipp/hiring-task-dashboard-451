@@ -9,7 +9,7 @@ export default function Spinner() {
   };
   return (
     <BeatLoader
-      color={"var(--color-cyan-500)"}
+      color={"var(--color-primary)"}
       loading={true}
       cssOverride={override}
       size={16}
