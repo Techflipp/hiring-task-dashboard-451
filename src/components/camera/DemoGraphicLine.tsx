@@ -48,7 +48,7 @@ export default function DemoGraphicLine({
         {loading ? (
           <CameraViewLoading />
         ) : (
-          <ChartContainer config={chartConfig}>
+          <ChartContainer config={chartConfig} className="size-full">
             <BarChart accessibilityLayer data={chartData}>
               <CartesianGrid vertical={false} />
               <XAxis

@@ -73,7 +73,7 @@ export default async function CameraPage({
   });
 
   return (
-    <div className="mainPx w-full py-5 xl:py-10">
+    <div className="mainPx min-h-svh w-full py-5">
       <div className="max-container w-full rounded-2xl">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <Suspense key={id} fallback={<CameraViewLoading />}>

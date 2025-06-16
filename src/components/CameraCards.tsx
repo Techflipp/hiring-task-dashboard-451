@@ -28,8 +28,9 @@ export default function CameraCard({
 }: Camera) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+      initial={{ opacity: 0, y: 100, filter: "blur(10px)" }}
       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      transition={{ duration: 0.65 }}
       key={id}
       className="relative h-full w-full"
     >

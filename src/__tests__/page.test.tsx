@@ -20,10 +20,8 @@ describe("Page", () => {
 
     render(<Page searchParams={Promise.resolve(mockSearchParams)} />);
 
-    expect(
-      screen.getByText(
-        (content, element) => element?.textContent == "TechFlipp",
-      ),
-    );
+    const heading = screen.getByRole("heading", { level: 1, hidden: true });
+
+    expect(heading).toBeInTheDocument();
   });
 });

@@ -97,13 +97,13 @@ export default function DemoGraphicsFilters() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="bg-card border-border grid w-full grid-cols-2 gap-4 rounded-2xl border-1 p-3 xl:grid-cols-5 xl:flex-row"
+        className="bg-card border-border grid w-full grid-cols-2 gap-4 rounded-2xl border-1 p-2 xl:flex-row"
       >
         <FormField
           control={form.control}
           name="age"
           render={({ field }) => (
-            <FormItem className="flex-1">
+            <FormItem>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
@@ -126,7 +126,7 @@ export default function DemoGraphicsFilters() {
           control={form.control}
           name="gender"
           render={({ field }) => (
-            <FormItem className="flex-1">
+            <FormItem>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
@@ -149,7 +149,7 @@ export default function DemoGraphicsFilters() {
           control={form.control}
           name="group"
           render={({ field }) => (
-            <FormItem className="flex-1">
+            <FormItem>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
@@ -172,7 +172,7 @@ export default function DemoGraphicsFilters() {
           control={form.control}
           name="emotion"
           render={({ field }) => (
-            <FormItem className="flex-1">
+            <FormItem>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
@@ -191,20 +191,18 @@ export default function DemoGraphicsFilters() {
             </FormItem>
           )}
         />
-        <div className="flex gap-2">
-          <Button type="submit" className="flex-5">
-            <Filter />
-            Filter
-          </Button>
-          <Button
-            variant={"secondary"}
-            type="button"
-            className="flex-1"
-            onClick={() => formReset()}
-          >
-            <RefreshCw />
-          </Button>
-        </div>
+        <Button type="submit" className="w-full">
+          <Filter />
+          Filter
+        </Button>
+        <Button
+          variant={"secondary"}
+          type="button"
+          className="w-full"
+          onClick={() => formReset()}
+        >
+          <RefreshCw />
+        </Button>
       </form>
     </Form>
   );

@@ -3,7 +3,6 @@ import CamerasListSkeleton from "@/components/CamerasListSkeleton";
 import { getCamerasResponse } from "@/constants/apitypes";
 import { ENDPOINTS } from "@/constants/endpoints";
 import { Suspense } from "react";
-export const fetchCache = "force-no-store";
 
 export default async function Home({
   searchParams,
@@ -20,7 +19,7 @@ export default async function Home({
   const data: getCamerasResponse = await res.json();
 
   return (
-    <div className="mainPx min-h-svh w-full py-10">
+    <div className="mainPx min-h-svh w-full py-5 xl:py-8">
       <div className="max-container w-full">
         <Suspense
           key={params.page + params.size}

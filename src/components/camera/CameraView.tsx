@@ -61,7 +61,7 @@ export default function CameraView({
   }
 
   return (
-    <div className="mt-16 grid w-full grid-cols-1 flex-col gap-5 xl:grid-cols-2">
+    <div className="mt-16 grid h-full w-full grid-cols-1 flex-col gap-5 xl:grid-cols-2">
       <div className="bg-card border-border flex h-full w-full flex-col gap-4 rounded-2xl border-1 p-6 shadow-lg">
         <div className="flex w-full">
           <div className="flex h-full w-full flex-col gap-2">
@@ -138,7 +138,7 @@ export default function CameraView({
         <div className="col-span-1 w-full md:col-span-2">
           <DemoGraphicsFilters />
         </div>
-        {!graphError && demoGraphicResult?.analytics ? (
+        {!graphError && demoGraphicResult?.items[0]?.created_at ? (
           <>
             <DemoGraphicLine
               item={Object.keys(demoGraphicResult.analytics)[0]}
@@ -160,7 +160,7 @@ export default function CameraView({
             />
             <DemoGraphicCircle
               item={Object.keys(demoGraphicResult.analytics)[3]}
-              analytics={demoGraphicResult.analytics}
+              analytics={demoGraphicResult?.analytics}
               date={demoGraphicResult.items[0].created_at}
               loading={isFetching}
             />

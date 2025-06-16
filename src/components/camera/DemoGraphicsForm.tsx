@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Slider } from "../ui/slider";
+import { UploadCloud } from "lucide-react";
 
 //defining schema
 const formSchema = z.object({
@@ -246,7 +247,7 @@ export default function DemoGraphicsForm({ id }: { id: string }) {
                           value={[field.value]}
                           onValueChange={(val) => field.onChange(val[0])}
                         />
-                        {formSchema.shape.min_track_duration.minValue?.toString()}
+                        {formSchema.shape.min_track_duration.maxValue?.toString()}
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -453,6 +454,7 @@ export default function DemoGraphicsForm({ id }: { id: string }) {
               />
             </div>
             <Button type="submit" className="w-full max-w-40">
+              <UploadCloud />
               update
             </Button>
           </div>
