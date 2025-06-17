@@ -1,6 +1,11 @@
 import axios from 'axios';
 import { PaginatedCameras, Camera, DemographicsConfig, Tag, DemographicsFilters, DemographicsResponse } from '@/types';
 
+// Define the update payload type that matches the API's expected format
+type CameraUpdatePayload = Omit<Partial<Camera>, 'tags'> & {
+  tags: string[]; // API expects tag IDs as strings
+};
+
 const apiClient = axios.create({
   baseURL: 'https://task-451-api.ryd.wafaicloud.com/',
   headers: {
@@ -25,7 +30,7 @@ export const getCameraDetails = async (cameraId: string): Promise<Camera> => {
     return response.data;
 }
 
-export const updateCamera = async (cameraId: string, data: Partial<Camera>): Promise<Camera> => {
+export const updateCamera = async (cameraId: string, data: CameraUpdatePayload): Promise<Camera> => {
     const response = await apiClient.put(`/cameras/${cameraId}`, data);
     return response.data;
 }

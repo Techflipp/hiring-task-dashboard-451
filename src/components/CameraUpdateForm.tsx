@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { updateCamera, getTags } from '@/lib/api';
 import { Camera, Tag } from '@/types';
+
+// Define the update payload type that matches the API's expected format
+interface CameraUpdatePayload extends Omit<Partial<Camera>, 'tags'> {
+  tags: string[]; // API expects tag IDs as strings
+}
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -35,10 +40,13 @@ interface CameraUpdateFormProps {
 export default function CameraUpdateForm({ camera }: CameraUpdateFormProps) {
   const queryClient = useQueryClient();
 
-  const { data: allTags } = useQuery<Tag[]>({ 
+  const { data: tagsData } = useQuery<Tag[]>({
     queryKey: ['tags'],
     queryFn: getTags,
   });
+  
+  // Alias for the tags data to match the JSX
+  const allTags = tagsData;
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -57,21 +65,58 @@ export default function CameraUpdateForm({ camera }: CameraUpdateFormProps) {
     });
   }, [camera, form]);
 
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  
   const mutation = useMutation({
-    mutationFn: (updatedCamera: Partial<Omit<Camera, 'tags'>> & { tags: string[] }) => 
-      updateCamera(camera.id, updatedCamera),
+    mutationFn: async (values: z.infer<typeof formSchema>) => {
+      const updateData: CameraUpdatePayload = {
+        name: values.name,
+        rtsp_url: values.rtsp_url,
+        tags: values.tags,
+        stream_frame_width: camera.stream_frame_width,
+        stream_frame_height: camera.stream_frame_height,
+        stream_max_length: camera.stream_max_length,
+        stream_quality: camera.stream_quality,
+        stream_fps: camera.stream_fps,
+        stream_skip_frames: camera.stream_skip_frames,
+        demographics_config: camera.demographics_config
+      };
+      
+      return await updateCamera(camera.id, updateData);
+    },
     onSuccess: () => {
+      setSuccessMessage('Camera details updated successfully!');
       queryClient.invalidateQueries({ queryKey: ['camera', camera.id] });
       queryClient.invalidateQueries({ queryKey: ['cameras'] });
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccessMessage(null), 3000);
     },
+    onError: (error: unknown) => {
+      setSuccessMessage(null);
+      if (error instanceof Error) {
+        // Error handling remains but without console logs
+      }
+    }
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    mutation.mutate(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await mutation.mutateAsync(values);
+      return true;
+    } catch (error) {
+      console.error('Update failed:', error);
+      throw error;
+    }
   }
 
   return (
     <Form {...form}>
+      {successMessage && (
+        <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-md">
+          {successMessage}
+        </div>
+      )}
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
@@ -111,7 +156,7 @@ export default function CameraUpdateForm({ camera }: CameraUpdateFormProps) {
                 </FormDescription>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {allTags?.map((tag) => (
+                {allTags?.map((tag: Tag) => (
                   <FormField
                     key={tag.id}
                     control={form.control}
