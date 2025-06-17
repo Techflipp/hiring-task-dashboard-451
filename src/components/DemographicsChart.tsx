@@ -182,9 +182,12 @@ export default function DemographicsChart({ results }: DemographicsChartProps) {
       if (!Array.isArray(results)) {
         
         // Try to extract array from object
-        const resultsObj = results as {
-          items: boolean; results?: DemographicsResult[]; data?: DemographicsResult[] 
-};
+        type ResultsObject = {
+          items?: DemographicsResult[];
+          results?: DemographicsResult[];
+          data?: DemographicsResult[];
+        };
+        const resultsObj = results as ResultsObject;
         let extractedResults = null;
         
         if (resultsObj.results && Array.isArray(resultsObj.results)) {
