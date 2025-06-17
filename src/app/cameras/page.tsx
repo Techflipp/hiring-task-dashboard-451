@@ -42,7 +42,7 @@ export default function CamerasPage() {
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-red-600">Error loading cameras</h1>
-            <p className="mt-2 text-gray-600">{error.message}</p>
+            <p className="mt-2 text-gray-800">{error.message}</p>
           </div>
         </div>
       </div>
@@ -57,7 +57,7 @@ export default function CamerasPage() {
         <div className="sm:flex sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Cameras</h1>
-            <p className="mt-2 text-gray-600">
+            <p className="mt-2 text-gray-800">
               Manage your camera network and configurations
             </p>
           </div>

@@ -72,9 +72,9 @@ export default function CameraDetailPage() {
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-red-600">Error loading camera</h1>
-            <p className="mt-2 text-gray-600">
-              {error?.message || 'Camera not found'}
-            </p>
+                          <p className="mt-2 text-gray-800">
+                {error?.message || 'Camera not found'}
+              </p>
             <Link 
               href="/cameras"
               className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500 h-10 px-4 text-sm mt-4"
@@ -117,7 +117,7 @@ export default function CameraDetailPage() {
                   )}
                 </div>
               </h1>
-              <p className="mt-2 text-gray-600">
+              <p className="mt-2 text-gray-800">
                 Created {formatDate(camera.created_at)} • Last updated {formatDate(camera.updated_at)}
               </p>
               {camera.status_message && (
@@ -315,47 +315,47 @@ export default function CameraDetailPage() {
                 <CardContent className="space-y-6">
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Track History Max Length</label>
+                      <label className="text-sm font-medium text-gray-900">Track History Max Length</label>
                       <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.track_history_max_length || 'Default'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Exit Threshold</label>
+                      <label className="text-sm font-medium text-gray-900">Exit Threshold</label>
                       <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.exit_threshold || 'Default'} seconds</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Min Track Duration</label>
+                      <label className="text-sm font-medium text-gray-900">Min Track Duration</label>
                       <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.min_track_duration || 'Default'} seconds</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Detection Confidence</label>
+                      <label className="text-sm font-medium text-gray-900">Detection Confidence</label>
                       <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.detection_confidence_threshold || 'Default'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Demographics Confidence</label>
+                      <label className="text-sm font-medium text-gray-900">Demographics Confidence</label>
                       <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.demographics_confidence_threshold || 'Default'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Min Track Updates</label>
+                      <label className="text-sm font-medium text-gray-900">Min Track Updates</label>
                       <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.min_track_updates || 'Default'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Box Area Threshold</label>
+                      <label className="text-sm font-medium text-gray-900">Box Area Threshold</label>
                       <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.box_area_threshold || 'Default'}</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Save Interval</label>
+                      <label className="text-sm font-medium text-gray-900">Save Interval</label>
                       <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.save_interval || 'Default'} seconds</p>
                     </div>
                     <div>
-                      <label className="text-sm font-medium text-gray-700">Frame Skip Interval</label>
+                      <label className="text-sm font-medium text-gray-900">Frame Skip Interval</label>
                       <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.frame_skip_interval || 'Default'} seconds</p>
                     </div>
                   </div>
                   <div className="border-t pt-4">
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-700">
                       Configuration created: {formatDate(camera.demographics_config.created_at)}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-gray-700">
                       Last updated: {formatDate(camera.demographics_config.updated_at)}
                     </p>
                   </div>
@@ -366,7 +366,7 @@ export default function CameraDetailPage() {
                 <CardContent className="py-16 text-center">
                   <Settings className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">No Demographics Configuration</h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-gray-800 mb-6">
                     This camera doesn&apos;t have a demographics configuration yet. Create one to enable analytics.
                   </p>
                   <Link 
@@ -388,9 +388,9 @@ export default function CameraDetailPage() {
                     <CardTitle className="text-red-600">Delete Demographics Configuration</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600 mb-6">
-                      Are you sure you want to delete the demographics configuration? This action cannot be undone and will disable analytics for this camera.
-                    </p>
+                                      <p className="text-gray-800 mb-6">
+                    Are you sure you want to delete the demographics configuration? This action cannot be undone and will disable analytics for this camera.
+                  </p>
                     <div className="flex justify-end gap-3">
                       <Button
                         variant="outline"
@@ -422,7 +422,7 @@ export default function CameraDetailPage() {
                 <CardContent className="py-16 text-center">
                   <BarChart3 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">View Analytics</h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-gray-800 mb-6">
                     Explore detailed demographics analytics for this camera.
                   </p>
                   <Link 
@@ -439,7 +439,7 @@ export default function CameraDetailPage() {
                 <CardContent className="py-16 text-center">
                   <BarChart3 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">Analytics Unavailable</h3>
-                  <p className="text-gray-600 mb-6">
+                  <p className="text-gray-800 mb-6">
                     To view analytics, you need to create a demographics configuration first.
                   </p>
                   <Link 

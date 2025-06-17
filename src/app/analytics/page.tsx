@@ -75,7 +75,7 @@ function AnalyticsContent() {
                 </div>
                 Demographics Analytics
               </h1>
-              <p className="mt-3 text-lg text-gray-600 max-w-3xl">
+              <p className="mt-3 text-lg text-gray-800 max-w-3xl">
                 Gain deep insights into visitor demographics with advanced analytics and real-time data visualization from your camera network.
               </p>
             </div>
@@ -468,7 +468,7 @@ function AnalyticsContent() {
                     </table>
                   </div>
                   {results.length > 50 && (
-                    <p className="text-sm text-gray-500 mt-4">
+                    <p className="text-sm text-gray-700 mt-4">
                       Showing first 50 results of {results.length} total detections.
                     </p>
                   )}
@@ -483,7 +483,7 @@ function AnalyticsContent() {
           <div className="text-center py-16">
             <BarChart3 className="mx-auto h-16 w-16 text-gray-400 mb-4" />
             <h3 className="text-xl font-medium text-gray-900 mb-2">Select a Camera to View Analytics</h3>
-            <p className="text-gray-600">Choose a camera from the dropdown above to start exploring demographics data.</p>
+            <p className="text-gray-800">Choose a camera from the dropdown above to start exploring demographics data.</p>
           </div>
         )}
 
@@ -492,7 +492,7 @@ function AnalyticsContent() {
           <div className="text-center py-16">
             <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
             <h3 className="text-xl font-medium text-gray-900 mb-2">Loading Analytics...</h3>
-            <p className="text-gray-600">Fetching demographics data from the selected camera.</p>
+            <p className="text-gray-800">Fetching demographics data from the selected camera.</p>
           </div>
         )}
 
@@ -501,7 +501,7 @@ function AnalyticsContent() {
           <div className="text-center py-16">
             <Activity className="mx-auto h-16 w-16 text-gray-400 mb-4" />
             <h3 className="text-xl font-medium text-gray-900 mb-2">No Data Available</h3>
-            <p className="text-gray-600">No demographics data found for the selected camera and filters.</p>
+            <p className="text-gray-800">No demographics data found for the selected camera and filters.</p>
           </div>
         )}
       </div>

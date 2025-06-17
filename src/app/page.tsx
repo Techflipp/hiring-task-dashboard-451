@@ -88,7 +88,7 @@ export default function HomePage() {
                 Dashboard
               </span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-800 mb-8 max-w-3xl mx-auto leading-relaxed">
               Powerful AI-driven camera management and demographics analytics platform. 
               Monitor, analyze, and optimize your camera network with advanced real-time insights.
             </p>
@@ -117,7 +117,7 @@ export default function HomePage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
+                    <p className="text-sm font-medium text-gray-800 mb-1">{stat.title}</p>
                     <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
                     <p className="text-sm text-emerald-600 font-medium mt-1">
                       {stat.change} from last month
@@ -138,7 +138,7 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
               Powerful Features for Modern Camera Management
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-800 max-w-2xl mx-auto">
               Everything you need to manage, monitor, and analyze your camera network in one comprehensive platform.
             </p>
           </div>
@@ -161,7 +161,7 @@ export default function HomePage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600 leading-relaxed mb-4">
+                    <p className="text-gray-800 leading-relaxed mb-4">
                       {feature.description}
                     </p>
                     <div className="flex items-center gap-2 text-blue-600 font-medium group-hover:gap-3 transition-all">
@@ -237,21 +237,21 @@ export default function HomePage() {
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <span className="font-medium text-gray-900">All Systems Operational</span>
                   </div>
-                  <span className="text-sm text-gray-600">2 min ago</span>
+                  <span className="text-sm text-gray-800">2 min ago</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                     <span className="font-medium text-gray-900">Camera Network Optimized</span>
                   </div>
-                  <span className="text-sm text-gray-600">1 hour ago</span>
+                  <span className="text-sm text-gray-800">1 hour ago</span>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
                   <div className="flex items-center gap-3">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                     <span className="font-medium text-gray-900">AI Model Updated</span>
                   </div>
-                  <span className="text-sm text-gray-600">3 hours ago</span>
+                  <span className="text-sm text-gray-800">3 hours ago</span>
                 </div>
               </div>
             </CardContent>
