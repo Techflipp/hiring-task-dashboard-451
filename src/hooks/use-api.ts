@@ -92,7 +92,7 @@ export function useDeleteDemographicsConfig() {
   return useMutation({
     mutationFn: (configId: string) =>
       apiClient.deleteDemographicsConfig(configId),
-    onSuccess: (_, configId) => {
+    onSuccess: () => {
       // Invalidate all camera queries to refresh the data
       queryClient.invalidateQueries({ queryKey: queryKeys.cameras });
     },

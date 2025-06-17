@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   ArrowLeft, 
   Edit, 
@@ -15,7 +16,6 @@ import {
   XCircle,
   Image as ImageIcon,
   Monitor,
-  Play,
   Trash2
 } from 'lucide-react';
 import { useCamera, useDeleteDemographicsConfig } from '@/hooks/use-api';
@@ -26,7 +26,6 @@ import { formatDate } from '@/lib/utils';
 
 export default function CameraDetailPage() {
   const params = useParams();
-  const router = useRouter();
   const cameraId = params.id as string;
   const [activeTab, setActiveTab] = useState<'details' | 'config' | 'analytics'>('details');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -169,11 +168,13 @@ export default function CameraDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="relative h-64 w-full bg-gray-100 rounded-lg overflow-hidden">
-                    <img
+                    <Image
                       src={camera.snapshot}
                       alt={`${camera.name} snapshot`}
                       className="h-full w-full object-contain"
-                      onError={(e) => {
+                      width={800}
+                      height={256}
+                      onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                         e.currentTarget.style.display = 'none';
                         e.currentTarget.nextElementSibling!.classList.remove('hidden');
                       }}
@@ -366,7 +367,7 @@ export default function CameraDetailPage() {
                   <Settings className="mx-auto h-12 w-12 text-gray-400 mb-4" />
                   <h3 className="text-lg font-medium text-gray-900 mb-2">No Demographics Configuration</h3>
                   <p className="text-gray-600 mb-6">
-                    This camera doesn't have a demographics configuration yet. Create one to enable analytics.
+                    This camera doesn&apos;t have a demographics configuration yet. Create one to enable analytics.
                   </p>
                   <Link 
                     href={`/cameras/${camera.id}/demographics/new`}

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Search, Camera as CameraIcon, CheckCircle, XCircle, Image as ImageIcon } from 'lucide-react';
 import { useCameras } from '@/hooks/use-api';
 import { Button } from '@/components/ui/button';
@@ -143,11 +144,13 @@ export default function CamerasPage() {
                       {/* Camera Snapshot */}
                       {camera.snapshot ? (
                         <div className="relative h-32 w-full bg-gray-100 rounded-lg overflow-hidden">
-                          <img
+                          <Image
                             src={camera.snapshot}
                             alt={`${camera.name} snapshot`}
                             className="h-full w-full object-cover"
-                            onError={(e) => {
+                            width={400}
+                            height={128}
+                            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                               e.currentTarget.style.display = 'none';
                               e.currentTarget.nextElementSibling!.classList.remove('hidden');
                             }}
