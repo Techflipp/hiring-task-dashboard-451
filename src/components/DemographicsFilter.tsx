@@ -30,7 +30,7 @@ export default function DemographicsFilter({ cameras, onFilterChange }: Demograp
       if (Object.prototype.hasOwnProperty.call(filters, key)) {
         const value = filters[key as keyof typeof filters];
         if (value && value !== 'all') {
-          (processedFilters as any)[key] = value;
+          (processedFilters as Record<string, unknown>)[key] = value;
         }
       }
     }

@@ -182,7 +182,9 @@ export default function DemographicsChart({ results }: DemographicsChartProps) {
       if (!Array.isArray(results)) {
         
         // Try to extract array from object
-        const resultsObj = results as any;
+        const resultsObj = results as {
+          items: boolean; results?: DemographicsResult[]; data?: DemographicsResult[] 
+};
         let extractedResults = null;
         
         if (resultsObj.results && Array.isArray(resultsObj.results)) {
@@ -247,8 +249,10 @@ export default function DemographicsChart({ results }: DemographicsChartProps) {
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
-            return `${context.label}: ${context.parsed.y || context.parsed} (${(((context.parsed.y || context.parsed) / results.length) * 100).toFixed(1)}%)`;
+          label: function(context: { label: string; parsed: { y?: number } | number }) {
+            const value = typeof context.parsed === 'number' ? context.parsed : context.parsed.y || 0;
+            const percentage = ((value / results.length) * 100).toFixed(1);
+            return `${context.label}: ${value} (${percentage}%)`;
           }
         }
       }
@@ -288,8 +292,8 @@ export default function DemographicsChart({ results }: DemographicsChartProps) {
       },
       tooltip: {
         callbacks: {
-          label: function(context: any) {
-            const total = context.dataset.data.reduce((a: number, b: number) => a + b, 0);
+          label: function(context: { label: string; parsed: number; dataset: { data: number[] } }) {
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
             const percentage = ((context.parsed / total) * 100).toFixed(1);
             return `${context.label}: ${context.parsed} (${percentage}%)`;
           }
