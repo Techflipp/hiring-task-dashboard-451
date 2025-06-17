@@ -1,5 +1,6 @@
 import {
   Camera,
+  CameraDetail,
   Tag,
   PaginatedResponse,
   CameraListParams,
@@ -7,7 +8,7 @@ import {
   DemographicsConfig,
   CreateDemographicsConfigData,
   UpdateDemographicsConfigData,
-  DemographicsResult,
+  DemographicsResultsResponse,
   DemographicsResultsParams
 } from '@/types/api';
 
@@ -59,12 +60,12 @@ class ApiClient {
     return this.request<PaginatedResponse<Camera>>(endpoint);
   }
 
-  async getCamera(cameraId: string): Promise<Camera> {
-    return this.request<Camera>(`/cameras/${cameraId}`);
+  async getCamera(cameraId: string): Promise<CameraDetail> {
+    return this.request<CameraDetail>(`/cameras/${cameraId}`);
   }
 
-  async updateCamera(cameraId: string, data: UpdateCameraData): Promise<Camera> {
-    return this.request<Camera>(`/cameras/${cameraId}`, {
+  async updateCamera(cameraId: string, data: UpdateCameraData): Promise<CameraDetail> {
+    return this.request<CameraDetail>(`/cameras/${cameraId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
@@ -85,7 +86,13 @@ class ApiClient {
     });
   }
 
-  async getDemographicsResults(params: DemographicsResultsParams): Promise<DemographicsResult[]> {
+  async deleteDemographicsConfig(configId: string): Promise<void> {
+    return this.request<void>(`/demographics/config/${configId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async getDemographicsResults(params: DemographicsResultsParams): Promise<DemographicsResultsResponse> {
     const searchParams = new URLSearchParams();
     
     searchParams.append('camera_id', params.camera_id);
@@ -99,7 +106,7 @@ class ApiClient {
     const queryString = searchParams.toString();
     const endpoint = `/demographics/results?${queryString}`;
     
-    return this.request<DemographicsResult[]>(endpoint);
+    return this.request<DemographicsResultsResponse>(endpoint);
   }
 }
 

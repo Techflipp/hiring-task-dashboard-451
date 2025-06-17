@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
-import { Search, Camera as CameraIcon } from 'lucide-react';
+import { Search, Camera as CameraIcon, CheckCircle, XCircle, Image as ImageIcon } from 'lucide-react';
 import { useCameras } from '@/hooks/use-api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -104,6 +104,7 @@ export default function CamerasPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
+                    <div className="h-32 bg-gray-200 rounded"></div>
                     <div className="h-4 bg-gray-200 rounded"></div>
                     <div className="h-4 bg-gray-200 rounded w-2/3"></div>
                   </div>
@@ -118,11 +119,20 @@ export default function CamerasPage() {
           <>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {data.items.map((camera) => (
-                <Card key={camera.id} className="hover:shadow-md transition-shadow">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <CameraIcon className="h-5 w-5 text-blue-600" />
-                      {camera.name}
+                <Card key={camera.id} className="hover:shadow-md transition-shadow overflow-hidden">
+                  <CardHeader className="pb-3">
+                    <CardTitle className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <CameraIcon className="h-5 w-5 text-blue-600" />
+                        {camera.name}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {camera.is_active ? (
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-500" />
+                        )}
+                      </div>
                     </CardTitle>
                     <p className="text-sm text-gray-500">
                       Created {formatDate(camera.created_at)}
@@ -130,19 +140,50 @@ export default function CamerasPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
+                      {/* Camera Snapshot */}
+                      {camera.snapshot ? (
+                        <div className="relative h-32 w-full bg-gray-100 rounded-lg overflow-hidden">
+                          <img
+                            src={camera.snapshot}
+                            alt={`${camera.name} snapshot`}
+                            className="h-full w-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.nextElementSibling!.classList.remove('hidden');
+                            }}
+                          />
+                          <div className="hidden absolute inset-0 flex items-center justify-center">
+                            <ImageIcon className="h-8 w-8 text-gray-400" />
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="h-32 w-full bg-gray-100 rounded-lg flex items-center justify-center">
+                          <ImageIcon className="h-8 w-8 text-gray-400" />
+                        </div>
+                      )}
+
+                      {/* Status */}
+                      <div>
+                        <p className="text-sm font-medium text-gray-700">Status</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <div className={`h-2 w-2 rounded-full ${
+                            camera.is_active ? 'bg-green-500' : 'bg-red-500'
+                          }`} />
+                          <span className={`text-sm ${
+                            camera.is_active ? 'text-green-700' : 'text-red-700'
+                          }`}>
+                            {camera.is_active ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
+                        {camera.status_message && (
+                          <p className="text-xs text-gray-500 mt-1">{camera.status_message}</p>
+                        )}
+                      </div>
+
                       <div>
                         <p className="text-sm font-medium text-gray-700">RTSP URL</p>
                         <p className="text-sm text-gray-600 truncate">{camera.rtsp_url}</p>
                       </div>
-                      
-                      {camera.stream_frame_width && camera.stream_frame_height && (
-                        <div>
-                          <p className="text-sm font-medium text-gray-700">Resolution</p>
-                          <p className="text-sm text-gray-600">
-                            {camera.stream_frame_width} × {camera.stream_frame_height}
-                          </p>
-                        </div>
-                      )}
 
                       {camera.tags && camera.tags.length > 0 && (
                         <div>
@@ -151,7 +192,11 @@ export default function CamerasPage() {
                             {camera.tags.map((tag) => (
                               <span
                                 key={tag.id}
-                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                                style={{ 
+                                  backgroundColor: tag.color + '20',
+                                  color: tag.color 
+                                }}
                               >
                                 {tag.name}
                               </span>
@@ -162,11 +207,8 @@ export default function CamerasPage() {
 
                       <div className="flex items-center justify-between pt-4">
                         <div className="flex items-center gap-2">
-                          <div className={`h-2 w-2 rounded-full ${
-                            camera.demographics_config ? 'bg-green-500' : 'bg-gray-300'
-                          }`} />
                           <span className="text-xs text-gray-600">
-                            {camera.demographics_config ? 'Analytics enabled' : 'No analytics'}
+                            Camera ID: {camera.id.slice(0, 8)}...
                           </span>
                         </div>
                         <Link 

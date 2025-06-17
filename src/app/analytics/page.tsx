@@ -41,7 +41,7 @@ function AnalyticsContent() {
   });
 
   const { data: cameras } = useCameras({ size: 100 });
-  const { data: results, isLoading: resultsLoading } = useDemographicsResults({
+  const { data: demographicsData, isLoading: resultsLoading } = useDemographicsResults({
     camera_id: selectedCameraId,
     ...(filters.gender && { gender: filters.gender as Gender }),
     ...(filters.age && { age: filters.age as Age }),
@@ -51,29 +51,14 @@ function AnalyticsContent() {
     ...(filters.endDate && { end_date: filters.endDate }),
   });
 
-  const filteredResults = Array.isArray(results) ? results : [];
+  const results = demographicsData?.items || [];
+  const analytics = demographicsData?.analytics;
 
-  const totalDetections = filteredResults.length;
-  const genderBreakdown = filteredResults.reduce((acc, result) => {
-    acc[result.gender] = (acc[result.gender] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  const ageBreakdown = filteredResults.reduce((acc, result) => {
-    acc[result.age] = (acc[result.age] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  const emotionBreakdown = filteredResults.reduce((acc, result) => {
-    acc[result.emotion] = (acc[result.emotion] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  const ethnicityBreakdown = filteredResults.reduce((acc, result) => {
-    acc[result.ethnicity] = (acc[result.ethnicity] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
+  const totalDetections = analytics?.total_count || 0;
+  const genderBreakdown = analytics?.gender_distribution || {};
+  const ageBreakdown = analytics?.age_distribution || {};
+  const emotionBreakdown = analytics?.emotion_distribution || {};
+  const ethnicityBreakdown = analytics?.ethnicity_distribution || {};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
@@ -145,8 +130,8 @@ function AnalyticsContent() {
                   className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm bg-white focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 transition-all duration-200"
                 >
                   <option value="">All Genders</option>
-                  <option value="MALE">Male</option>
-                  <option value="FEMALE">Female</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
                 </select>
               </div>
 
@@ -162,14 +147,11 @@ function AnalyticsContent() {
                   className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm bg-white focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all duration-200"
                 >
                   <option value="">All Ages</option>
-                  <option value="0-2">0-2 years</option>
-                  <option value="4-6">4-6 years</option>
-                  <option value="8-12">8-12 years</option>
-                  <option value="15-20">15-20 years</option>
-                  <option value="25-32">25-32 years</option>
-                  <option value="38-43">38-43 years</option>
-                  <option value="48-53">48-53 years</option>
-                  <option value="60-100">60+ years</option>
+                  <option value="0-18">0-18 years</option>
+                  <option value="19-30">19-30 years</option>
+                  <option value="31-45">31-45 years</option>
+                  <option value="46-60">46-60 years</option>
+                  <option value="60+">60+ years</option>
                 </select>
               </div>
 
@@ -185,369 +167,342 @@ function AnalyticsContent() {
                   className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm bg-white focus:border-amber-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all duration-200"
                 >
                   <option value="">All Emotions</option>
-                  <option value="ANGRY">😠 Angry</option>
-                  <option value="DISGUST">🤢 Disgust</option>
-                  <option value="FEAR">😨 Fear</option>
-                  <option value="HAPPY">😊 Happy</option>
-                  <option value="NEUTRAL">😐 Neutral</option>
-                  <option value="SAD">😢 Sad</option>
-                  <option value="SURPRISE">😲 Surprise</option>
+                  <option value="angry">😠 Angry</option>
+                  <option value="fear">😨 Fear</option>
+                  <option value="happy">😊 Happy</option>
+                  <option value="neutral">😐 Neutral</option>
+                  <option value="sad">😢 Sad</option>
+                  <option value="surprise">😲 Surprise</option>
                 </select>
               </div>
 
               {/* Ethnicity Filter */}
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                  <Globe className="h-4 w-4 text-rose-500" />
+                  <Globe className="h-4 w-4 text-indigo-500" />
                   Ethnicity
                 </label>
                 <select
                   value={filters.ethnicity}
                   onChange={(e) => setFilters(prev => ({ ...prev, ethnicity: e.target.value }))}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm bg-white focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition-all duration-200"
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm bg-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                 >
                   <option value="">All Ethnicities</option>
-                  <option value="WHITE">White</option>
-                  <option value="BLACK">Black</option>
-                  <option value="ASIAN">Asian</option>
-                  <option value="INDIAN">Indian</option>
-                  <option value="OTHERS">Others</option>
+                  <option value="white">White</option>
+                  <option value="african">African</option>
+                  <option value="south_asian">South Asian</option>
+                  <option value="east_asian">East Asian</option>
+                  <option value="middle_eastern">Middle Eastern</option>
                 </select>
               </div>
 
-              {/* Date Range */}
+              {/* Date Range Filters */}
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                  <Calendar className="h-4 w-4 text-indigo-500" />
+                  <Calendar className="h-4 w-4 text-rose-500" />
                   Start Date
                 </label>
                 <input
-                  type="date"
+                  type="datetime-local"
                   value={filters.startDate}
                   onChange={(e) => setFilters(prev => ({ ...prev, startDate: e.target.value }))}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm bg-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm bg-white focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition-all duration-200"
                 />
               </div>
 
               <div className="space-y-2">
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                  <Calendar className="h-4 w-4 text-indigo-500" />
+                  <Calendar className="h-4 w-4 text-rose-500" />
                   End Date
                 </label>
                 <input
-                  type="date"
+                  type="datetime-local"
                   value={filters.endDate}
                   onChange={(e) => setFilters(prev => ({ ...prev, endDate: e.target.value }))}
-                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm bg-white focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
+                  className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm bg-white focus:border-rose-500 focus:outline-none focus:ring-2 focus:ring-rose-500/20 transition-all duration-200"
                 />
+              </div>
+
+              <div className="flex items-end">
+                <Button
+                  onClick={() => setFilters({
+                    gender: '',
+                    age: '',
+                    emotion: '',
+                    ethnicity: '',
+                    startDate: '',
+                    endDate: '',
+                  })}
+                  variant="outline"
+                  className="w-full rounded-xl border-2 hover:bg-gray-50"
+                >
+                  Clear Filters
+                </Button>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Loading State */}
-        {resultsLoading && (
-          <div className="flex items-center justify-center py-16">
-            <div className="flex items-center gap-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-200 border-t-blue-600"></div>
-              <span className="text-lg text-gray-600">Analyzing demographics data...</span>
-            </div>
-          </div>
-        )}
-
-        {/* No Camera Selected */}
-        {!selectedCameraId && !resultsLoading && (
-          <Card className="border-0 shadow-xl bg-gradient-to-r from-blue-50 to-purple-50">
-            <CardContent className="py-16 text-center">
-              <div className="mx-auto w-24 h-24 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full flex items-center justify-center mb-6">
-                <Eye className="h-12 w-12 text-blue-600" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Select a Camera to Begin</h3>
-              <p className="text-gray-600 max-w-md mx-auto">
-                Choose a camera from the dropdown above to view comprehensive demographics analytics and insights.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Results Section */}
-        {selectedCameraId && !resultsLoading && (
+        {/* Analytics Overview Cards */}
+        {selectedCameraId && (
           <>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-blue-500 to-blue-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-blue-100 text-sm font-medium">Total Detections</p>
+                      <p className="text-3xl font-bold">{totalDetections.toLocaleString()}</p>
+                    </div>
+                    <TrendingUp className="h-8 w-8 text-blue-200" />
+                  </div>
+                </CardContent>
+              </Card>
 
-            {/* Data Breakdown Cards */}
-            <div className="grid gap-8 lg:grid-cols-2">
-              {/* Gender Breakdown */}
-              <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-purple-500 to-purple-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-purple-100 text-sm font-medium">Most Common Gender</p>
+                      <p className="text-xl font-bold">
+                        {Object.entries(genderBreakdown).sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A'}
+                      </p>
+                    </div>
+                    <Users className="h-8 w-8 text-purple-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-emerald-500 to-emerald-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-emerald-100 text-sm font-medium">Most Common Age</p>
+                      <p className="text-xl font-bold">
+                        {Object.entries(ageBreakdown).sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A'}
+                      </p>
+                    </div>
+                    <UserCheck className="h-8 w-8 text-emerald-200" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg bg-gradient-to-br from-amber-500 to-amber-600 text-white">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-amber-100 text-sm font-medium">Most Common Emotion</p>
+                      <p className="text-xl font-bold">
+                        {Object.entries(emotionBreakdown).sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A'}
+                      </p>
+                    </div>
+                    <Brain className="h-8 w-8 text-amber-200" />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Distribution Charts */}
+            <div className="grid gap-8 md:grid-cols-2 mb-8">
+              {/* Gender Distribution */}
+              <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-r from-pink-500 to-rose-500 rounded-lg">
+                    <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg">
                       <Users className="h-5 w-5 text-white" />
                     </div>
                     Gender Distribution
                   </CardTitle>
                 </CardHeader>
-                                <CardContent>
-                  {totalDetections > 0 ? (
-                    <div className="space-y-4">
-                      {Object.entries(genderBreakdown).map(([gender, count]) => {
-                        const percentage = totalDetections > 0 ? (count / totalDetections) * 100 : 0;
-                        return (
-                          <div key={gender} className="space-y-2">
-                            <div className="flex justify-between text-sm font-medium">
-                              <span className="capitalize">{gender.toLowerCase()}</span>
-                              <span>{count} ({percentage.toFixed(1)}%)</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-3">
-                               <div 
-                                 className={`h-3 rounded-full transition-all duration-500 ${
-                                   gender === Gender.MALE ? 'bg-gradient-to-r from-blue-500 to-blue-600' : 
-                                   'bg-gradient-to-r from-pink-500 to-rose-500'
-                                 }`}
-                                style={{ width: `${percentage}%` }}
-                              ></div>
-                            </div>
+                <CardContent>
+                  <div className="space-y-4">
+                    {Object.entries(genderBreakdown).map(([gender, count]) => (
+                      <div key={gender} className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700 capitalize">{gender}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-gradient-to-r from-purple-500 to-pink-600 h-2 rounded-full"
+                              style={{ width: `${totalDetections > 0 ? (count / totalDetections) * 100 : 0}%` }}
+                            />
                           </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <Users className="h-8 w-8 text-gray-400" />
+                          <span className="text-sm font-semibold text-gray-900 w-12 text-right">{count}</span>
+                        </div>
                       </div>
-                      <p className="text-gray-500 text-sm">No gender data available</p>
-                      <p className="text-gray-400 text-xs mt-1">Select a camera with analytics data</p>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
 
-              {/* Age Breakdown */}
-              <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+              {/* Age Distribution */}
+              <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-lg">
-                      <TrendingUp className="h-5 w-5 text-white" />
+                    <div className="p-2 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg">
+                      <UserCheck className="h-5 w-5 text-white" />
                     </div>
-                    Age Group Distribution
+                    Age Distribution
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {totalDetections > 0 ? (
-                    <div className="space-y-4">
-                      {Object.entries(ageBreakdown).map(([age, count]) => {
-                        const percentage = totalDetections > 0 ? (count / totalDetections) * 100 : 0;
-                        return (
-                          <div key={age} className="space-y-2">
-                            <div className="flex justify-between text-sm font-medium">
-                              <span>{age} years</span>
-                              <span>{count} ({percentage.toFixed(1)}%)</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-3">
-                              <div 
-                                className="h-3 rounded-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-500"
-                                style={{ width: `${percentage}%` }}
-                              ></div>
-                            </div>
+                  <div className="space-y-4">
+                    {Object.entries(ageBreakdown).map(([age, count]) => (
+                      <div key={age} className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">{age}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-gradient-to-r from-emerald-500 to-teal-600 h-2 rounded-full"
+                              style={{ width: `${totalDetections > 0 ? (count / totalDetections) * 100 : 0}%` }}
+                            />
                           </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <TrendingUp className="h-8 w-8 text-gray-400" />
+                          <span className="text-sm font-semibold text-gray-900 w-12 text-right">{count}</span>
+                        </div>
                       </div>
-                      <p className="text-gray-500 text-sm">No age group data available</p>
-                      <p className="text-gray-400 text-xs mt-1">Select a camera with analytics data</p>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
 
-              {/* Emotion Breakdown */}
-              <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+              {/* Emotion Distribution */}
+              <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-lg">
+                    <div className="p-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-lg">
                       <Brain className="h-5 w-5 text-white" />
                     </div>
-                    Emotion Analysis
+                    Emotion Distribution
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {totalDetections > 0 ? (
-                    <div className="space-y-4">
-                      {Object.entries(emotionBreakdown).map(([emotion, count]) => {
-                        const percentage = totalDetections > 0 ? (count / totalDetections) * 100 : 0;
-                        const emotionEmoji = {
-                          'ANGRY': '😠',
-                          'DISGUST': '🤢',
-                          'FEAR': '😨',
-                          'HAPPY': '😊',
-                          'NEUTRAL': '😐',
-                          'SAD': '😢',
-                          'SURPRISE': '😲'
-                        }[emotion] || '😐';
-                        
-                        return (
-                          <div key={emotion} className="space-y-2">
-                            <div className="flex justify-between text-sm font-medium">
-                              <span className="flex items-center gap-2">
-                                <span>{emotionEmoji}</span>
-                                <span className="capitalize">{emotion.toLowerCase()}</span>
-                              </span>
-                              <span>{count} ({percentage.toFixed(1)}%)</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-3">
-                              <div 
-                                className="h-3 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 transition-all duration-500"
-                                style={{ width: `${percentage}%` }}
-                              ></div>
-                            </div>
+                  <div className="space-y-4">
+                    {Object.entries(emotionBreakdown).map(([emotion, count]) => (
+                      <div key={emotion} className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700 capitalize">{emotion}</span>
+                        <div className="flex items-center gap-3">
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-gradient-to-r from-amber-500 to-orange-600 h-2 rounded-full"
+                              style={{ width: `${totalDetections > 0 ? (count / totalDetections) * 100 : 0}%` }}
+                            />
                           </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <Brain className="h-8 w-8 text-gray-400" />
+                          <span className="text-sm font-semibold text-gray-900 w-12 text-right">{count}</span>
+                        </div>
                       </div>
-                      <p className="text-gray-500 text-sm">No emotion data available</p>
-                      <p className="text-gray-400 text-xs mt-1">Select a camera with analytics data</p>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
 
-              {/* Ethnicity Breakdown */}
-              <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+              {/* Ethnicity Distribution */}
+              <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg">
+                    <div className="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg">
                       <Globe className="h-5 w-5 text-white" />
                     </div>
                     Ethnicity Distribution
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {totalDetections > 0 ? (
-                    <div className="space-y-4">
-                      {Object.entries(ethnicityBreakdown).map(([ethnicity, count]) => {
-                        const percentage = totalDetections > 0 ? (count / totalDetections) * 100 : 0;
-                        return (
-                          <div key={ethnicity} className="space-y-2">
-                            <div className="flex justify-between text-sm font-medium">
-                              <span className="capitalize">{ethnicity.toLowerCase()}</span>
-                              <span>{count} ({percentage.toFixed(1)}%)</span>
-                            </div>
-                            <div className="w-full bg-gray-200 rounded-full h-3">
-                              <div 
-                                className="h-3 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 transition-all duration-500"
-                                style={{ width: `${percentage}%` }}
-                              ></div>
-                            </div>
+                  <div className="space-y-4">
+                    {Object.entries(ethnicityBreakdown).map(([ethnicity, count]) => (
+                      <div key={ethnicity} className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">
+                          {ethnicity.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </span>
+                        <div className="flex items-center gap-3">
+                          <div className="w-32 bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-gradient-to-r from-indigo-500 to-purple-600 h-2 rounded-full"
+                              style={{ width: `${totalDetections > 0 ? (count / totalDetections) * 100 : 0}%` }}
+                            />
                           </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                        <Globe className="h-8 w-8 text-gray-400" />
+                          <span className="text-sm font-semibold text-gray-900 w-12 text-right">{count}</span>
+                        </div>
                       </div>
-                      <p className="text-gray-500 text-sm">No ethnicity data available</p>
-                      <p className="text-gray-400 text-xs mt-1">Select a camera with analytics data</p>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </div>
 
-            {/* Recent Detections */}
-            {totalDetections > 0 && (
-              <Card className="mt-8 border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+            {/* Detailed Results */}
+            {results.length > 0 && (
+              <Card className="border-0 shadow-xl bg-white/90 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg">
+                    <div className="p-2 bg-gradient-to-r from-gray-700 to-gray-800 rounded-lg">
                       <Activity className="h-5 w-5 text-white" />
                     </div>
-                    Recent Detections
+                    Detailed Detection Results
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b border-gray-200">
-                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Time</th>
-                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Gender</th>
-                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Age</th>
-                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Emotion</th>
-                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Ethnicity</th>
-                          <th className="text-left py-3 px-4 font-semibold text-gray-700">Confidence</th>
+                    <table className="w-full text-sm text-left">
+                      <thead className="text-xs text-gray-700 uppercase bg-gray-50 rounded-lg">
+                        <tr>
+                          <th className="px-6 py-3">Count</th>
+                          <th className="px-6 py-3">Gender</th>
+                          <th className="px-6 py-3">Age</th>
+                          <th className="px-6 py-3">Emotion</th>
+                          <th className="px-6 py-3">Ethnicity</th>
+                          <th className="px-6 py-3">Created At</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredResults.slice(0, 10).map((result, index) => (
-                          <tr key={index} className="border-b border-gray-100 hover:bg-gray-50/50 transition-colors">
-                            <td className="py-3 px-4 text-gray-600">
-                              {formatDate(result.timestamp)}
+                        {results.slice(0, 50).map((result) => (
+                          <tr key={result.id} className="bg-white border-b hover:bg-gray-50">
+                            <td className="px-6 py-4 font-medium text-gray-900">{result.count}</td>
+                            <td className="px-6 py-4 capitalize">{result.gender}</td>
+                            <td className="px-6 py-4">{result.age}</td>
+                            <td className="px-6 py-4 capitalize">{result.emotion}</td>
+                            <td className="px-6 py-4">
+                              {result.ethnicity.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                             </td>
-                            <td className="py-3 px-4">
-                                                             <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${
-                                 result.gender === Gender.MALE 
-                                   ? 'bg-blue-100 text-blue-800' 
-                                   : 'bg-pink-100 text-pink-800'
-                               }`}>
-                                {result.gender}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 text-gray-600">{result.age}</td>
-                            <td className="py-3 px-4">
-                              <span className="inline-flex px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
-                                {result.emotion}
-                              </span>
-                            </td>
-                            <td className="py-3 px-4 text-gray-600">{result.ethnicity}</td>
-                            <td className="py-3 px-4">
-                              <div className="flex items-center gap-2">
-                                <div className="w-16 bg-gray-200 rounded-full h-2">
-                                  <div 
-                                    className="h-2 rounded-full bg-gradient-to-r from-green-500 to-emerald-500"
-                                    style={{ width: `${result.confidence * 100}%` }}
-                                  ></div>
-                                </div>
-                                <span className="text-xs text-gray-600">
-                                  {(result.confidence * 100).toFixed(1)}%
-                                </span>
-                              </div>
-                            </td>
+                            <td className="px-6 py-4">{formatDate(result.created_at)}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
-                </CardContent>
-              </Card>
-            )}
-
-            {/* No Results */}
-            {totalDetections === 0 && (
-              <Card className="mt-8 border-0 shadow-xl bg-gradient-to-r from-gray-50 to-gray-100">
-                <CardContent className="py-16 text-center">
-                  <div className="mx-auto w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center mb-6">
-                    <BarChart3 className="h-12 w-12 text-gray-400" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">No Data Available</h3>
-                  <p className="text-gray-600 max-w-md mx-auto">
-                    No demographics data found for the selected camera and filters. Try adjusting your filters or selecting a different camera.
-                  </p>
+                  {results.length > 50 && (
+                    <p className="text-sm text-gray-500 mt-4">
+                      Showing first 50 results of {results.length} total detections.
+                    </p>
+                  )}
                 </CardContent>
               </Card>
             )}
           </>
+        )}
+
+        {/* No Camera Selected State */}
+        {!selectedCameraId && (
+          <div className="text-center py-16">
+            <BarChart3 className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+            <h3 className="text-xl font-medium text-gray-900 mb-2">Select a Camera to View Analytics</h3>
+            <p className="text-gray-600">Choose a camera from the dropdown above to start exploring demographics data.</p>
+          </div>
+        )}
+
+        {/* Loading State */}
+        {selectedCameraId && resultsLoading && (
+          <div className="text-center py-16">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <h3 className="text-xl font-medium text-gray-900 mb-2">Loading Analytics...</h3>
+            <p className="text-gray-600">Fetching demographics data from the selected camera.</p>
+          </div>
+        )}
+
+        {/* No Data State */}
+        {selectedCameraId && !resultsLoading && totalDetections === 0 && (
+          <div className="text-center py-16">
+            <Activity className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+            <h3 className="text-xl font-medium text-gray-900 mb-2">No Data Available</h3>
+            <p className="text-gray-600">No demographics data found for the selected camera and filters.</p>
+          </div>
         )}
       </div>
     </div>
@@ -557,12 +512,12 @@ function AnalyticsContent() {
 export default function AnalyticsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      <div className="min-h-screen bg-gray-50">
         <Navbar />
-        <div className="flex items-center justify-center min-h-[50vh]">
-          <div className="flex items-center gap-3">
-            <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-200 border-t-blue-600"></div>
-            <span className="text-lg text-gray-600">Loading analytics...</span>
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+            <div className="h-64 bg-gray-200 rounded"></div>
           </div>
         </div>
       </div>

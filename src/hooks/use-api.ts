@@ -86,6 +86,19 @@ export function useUpdateDemographicsConfig() {
   });
 }
 
+export function useDeleteDemographicsConfig() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: (configId: string) =>
+      apiClient.deleteDemographicsConfig(configId),
+    onSuccess: (_, configId) => {
+      // Invalidate all camera queries to refresh the data
+      queryClient.invalidateQueries({ queryKey: queryKeys.cameras });
+    },
+  });
+}
+
 export function useDemographicsResults(params: DemographicsResultsParams) {
   return useQuery({
     queryKey: queryKeys.demographicsResults(params),

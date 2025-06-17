@@ -2,22 +2,38 @@
 export interface Tag {
   id: string;
   name: string;
+  color: string;
 }
 
 export interface Camera {
   id: string;
   name: string;
   rtsp_url: string;
-  stream_frame_width?: number;
-  stream_frame_height?: number;
-  stream_max_length?: number;
-  stream_quality?: number;
-  stream_fps?: number;
-  stream_skip_frames?: number;
-  tags?: Tag[];
-  demographics_config?: DemographicsConfig;
+  tags: Tag[];
+  is_active: boolean;
+  status_message: string;
+  snapshot: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface CameraDetail {
+  id: string;
+  name: string;
+  rtsp_url: string;
+  tags: Tag[];
+  is_active: boolean;
+  status_message: string;
+  snapshot: string;
+  created_at: string;
+  updated_at: string;
+  stream_frame_width: number;
+  stream_frame_height: number;
+  stream_max_length: number;
+  stream_quality: number;
+  stream_fps: number;
+  stream_skip_frames: number;
+  demographics_config: DemographicsConfig | null;
 }
 
 export interface DemographicsConfig {
@@ -37,14 +53,27 @@ export interface DemographicsConfig {
 }
 
 export interface DemographicsResult {
-  id: string;
-  camera_id: string;
+  count: number;
   gender: Gender;
   age: Age;
   emotion: Emotion;
   ethnicity: EthnicGroup;
-  confidence: number;
-  timestamp: string;
+  id: string;
+  config_id: string;
+  created_at: string;
+}
+
+export interface Analytics {
+  gender_distribution: Record<string, number>;
+  age_distribution: Record<string, number>;
+  emotion_distribution: Record<string, number>;
+  ethnicity_distribution: Record<string, number>;
+  total_count: number;
+}
+
+export interface DemographicsResultsResponse {
+  items: DemographicsResult[];
+  analytics: Analytics;
 }
 
 // Enums

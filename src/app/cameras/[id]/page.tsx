@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   ArrowLeft, 
@@ -10,19 +10,41 @@ import {
   Camera as CameraIcon,
   BarChart3,
   Tag as TagIcon,
-  Info
+  Info,
+  CheckCircle,
+  XCircle,
+  Image as ImageIcon,
+  Monitor,
+  Play,
+  Trash2
 } from 'lucide-react';
-import { useCamera } from '@/hooks/use-api';
+import { useCamera, useDeleteDemographicsConfig } from '@/hooks/use-api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Navbar } from '@/components/layout/navbar';
 import { formatDate } from '@/lib/utils';
 
 export default function CameraDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const cameraId = params.id as string;
   const [activeTab, setActiveTab] = useState<'details' | 'config' | 'analytics'>('details');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const { data: camera, isLoading, error } = useCamera(cameraId);
+  const deleteConfigMutation = useDeleteDemographicsConfig();
+
+  const handleDeleteConfig = async () => {
+    if (!camera?.demographics_config) return;
+    
+    try {
+      await deleteConfigMutation.mutateAsync(camera.demographics_config.id);
+      setShowDeleteConfirm(false);
+      // The query will be invalidated automatically by the mutation
+    } catch (error) {
+      console.error('Failed to delete demographics configuration:', error);
+    }
+  };
 
   const tabs = [
     { id: 'details' as const, name: 'Details', icon: Info },
@@ -88,10 +110,20 @@ export default function CameraDetailPage() {
               <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                 <CameraIcon className="h-8 w-8 text-blue-600" />
                 {camera.name}
+                <div className="flex items-center gap-2">
+                  {camera.is_active ? (
+                    <CheckCircle className="h-6 w-6 text-green-500" />
+                  ) : (
+                    <XCircle className="h-6 w-6 text-red-500" />
+                  )}
+                </div>
               </h1>
               <p className="mt-2 text-gray-600">
                 Created {formatDate(camera.created_at)} • Last updated {formatDate(camera.updated_at)}
               </p>
+              {camera.status_message && (
+                <p className="mt-1 text-sm text-gray-500">{camera.status_message}</p>
+              )}
             </div>
             <Link 
               href={`/cameras/${camera.id}/edit`}
@@ -125,212 +157,301 @@ export default function CameraDetailPage() {
 
         {/* Tab Content */}
         {activeTab === 'details' && (
-          <div className="grid gap-6 lg:grid-cols-2">
-            <Card>
-              <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-700">Camera Name</label>
-                  <p className="mt-1 text-sm text-gray-900">{camera.name}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-700">RTSP URL</label>
-                  <p className="mt-1 text-sm text-gray-900 font-mono bg-gray-50 p-2 rounded">
-                    {camera.rtsp_url}
-                  </p>
-                </div>
-                {camera.tags && camera.tags.length > 0 && (
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Tags</label>
-                    <div className="flex flex-wrap gap-2 mt-1">
-                      {camera.tags.map((tag) => (
-                        <span
-                          key={tag.id}
-                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                        >
-                          <TagIcon className="w-3 h-3 mr-1" />
-                          {tag.name}
-                        </span>
-                      ))}
+          <div className="space-y-6">
+            {/* Camera Snapshot */}
+            {camera.snapshot && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <ImageIcon className="h-5 w-5 text-blue-600" />
+                    Camera Snapshot
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="relative h-64 w-full bg-gray-100 rounded-lg overflow-hidden">
+                    <img
+                      src={camera.snapshot}
+                      alt={`${camera.name} snapshot`}
+                      className="h-full w-full object-contain"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none';
+                        e.currentTarget.nextElementSibling!.classList.remove('hidden');
+                      }}
+                    />
+                    <div className="hidden absolute inset-0 flex items-center justify-center">
+                      <ImageIcon className="h-12 w-12 text-gray-400" />
                     </div>
                   </div>
-                )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Stream Configuration</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {camera.stream_frame_width && camera.stream_frame_height && (
+            <div className="grid gap-6 lg:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Basic Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Camera Name</label>
+                    <p className="mt-1 text-sm text-gray-900">{camera.name}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Camera ID</label>
+                    <p className="mt-1 text-sm text-gray-900 font-mono">{camera.id}</p>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">Status</label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <div className={`h-2 w-2 rounded-full ${
+                        camera.is_active ? 'bg-green-500' : 'bg-red-500'
+                      }`} />
+                      <span className={`text-sm ${
+                        camera.is_active ? 'text-green-700' : 'text-red-700'
+                      }`}>
+                        {camera.is_active ? 'Active' : 'Inactive'}
+                      </span>
+                    </div>
+                    {camera.status_message && (
+                      <p className="text-xs text-gray-500 mt-1">{camera.status_message}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700">RTSP URL</label>
+                    <p className="mt-1 text-sm text-gray-900 font-mono bg-gray-50 p-2 rounded break-all">
+                      {camera.rtsp_url}
+                    </p>
+                  </div>
+                  {camera.tags && camera.tags.length > 0 && (
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Tags</label>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {camera.tags.map((tag) => (
+                          <span
+                            key={tag.id}
+                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                            style={{ 
+                              backgroundColor: tag.color + '20',
+                              color: tag.color 
+                            }}
+                          >
+                            <TagIcon className="w-3 h-3 mr-1" />
+                            {tag.name}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Monitor className="h-5 w-5 text-blue-600" />
+                    Stream Configuration
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   <div>
                     <label className="text-sm font-medium text-gray-700">Resolution</label>
                     <p className="mt-1 text-sm text-gray-900">
                       {camera.stream_frame_width} × {camera.stream_frame_height} pixels
                     </p>
                   </div>
-                )}
-                {camera.stream_fps && (
                   <div>
                     <label className="text-sm font-medium text-gray-700">Frame Rate</label>
                     <p className="mt-1 text-sm text-gray-900">{camera.stream_fps} FPS</p>
                   </div>
-                )}
-                {camera.stream_quality && (
                   <div>
                     <label className="text-sm font-medium text-gray-700">Stream Quality</label>
                     <p className="mt-1 text-sm text-gray-900">{camera.stream_quality}%</p>
                   </div>
-                )}
-                {camera.stream_max_length && (
                   <div>
                     <label className="text-sm font-medium text-gray-700">Max Stream Length</label>
-                    <p className="mt-1 text-sm text-gray-900">{camera.stream_max_length} seconds</p>
+                    <p className="mt-1 text-sm text-gray-900">
+                      {camera.stream_max_length === 0 ? 'Unlimited' : `${camera.stream_max_length} frames`}
+                    </p>
                   </div>
-                )}
-                {camera.stream_skip_frames && (
                   <div>
                     <label className="text-sm font-medium text-gray-700">Skip Frames</label>
                     <p className="mt-1 text-sm text-gray-900">{camera.stream_skip_frames}</p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         )}
 
         {activeTab === 'config' && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                Demographics Configuration
-                {camera.demographics_config ? (
-                  <Link 
-                    href={`/cameras/${camera.id}/demographics/edit`}
-                    className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 focus-visible:ring-gray-500 h-8 px-3 text-sm"
-                  >
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit Config
-                  </Link>
-                ) : (
+          <div>
+            {camera.demographics_config ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Demographics Configuration</span>
+                    <div className="flex items-center gap-2">
+                      <Link 
+                        href={`/cameras/${camera.id}/demographics/edit`}
+                        className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 focus-visible:ring-gray-500 h-8 px-3 text-sm"
+                      >
+                        <Edit className="mr-2 h-3 w-3" />
+                        Edit
+                      </Link>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowDeleteConfirm(true)}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                        disabled={deleteConfigMutation.isPending}
+                      >
+                        <Trash2 className="mr-2 h-3 w-3" />
+                        Delete
+                      </Button>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Track History Max Length</label>
+                      <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.track_history_max_length || 'Default'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Exit Threshold</label>
+                      <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.exit_threshold || 'Default'} seconds</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Min Track Duration</label>
+                      <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.min_track_duration || 'Default'} seconds</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Detection Confidence</label>
+                      <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.detection_confidence_threshold || 'Default'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Demographics Confidence</label>
+                      <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.demographics_confidence_threshold || 'Default'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Min Track Updates</label>
+                      <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.min_track_updates || 'Default'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Box Area Threshold</label>
+                      <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.box_area_threshold || 'Default'}</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Save Interval</label>
+                      <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.save_interval || 'Default'} seconds</p>
+                    </div>
+                    <div>
+                      <label className="text-sm font-medium text-gray-700">Frame Skip Interval</label>
+                      <p className="mt-1 text-sm text-gray-900">{camera.demographics_config.frame_skip_interval || 'Default'} seconds</p>
+                    </div>
+                  </div>
+                  <div className="border-t pt-4">
+                    <p className="text-xs text-gray-500">
+                      Configuration created: {formatDate(camera.demographics_config.created_at)}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Last updated: {formatDate(camera.demographics_config.updated_at)}
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="py-16 text-center">
+                  <Settings className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Demographics Configuration</h3>
+                  <p className="text-gray-600 mb-6">
+                    This camera doesn't have a demographics configuration yet. Create one to enable analytics.
+                  </p>
                   <Link 
                     href={`/cameras/${camera.id}/demographics/new`}
-                    className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500 h-8 px-3 text-sm"
+                    className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500 h-10 px-4 text-sm"
                   >
                     <Settings className="mr-2 h-4 w-4" />
-                    Create Config
+                    Create Configuration
                   </Link>
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {camera.demographics_config ? (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Track History Max Length</label>
-                    <p className="mt-1 text-sm text-gray-900">
-                      {camera.demographics_config.track_history_max_length || 'Not set'}
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Delete Confirmation Dialog */}
+            {showDeleteConfirm && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <Card className="w-full max-w-md mx-4">
+                  <CardHeader>
+                    <CardTitle className="text-red-600">Delete Demographics Configuration</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-600 mb-6">
+                      Are you sure you want to delete the demographics configuration? This action cannot be undone and will disable analytics for this camera.
                     </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Exit Threshold</label>
-                    <p className="mt-1 text-sm text-gray-900">
-                      {camera.demographics_config.exit_threshold || 'Not set'}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Min Track Duration</label>
-                    <p className="mt-1 text-sm text-gray-900">
-                      {camera.demographics_config.min_track_duration || 'Not set'}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Detection Confidence</label>
-                    <p className="mt-1 text-sm text-gray-900">
-                      {camera.demographics_config.detection_confidence_threshold || 'Not set'}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Demographics Confidence</label>
-                    <p className="mt-1 text-sm text-gray-900">
-                      {camera.demographics_config.demographics_confidence_threshold || 'Not set'}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-gray-700">Save Interval</label>
-                    <p className="mt-1 text-sm text-gray-900">
-                      {camera.demographics_config.save_interval || 'Not set'}s
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <Settings className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">No demographics configuration</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Create a demographics configuration to enable analytics for this camera.
-                  </p>
-                  <div className="mt-6">
-                    <Link 
-                      href={`/cameras/${camera.id}/demographics/new`}
-                      className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500 h-10 px-4 text-sm"
-                    >
-                      <Settings className="mr-2 h-4 w-4" />
-                      Create Configuration
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                    <div className="flex justify-end gap-3">
+                      <Button
+                        variant="outline"
+                        onClick={() => setShowDeleteConfirm(false)}
+                        disabled={deleteConfigMutation.isPending}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={handleDeleteConfig}
+                        disabled={deleteConfigMutation.isPending}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                      >
+                        {deleteConfigMutation.isPending ? 'Deleting...' : 'Delete'}
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+          </div>
         )}
 
         {activeTab === 'analytics' && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Demographics Analytics</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {camera.demographics_config ? (
-                <div className="text-center py-8">
-                  <BarChart3 className="mx-auto h-12 w-12 text-blue-500" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">Analytics Available</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    View detailed demographics analytics for this camera.
+          <div>
+            {camera.demographics_config ? (
+              <Card>
+                <CardContent className="py-16 text-center">
+                  <BarChart3 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">View Analytics</h3>
+                  <p className="text-gray-600 mb-6">
+                    Explore detailed demographics analytics for this camera.
                   </p>
-                  <div className="mt-6">
-                    <Link 
-                      href={`/analytics?camera_id=${camera.id}`}
-                      className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500 h-10 px-4 text-sm"
-                    >
-                      <BarChart3 className="mr-2 h-4 w-4" />
-                      View Analytics
-                    </Link>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-8">
-                  <BarChart3 className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">Analytics not available</h3>
-                  <p className="mt-1 text-sm text-gray-500">
-                    Demographics configuration is required to view analytics data.
+                  <Link 
+                    href={`/analytics?camera_id=${camera.id}`}
+                    className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500 h-10 px-4 text-sm"
+                  >
+                    <BarChart3 className="mr-2 h-4 w-4" />
+                    View Analytics
+                  </Link>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="py-16 text-center">
+                  <BarChart3 className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Analytics Unavailable</h3>
+                  <p className="text-gray-600 mb-6">
+                    To view analytics, you need to create a demographics configuration first.
                   </p>
-                  <div className="mt-6">
-                    <Link 
-                      href={`/cameras/${camera.id}/demographics/new`}
-                      className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500 h-10 px-4 text-sm"
-                    >
-                      <Settings className="mr-2 h-4 w-4" />
-                      Enable Analytics
-                    </Link>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                  <Link 
+                    href={`/cameras/${camera.id}/demographics/new`}
+                    className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500 h-10 px-4 text-sm"
+                  >
+                    <Settings className="mr-2 h-4 w-4" />
+                    Enable Analytics
+                  </Link>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         )}
       </div>
     </div>
