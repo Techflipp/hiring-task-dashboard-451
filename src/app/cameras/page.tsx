@@ -66,15 +66,15 @@ export default function CamerasPage() {
         {/* Search and Filters */}
         <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
             <Input
               placeholder="Search cameras..."
-              className="pl-10"
+              className="pl-10 text-gray-900 placeholder:text-gray-500"
               onChange={handleSearchChange}
             />
           </div>
           <div className="flex items-center gap-2">
-            <label htmlFor="pageSize" className="text-sm font-medium text-gray-700">
+            <label htmlFor="pageSize" className="text-sm font-medium text-gray-900">
               Show:
             </label>
             <select
@@ -90,7 +90,7 @@ export default function CamerasPage() {
               <option value={20}>20</option>
               <option value={50}>50</option>
             </select>
-            <span className="text-sm text-gray-700">per page</span>
+            <span className="text-sm text-gray-900">per page</span>
           </div>
         </div>
 
@@ -167,38 +167,39 @@ export default function CamerasPage() {
 
                       {/* Status */}
                       <div>
-                        <p className="text-sm font-medium text-gray-700">Status</p>
+                        <p className="text-sm font-medium text-gray-900">Status</p>
                         <div className="flex items-center gap-2 mt-1">
                           <div className={`h-2 w-2 rounded-full ${
                             camera.is_active ? 'bg-green-500' : 'bg-red-500'
                           }`} />
-                          <span className={`text-sm ${
+                          <span className={`text-sm font-semibold ${
                             camera.is_active ? 'text-green-700' : 'text-red-700'
                           }`}>
                             {camera.is_active ? 'Active' : 'Inactive'}
                           </span>
                         </div>
                         {camera.status_message && (
-                          <p className="text-xs text-gray-500 mt-1">{camera.status_message}</p>
+                          <p className="text-xs text-gray-700 mt-1">{camera.status_message}</p>
                         )}
                       </div>
 
                       <div>
-                        <p className="text-sm font-medium text-gray-700">RTSP URL</p>
-                        <p className="text-sm text-gray-600 truncate">{camera.rtsp_url}</p>
+                        <p className="text-sm font-medium text-gray-900">RTSP URL</p>
+                        <p className="text-sm text-gray-800 truncate font-mono">{camera.rtsp_url}</p>
                       </div>
 
                       {camera.tags && camera.tags.length > 0 && (
                         <div>
-                          <p className="text-sm font-medium text-gray-700">Tags</p>
+                          <p className="text-sm font-medium text-gray-900">Tags</p>
                           <div className="flex flex-wrap gap-1 mt-1">
                             {camera.tags.map((tag) => (
                               <span
                                 key={tag.id}
-                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium"
+                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold border"
                                 style={{ 
-                                  backgroundColor: tag.color + '20',
-                                  color: tag.color 
+                                  backgroundColor: tag.color + '15',
+                                  color: tag.color,
+                                  borderColor: tag.color + '40'
                                 }}
                               >
                                 {tag.name}
@@ -208,10 +209,10 @@ export default function CamerasPage() {
                         </div>
                       )}
 
-                      <div className="flex items-center justify-between pt-4">
+                                              <div className="flex items-center justify-between pt-4">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-600">
-                            Camera ID: {camera.id.slice(0, 8)}...
+                          <span className="text-xs text-gray-700 font-mono">
+                            ID: {camera.id.slice(0, 8)}...
                           </span>
                         </div>
                         <Link 
@@ -230,7 +231,7 @@ export default function CamerasPage() {
             {/* Pagination */}
             {data.pages > 1 && (
               <div className="mt-8 flex items-center justify-between">
-                <div className="text-sm text-gray-700">
+                <div className="text-sm text-gray-900 font-medium">
                   Showing {((page - 1) * pageSize) + 1} to{' '}
                   {Math.min(page * pageSize, data.total)} of {data.total} cameras
                 </div>
@@ -243,7 +244,7 @@ export default function CamerasPage() {
                   >
                     Previous
                   </Button>
-                  <span className="text-sm text-gray-700">
+                  <span className="text-sm text-gray-900 font-medium">
                     Page {page} of {data.pages}
                   </span>
                   <Button

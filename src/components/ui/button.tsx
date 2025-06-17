@@ -9,14 +9,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading, children, disabled, ...props }, ref) => {
-    const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+    const baseClasses = 'inline-flex items-center justify-center rounded-lg font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
     
     const variantClasses = {
-      primary: 'bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500',
-      secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 focus-visible:ring-gray-500',
-      outline: 'border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 focus-visible:ring-gray-500',
-      ghost: 'text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-500',
-      destructive: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500',
+      primary: 'bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500 shadow-lg hover:shadow-xl transition-all',
+      secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus-visible:ring-gray-500 shadow-md hover:shadow-lg transition-all',
+      outline: 'border-2 border-gray-300 bg-white text-gray-900 hover:bg-gray-50 hover:border-gray-400 focus-visible:ring-gray-500 shadow-sm hover:shadow-md transition-all',
+      ghost: 'text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-500 transition-colors',
+      destructive: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500 shadow-lg hover:shadow-xl transition-all',
     };
     
     const sizeClasses = {

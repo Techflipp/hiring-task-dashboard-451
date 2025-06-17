@@ -2,25 +2,102 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111827;
+  --primary: #1d4ed8;
+  --primary-foreground: #ffffff;
+  --muted: #f3f4f6;
+  --muted-foreground: #374151;
+  --accent: #3b82f6;
+  --accent-foreground: #ffffff;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #d1d5db;
+  --input: #d1d5db;
+  --ring: #3b82f6;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0f172a;
+    --foreground: #f1f5f9;
+    --muted: #1e293b;
+    --muted-foreground: #cbd5e1;
+    --primary: #3b82f6;
+    --accent: #60a5fa;
+    --border: #334155;
+    --input: #334155;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+/* Improve text contrast globally */
+.text-gray-500 {
+  color: #374151 !important;
+}
+
+.text-gray-600 {
+  color: #1f2937 !important;
+}
+
+.text-gray-700 {
+  color: #111827 !important;
+}
+
+.text-gray-400 {
+  color: #6b7280 !important;
+}
+
+/* Ensure proper contrast for status indicators */
+.text-green-700 {
+  color: #15803d !important;
+}
+
+.text-red-700 {
+  color: #b91c1c !important;
+}
+
+/* Improve placeholder text */
+.placeholder-gray-400::placeholder {
+  color: #6b7280 !important;
+}
+
+/* Better focus states */
+*:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Dark mode improvements */
+@media (prefers-color-scheme: dark) {
+  .text-gray-500 {
+    color: #9ca3af !important;
+  }
+  
+  .text-gray-600 {
+    color: #d1d5db !important;
+  }
+  
+  .text-gray-700 {
+    color: #f3f4f6 !important;
+  }
+  
+  .text-gray-400 {
+    color: #9ca3af !important;
+  }
 }
