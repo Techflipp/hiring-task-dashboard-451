@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '../ui/Card';
 import { DemographicsResultsResponse } from '@/lib/types';
+import { Pagination } from '../ui/Pagination';
 import {
   BarChart,
   Bar,
@@ -29,7 +30,16 @@ interface PieLabelProps {
 }
 
 export const DemographicsCharts: React.FC<DemographicsChartsProps> = ({ data }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+  
   const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#14B8A6', '#F97316'];
+
+  // Calculate pagination
+  const totalPages = Math.ceil(data.items.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentItems = data.items.slice(startIndex, endIndex);
 
   // Convert distribution objects to chart data
   const genderData = Object.entries(data.analytics.gender_distribution || {})
@@ -59,6 +69,10 @@ export const DemographicsCharts: React.FC<DemographicsChartsProps> = ({ data }) 
         {`${(percent * 100).toFixed(0)}%`}
       </text>
     );
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   return (
@@ -157,70 +171,9 @@ export const DemographicsCharts: React.FC<DemographicsChartsProps> = ({ data }) 
         </Card>
       )}
 
-      {/* Detection Details Table */}
-      {data.items.length > 0 && (
-        <Card className="lg:col-span-2">
-          <h3 className="text-lg font-semibold mb-4">Recent Detections</h3>
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Date/Time
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Count
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Gender
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Age
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Emotion
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Ethnicity
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data.items.slice(0, 10).map((item) => (
-                  <tr key={item.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {new Date(item.created_at).toLocaleString()}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {item.count}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.gender || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.age || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.emotion || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.ethnicity || '-'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {data.items.length > 10 && (
-              <div className="px-6 py-3 bg-gray-50 text-sm text-gray-500">
-                Showing 10 of {data.items.length} detections
-              </div>
-            )}
-          </div>
-        </Card>
-      )}
 
-      {/* Distribution Summary */}
-      <Card className="lg:col-span-2">
+         {/* Distribution Summary */}
+         <Card className="lg:col-span-2">
         <h3 className="text-lg font-semibold mb-4">Distribution Summary</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           <div>
@@ -261,6 +214,80 @@ export const DemographicsCharts: React.FC<DemographicsChartsProps> = ({ data }) 
           </div>
         </div>
       </Card>
+
+      {/* Detection Details Table */}
+      {data.items.length > 0 && (
+        <Card className="lg:col-span-2">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold">All Detections</h3>
+            <div className="text-sm text-gray-500">
+              Showing {startIndex + 1}-{Math.min(endIndex, data.items.length)} of {data.items.length} detections
+            </div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date/Time
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Count
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Gender
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Age
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Emotion
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Ethnicity
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {currentItems.map((item) => (
+                  <tr key={item.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {new Date(item.created_at).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {item.count}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {item.gender || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {item.age || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {item.emotion || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {item.ethnicity || '-'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          
+          {totalPages > 1 && (
+            <div className="mt-6 flex justify-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
+        </Card>
+      )}
+
+   
     </div>
   );
 };

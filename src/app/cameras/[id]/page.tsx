@@ -13,7 +13,7 @@ export default function CameraDetailPage() {
   const cameraId = params.id as string;
   
   const { data: camera, isLoading, error } = useCamera(cameraId);
-
+console.log("camera",camera)
   if (isLoading) {
     return (
       <div className="space-y-6">

@@ -93,7 +93,7 @@ export const CameraDetail: React.FC<CameraDetailProps> = ({ camera }) => {
                   className={`object-cover transition-opacity duration-300 ${
                     imageLoading ? 'opacity-0' : 'opacity-100'
                   }`}
-                  sizes="(max-width: 1024px) 100vw, 400px"
+                  sizes={`(max-width: 768px) 100vw, (max-width: 1200px) 50vw, ${camera.stream_frame_width || 384}px`}
                   priority
                   onLoad={() => setImageLoading(false)}
                   onError={() => {
