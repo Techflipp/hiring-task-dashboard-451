@@ -45,6 +45,8 @@ const CameraStream: React.FC<CameraStreamProps> = ({ rtspUrl, snapshotUrl }) => 
             src={snapshotUrl || "https://picsum.photos/800/450"}
             alt="Camera Stream"
             className="w-full h-auto object-cover"
+            width={800}
+            height={450}
           />
           {isHovered && (
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">

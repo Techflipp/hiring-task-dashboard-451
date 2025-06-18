@@ -15,6 +15,8 @@ const CameraCard: React.FC<CameraCardProps> = ({ camera }) => {
         <Image
           src={camera.snapshot}
           alt={camera.name}
+          width={500}
+          height={500}
           className="w-full h-48 object-cover"
         />
         <div className="absolute top-2 left-2 flex flex-wrap gap-1">
