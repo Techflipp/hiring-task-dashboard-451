@@ -8,8 +8,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { CameraDetailSkeleton } from "@/components/skeletons/camera-detail.skelton";
 import { CameraEditForm } from "@/components/camera-edit-form";
+import { DemographicsConfigForm } from "@/components/demographics-config-form";
 import { useState } from "react";
-import { Edit3, ArrowLeft } from "lucide-react";
+import { Edit3, ArrowLeft, Settings } from "lucide-react";
 
 export default function CameraDetailPage() {
   const params = useParams();
@@ -17,6 +18,7 @@ export default function CameraDetailPage() {
   const cameraId = params?.id as string;
   const { enqueueSnackbar } = useSnackbar();
   const [isEditing, setIsEditing] = useState(false);
+  const [isEditingDemographics, setIsEditingDemographics] = useState(false);
 
   const {
     data: camera,
@@ -81,6 +83,17 @@ export default function CameraDetailPage() {
     );
   }
 
+  if (isEditingDemographics) {
+    return (
+      <DemographicsConfigForm
+        cameraId={camera.id}
+        existingConfig={camera.demographics_config}
+        onCancel={() => setIsEditingDemographics(false)}
+        onSuccess={() => setIsEditingDemographics(false)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-10">
@@ -118,22 +131,24 @@ export default function CameraDetailPage() {
               </p>
             </div>
           </div>
-          <button
-            onClick={() => setIsEditing(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            <Edit3 size={16} />
-            Edit Camera
-          </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Main Info */}
           <div className="md:col-span-2 space-y-8">
             <div className="bg-gray-800 rounded-lg p-6 mb-6">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Stream Settings
-              </h2>
+              <div className="flex justify-between">
+                <h2 className="text-xl font-semibold text-white mb-4">
+                  Stream Settings
+                </h2>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="flex items-center gap-1 px-4 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  <Edit3 size={16} />
+                  Edit stream
+                </button>
+              </div>
               <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
                 <div>
                   <span className="text-gray-400">Frame Width: </span>
@@ -217,60 +232,95 @@ export default function CameraDetailPage() {
             </div>
 
             <div className="bg-gray-800 rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-white mb-4">
-                Demographics Config
-              </h2>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-white">
+                  Demographics Config
+                </h2>
+                <button
+                  onClick={() => setIsEditingDemographics(true)}
+                  className="flex items-center gap-1 px-4 py-1 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  <Settings size={16} />
+                  {camera.demographics_config ? "Edit config" : "Create config"}
+                </button>
+              </div>
               {camera.demographics_config ? (
-                <div className="space-y-2 text-sm text-white">
-                  <div>
+                <div className="grid grid-cols-1 gap-y-2 text-sm">
+                  <div className="flex justify-between">
                     <span className="text-gray-400">
-                      Track History Max Length:{" "}
+                      Track History Max Length:
                     </span>
-                    {camera.demographics_config.track_history_max_length ?? "—"}
+                    <span className="text-white">
+                      {camera.demographics_config.track_history_max_length ??
+                        "—"}
+                    </span>
                   </div>
-                  <div>
-                    <span className="text-gray-400">Exit Threshold: </span>
-                    {camera.demographics_config.exit_threshold ?? "—"}
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Exit Threshold:</span>
+                    <span className="text-white">
+                      {camera.demographics_config.exit_threshold ?? "—"}
+                    </span>
                   </div>
-                  <div>
-                    <span className="text-gray-400">Min Track Duration: </span>
-                    {camera.demographics_config.min_track_duration ?? "—"}
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Min Track Duration:</span>
+                    <span className="text-white">
+                      {camera.demographics_config.min_track_duration ?? "—"}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex justify-between">
                     <span className="text-gray-400">
-                      Detection Confidence Threshold:{" "}
+                      Detection Confidence Threshold:
                     </span>
-                    {camera.demographics_config
-                      .detection_confidence_threshold ?? "—"}
+                    <span className="text-white">
+                      {camera.demographics_config
+                        .detection_confidence_threshold ?? "—"}
+                    </span>
                   </div>
-                  <div>
+                  <div className="flex justify-between">
                     <span className="text-gray-400">
-                      Demographics Confidence Threshold:{" "}
+                      Demographics Confidence Threshold:
                     </span>
-                    {camera.demographics_config
-                      .demographics_confidence_threshold ?? "—"}
+                    <span className="text-white">
+                      {camera.demographics_config
+                        .demographics_confidence_threshold ?? "—"}
+                    </span>
                   </div>
-                  <div>
-                    <span className="text-gray-400">Min Track Updates: </span>
-                    {camera.demographics_config.min_track_updates ?? "—"}
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Min Track Updates:</span>
+                    <span className="text-white">
+                      {camera.demographics_config.min_track_updates ?? "—"}
+                    </span>
                   </div>
-                  <div>
-                    <span className="text-gray-400">Box Area Threshold: </span>
-                    {camera.demographics_config.box_area_threshold ?? "—"}
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Box Area Threshold:</span>
+                    <span className="text-white">
+                      {camera.demographics_config.box_area_threshold ?? "—"}
+                    </span>
                   </div>
-                  <div>
-                    <span className="text-gray-400">Save Interval: </span>
-                    {camera.demographics_config.save_interval ?? "—"}
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Save Interval:</span>
+                    <span className="text-white">
+                      {camera.demographics_config.save_interval ?? "—"}
+                    </span>
                   </div>
-                  <div>
-                    <span className="text-gray-400">Frame Skip Interval: </span>
-                    {camera.demographics_config.frame_skip_interval ?? "—"}
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Frame Skip Interval:</span>
+                    <span className="text-white">
+                      {camera.demographics_config.frame_skip_interval ?? "—"}
+                    </span>
                   </div>
                 </div>
               ) : (
-                <span className="text-gray-400">
-                  No demographics config available.
-                </span>
+                <div className="text-center py-8">
+                  <Settings size={48} className="mx-auto text-gray-500 mb-4" />
+                  <p className="text-gray-400 mb-4">
+                    No demographics configuration available.
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    Create a configuration to enable demographics analysis for
+                    this camera.
+                  </p>
+                </div>
               )}
             </div>
           </div>

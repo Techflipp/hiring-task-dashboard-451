@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
@@ -23,7 +23,7 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
   const queryClient = useQueryClient();
 
   const {
-    control,
+    register,
     handleSubmit,
     formState: { errors, isDirty },
     reset,
@@ -92,7 +92,9 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
   return (
     <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-white">Edit Camera</h2>
+        <h2 className="text-xl font-semibold text-white">
+          Edit Stream Setting
+        </h2>
         <div className="flex items-center gap-2">
           {isDirty && (
             <button
@@ -116,7 +118,6 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Basic Information */}
         <div className="space-y-4">
           <h3 className="text-lg font-medium text-white border-b border-gray-700 pb-2">
             Basic Information
@@ -126,20 +127,14 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
             <label className="block text-sm font-medium text-gray-300 mb-2">
               Camera Name *
             </label>
-            <Controller
-              name="name"
-              control={control}
-              render={({ field }) => (
-                <input
-                  {...field}
-                  type="text"
-                  className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.name ? "border-red-500" : "border-gray-600"
-                  }`}
-                  placeholder="Enter camera name"
-                  disabled={isSubmitting}
-                />
-              )}
+            <input
+              {...register("name")}
+              type="text"
+              className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.name ? "border-red-500" : "border-gray-600"
+              }`}
+              placeholder="Enter camera name"
+              disabled={isSubmitting}
             />
             {errors.name && (
               <p className="mt-1 text-sm text-red-400">{errors.name.message}</p>
@@ -150,20 +145,14 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
             <label className="block text-sm font-medium text-gray-300 mb-2">
               RTSP URL *
             </label>
-            <Controller
-              name="rtsp_url"
-              control={control}
-              render={({ field }) => (
-                <input
-                  {...field}
-                  type="url"
-                  className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    errors.rtsp_url ? "border-red-500" : "border-gray-600"
-                  }`}
-                  placeholder="rtsp://example.com/stream"
-                  disabled={isSubmitting}
-                />
-              )}
+            <input
+              {...register("rtsp_url")}
+              type="url"
+              className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                errors.rtsp_url ? "border-red-500" : "border-gray-600"
+              }`}
+              placeholder="rtsp://example.com/stream"
+              disabled={isSubmitting}
             />
             {errors.rtsp_url && (
               <p className="mt-1 text-sm text-red-400">
@@ -172,8 +161,6 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
             )}
           </div>
         </div>
-
-        {/* Stream Settings */}
         <div className="space-y-4">
           <h3 className="text-lg font-medium text-white border-b border-gray-700 pb-2">
             Stream Settings
@@ -184,25 +171,18 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Frame Width (px)
               </label>
-              <Controller
-                name="stream_frame_width"
-                control={control}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    type="number"
-                    min="1"
-                    max="2560"
-                    value={field.value ?? ""}
-                    className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.stream_frame_width
-                        ? "border-red-500"
-                        : "border-gray-600"
-                    }`}
-                    placeholder="1920"
-                    disabled={isSubmitting}
-                  />
-                )}
+              <input
+                {...register("stream_frame_width")}
+                type="number"
+                min="1"
+                max="2560"
+                className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.stream_frame_width
+                    ? "border-red-500"
+                    : "border-gray-600"
+                }`}
+                placeholder="1920"
+                disabled={isSubmitting}
               />
               {errors.stream_frame_width && (
                 <p className="mt-1 text-sm text-red-400">
@@ -215,25 +195,18 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Frame Height (px)
               </label>
-              <Controller
-                name="stream_frame_height"
-                control={control}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    type="number"
-                    min="1"
-                    max="2560"
-                    value={field.value ?? ""}
-                    className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.stream_frame_height
-                        ? "border-red-500"
-                        : "border-gray-600"
-                    }`}
-                    placeholder="1080"
-                    disabled={isSubmitting}
-                  />
-                )}
+              <input
+                {...register("stream_frame_height")}
+                type="number"
+                min="1"
+                max="2560"
+                className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.stream_frame_height
+                    ? "border-red-500"
+                    : "border-gray-600"
+                }`}
+                placeholder="1080"
+                disabled={isSubmitting}
               />
               {errors.stream_frame_height && (
                 <p className="mt-1 text-sm text-red-400">
@@ -246,24 +219,17 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Max Length (frames)
               </label>
-              <Controller
-                name="stream_max_length"
-                control={control}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    type="number"
-                    min="0"
-                    value={field.value ?? ""}
-                    className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.stream_max_length
-                        ? "border-red-500"
-                        : "border-gray-600"
-                    }`}
-                    placeholder="0 (unlimited)"
-                    disabled={isSubmitting}
-                  />
-                )}
+              <input
+                {...register("stream_max_length")}
+                type="number"
+                min="0"
+                className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.stream_max_length
+                    ? "border-red-500"
+                    : "border-gray-600"
+                }`}
+                placeholder="0 (unlimited)"
+                disabled={isSubmitting}
               />
               {errors.stream_max_length && (
                 <p className="mt-1 text-sm text-red-400">
@@ -276,25 +242,16 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Quality (%)
               </label>
-              <Controller
-                name="stream_quality"
-                control={control}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    type="number"
-                    min="80"
-                    max="100"
-                    value={field.value ?? ""}
-                    className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.stream_quality
-                        ? "border-red-500"
-                        : "border-gray-600"
-                    }`}
-                    placeholder="90"
-                    disabled={isSubmitting}
-                  />
-                )}
+              <input
+                {...register("stream_quality")}
+                type="number"
+                min="80"
+                max="100"
+                className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.stream_quality ? "border-red-500" : "border-gray-600"
+                }`}
+                placeholder="90"
+                disabled={isSubmitting}
               />
               {errors.stream_quality && (
                 <p className="mt-1 text-sm text-red-400">
@@ -307,21 +264,14 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 FPS
               </label>
-              <Controller
-                name="stream_fps"
-                control={control}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    type="number"
-                    value={field.value ?? ""}
-                    className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.stream_fps ? "border-red-500" : "border-gray-600"
-                    }`}
-                    placeholder="30"
-                    disabled={isSubmitting}
-                  />
-                )}
+              <input
+                {...register("stream_fps")}
+                type="number"
+                className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.stream_fps ? "border-red-500" : "border-gray-600"
+                }`}
+                placeholder="30"
+                disabled={isSubmitting}
               />
               {errors.stream_fps && (
                 <p className="mt-1 text-sm text-red-400">
@@ -334,24 +284,17 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
               <label className="block text-sm font-medium text-gray-300 mb-2">
                 Skip Frames
               </label>
-              <Controller
-                name="stream_skip_frames"
-                control={control}
-                render={({ field }) => (
-                  <input
-                    {...field}
-                    type="number"
-                    min="0"
-                    value={field.value ?? ""}
-                    className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                      errors.stream_skip_frames
-                        ? "border-red-500"
-                        : "border-gray-600"
-                    }`}
-                    placeholder="0"
-                    disabled={isSubmitting}
-                  />
-                )}
+              <input
+                {...register("stream_skip_frames")}
+                type="number"
+                min="0"
+                className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                  errors.stream_skip_frames
+                    ? "border-red-500"
+                    : "border-gray-600"
+                }`}
+                placeholder="0"
+                disabled={isSubmitting}
               />
               {errors.stream_skip_frames && (
                 <p className="mt-1 text-sm text-red-400">
@@ -361,8 +304,6 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
             </div>
           </div>
         </div>
-
-        {/* Form Actions */}
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-700">
           <button
             type="button"
