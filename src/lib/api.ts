@@ -67,6 +67,11 @@ export interface PaginatedResponse<T> {
   pages: number;
 }
 
+// Add this type for camera updates
+export type CameraUpdateData = Omit<Partial<Camera>, "tags"> & {
+  tags?: string[]; // Tag IDs as strings for updates
+};
+
 // API functions
 export const cameraApi = {
   getCameras: async (params: {
@@ -83,7 +88,7 @@ export const cameraApi = {
     return response.data;
   },
 
-  updateCamera: async (id: string, data: Partial<Camera>): Promise<Camera> => {
+  updateCamera: async (id: string, data: CameraUpdateData): Promise<Camera> => {
     const response = await api.put(`/cameras/${id}`, data);
     return response.data;
   },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+// import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
+// import { Select } from "@/components/ui/select";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
 
 const cameraSchema = z.object({
@@ -49,8 +49,8 @@ export default function CameraEditPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setValue,
-    watch,
+    // setValue,
+    // watch,
   } = useForm<CameraFormData>({
     resolver: zodResolver(cameraSchema),
     defaultValues: {

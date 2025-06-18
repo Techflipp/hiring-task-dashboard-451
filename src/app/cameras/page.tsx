@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, Eye, Edit } from "lucide-react";
 import Link from "next/link";
-import { formatDate } from "@/lib/utils";
+// import { formatDate } from "@/lib/utils";
 
 export default function CamerasPage() {
   const [page, setPage] = useState(1);

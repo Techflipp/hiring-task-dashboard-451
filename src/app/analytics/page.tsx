@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { cameraApi, demographicsApi } from "@/lib/api";
@@ -16,17 +16,16 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
 } from "recharts";
-import { Filter, Download } from "lucide-react";
+import { Filter, Download, Loader2 } from "lucide-react";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
-export default function AnalyticsPage() {
+function AnalyticsContent() {
   const searchParams = useSearchParams();
   const [filters, setFilters] = useState({
     camera_id: searchParams.get("camera_id") || "",
@@ -247,200 +246,142 @@ export default function AnalyticsPage() {
           </CardContent>
         </Card>
 
-        {!filters.camera_id ? (
-          <Card>
-            <CardContent className="text-center py-12">
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Select a Camera
-              </h3>
-              <p className="text-gray-600">
-                Please select a camera to view analytics data.
-              </p>
-            </CardContent>
-          </Card>
-        ) : isLoading ? (
+        {/* Charts */}
+        {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        ) : results && results.length > 0 ? (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Gender Distribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Gender Distribution</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={chartData.gender}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) =>
+                        `${name} ${(percent * 100).toFixed(0)}%`
+                      }
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value">
+                      {chartData.gender.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Age Distribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Age Distribution</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={chartData.age}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#8884d8" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Emotion Distribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Emotion Distribution</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={chartData.emotion}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) =>
+                        `${name} ${(percent * 100).toFixed(0)}%`
+                      }
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value">
+                      {chartData.emotion.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+
+            {/* Ethnicity Distribution */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Ethnicity Distribution</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={chartData.ethnicity}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Bar dataKey="value" fill="#00C49F" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
           </div>
         ) : (
-          <div className="space-y-8">
-            {/* Summary Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="text-2xl font-bold">
-                    {results?.length || 0}
-                  </div>
-                  <p className="text-sm text-gray-600">Total Records</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6">
-                  <div className="text-2xl font-bold">
-                    {results?.filter((r) => r.gender === "male").length || 0}
-                  </div>
-                  <p className="text-sm text-gray-600">Male</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6">
-                  <div className="text-2xl font-bold">
-                    {results?.filter((r) => r.gender === "female").length || 0}
-                  </div>
-                  <p className="text-sm text-gray-600">Female</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-6">
-                  <div className="text-2xl font-bold">
-                    {results?.length
-                      ? Math.round(
-                          (results.filter((r) => r.confidence > 0.8).length /
-                            results.length) *
-                            100
-                        )
-                      : 0}
-                    %
-                  </div>
-                  <p className="text-sm text-gray-600">High Confidence</p>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Gender Distribution */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Gender Distribution</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={chartData.gender}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ name, percent }) =>
-                          `${name} ${(percent * 100).toFixed(0)}%`
-                        }
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="value">
-                        {chartData.gender.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              {/* Age Distribution */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Age Distribution</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={chartData.age}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="value" fill="#8884d8" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              {/* Emotion Distribution */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Emotion Distribution</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={chartData.emotion}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="value" fill="#82ca9d" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-
-              {/* Ethnicity Distribution */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Ethnicity Distribution</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ResponsiveContainer width="100%" height={300}>
-                    <BarChart data={chartData.ethnicity}>
-                      <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="name" />
-                      <YAxis />
-                      <Tooltip />
-                      <Bar dataKey="value" fill="#ffc658" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Recent Data Table */}
-            {results && results.length > 0 && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Data</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
-                      <thead>
-                        <tr className="border-b">
-                          <th className="text-left p-2">Timestamp</th>
-                          <th className="text-left p-2">Gender</th>
-                          <th className="text-left p-2">Age</th>
-                          <th className="text-left p-2">Emotion</th>
-                          <th className="text-left p-2">Ethnicity</th>
-                          <th className="text-left p-2">Confidence</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {results.slice(0, 10).map((result) => (
-                          <tr key={result.id} className="border-b">
-                            <td className="p-2">
-                              {new Date(result.timestamp).toLocaleString()}
-                            </td>
-                            <td className="p-2 capitalize">{result.gender}</td>
-                            <td className="p-2">{result.age}</td>
-                            <td className="p-2 capitalize">{result.emotion}</td>
-                            <td className="p-2 capitalize">
-                              {result.ethnicity.replace("_", " ")}
-                            </td>
-                            <td className="p-2">
-                              {(result.confidence * 100).toFixed(1)}%
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
+          <Card>
+            <CardContent className="py-12">
+              <div className="text-center text-gray-500">
+                <p>
+                  No data available. Please select a camera and apply filters.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>
+  );
+}
+
+export default function AnalyticsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-gray-50">
+          <div className="container mx-auto px-4 py-8">
+            <div className="flex items-center justify-center">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          </div>
+        </div>
+      }>
+      <AnalyticsContent />
+    </Suspense>
   );
 }

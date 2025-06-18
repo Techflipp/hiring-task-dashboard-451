@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { Suspense } from "react";
 
 const demographicsSchema = z.object({
   camera_id: z.string().min(1, "Camera is required"),
@@ -27,7 +28,7 @@ const demographicsSchema = z.object({
 
 type DemographicsFormData = z.infer<typeof demographicsSchema>;
 
-export default function NewDemographicsPage() {
+function DemographicsForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -42,7 +43,6 @@ export default function NewDemographicsPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    setValue,
   } = useForm<DemographicsFormData>({
     resolver: zodResolver(demographicsSchema),
     defaultValues: {
@@ -321,5 +321,20 @@ export default function NewDemographicsPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function NewDemographicsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="container mx-auto px-4 py-8">
+          <div className="flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        </div>
+      }>
+      <DemographicsForm />
+    </Suspense>
   );
 }
