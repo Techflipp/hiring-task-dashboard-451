@@ -3,370 +3,218 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Settings, Camera as CameraIcon } from 'lucide-react';
 import { useCamera, useUpdateDemographicsConfig } from '@/hooks/use-api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Navbar } from '@/components/layout/navbar';
-import { UpdateDemographicsConfigData } from '@/types/api';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
-export default function EditDemographicsConfigPage() {
+import { Navbar } from '@/components/layout/navbar';
+
+export default function EditDemographicsPage() {
   const params = useParams();
   const router = useRouter();
   const cameraId = params.id as string;
-
-  const { data: camera, isLoading: cameraLoading, error: cameraError } = useCamera(cameraId);
-  const updateConfigMutation = useUpdateDemographicsConfig();
-
-  const [formData, setFormData] = useState<UpdateDemographicsConfigData>({
-    track_history_max_length: 50,
-    exit_threshold: 30,
-    min_track_duration: 5,
+  
+  const [formData, setFormData] = useState({
     detection_confidence_threshold: 0.5,
-    demographics_confidence_threshold: 0.7,
-    min_track_updates: 10,
-    box_area_threshold: 0.1,
-    save_interval: 600,
-    frame_skip_interval: 1.0,
+    demographics_confidence_threshold: 0.5,
+    track_history_max_length: 30,
+    exit_threshold: 5,
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { data: camera } = useCamera(cameraId);
+  const updateMutation = useUpdateDemographicsConfig();
 
-  // Initialize form data when camera loads
+  const config = camera?.demographics_config;
+
   useEffect(() => {
-    if (camera?.demographics_config) {
-      const config = camera.demographics_config;
+    if (config) {
       setFormData({
-        track_history_max_length: config.track_history_max_length,
-        exit_threshold: config.exit_threshold,
-        min_track_duration: config.min_track_duration,
-        detection_confidence_threshold: config.detection_confidence_threshold,
-        demographics_confidence_threshold: config.demographics_confidence_threshold,
-        min_track_updates: config.min_track_updates,
-        box_area_threshold: config.box_area_threshold,
-        save_interval: config.save_interval,
-        frame_skip_interval: config.frame_skip_interval,
+        detection_confidence_threshold: config.detection_confidence_threshold || 0.5,
+        demographics_confidence_threshold: config.demographics_confidence_threshold || 0.5,
+        track_history_max_length: config.track_history_max_length || 30,
+        exit_threshold: config.exit_threshold || 5,
       });
     }
-  }, [camera]);
-
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (formData.track_history_max_length && (formData.track_history_max_length < 1 || formData.track_history_max_length > 100)) {
-      newErrors.track_history_max_length = 'Track history max length must be between 1 and 100';
-    }
-
-    if (formData.exit_threshold && (formData.exit_threshold < 1 || formData.exit_threshold > 300)) {
-      newErrors.exit_threshold = 'Exit threshold must be between 1 and 300';
-    }
-
-    if (formData.min_track_duration && (formData.min_track_duration < 1 || formData.min_track_duration > 60)) {
-      newErrors.min_track_duration = 'Min track duration must be between 1 and 60';
-    }
-
-    if (formData.detection_confidence_threshold && (formData.detection_confidence_threshold < 0.1 || formData.detection_confidence_threshold > 1.0)) {
-      newErrors.detection_confidence_threshold = 'Detection confidence threshold must be between 0.1 and 1.0';
-    }
-
-    if (formData.demographics_confidence_threshold && (formData.demographics_confidence_threshold < 0.1 || formData.demographics_confidence_threshold > 1.0)) {
-      newErrors.demographics_confidence_threshold = 'Demographics confidence threshold must be between 0.1 and 1.0';
-    }
-
-    if (formData.min_track_updates && (formData.min_track_updates < 1 || formData.min_track_updates > 100)) {
-      newErrors.min_track_updates = 'Min track updates must be between 1 and 100';
-    }
-
-    if (formData.box_area_threshold && (formData.box_area_threshold < 0.05 || formData.box_area_threshold > 1.0)) {
-      newErrors.box_area_threshold = 'Box area threshold must be between 0.05 and 1.0';
-    }
-
-    if (formData.save_interval && (formData.save_interval < 300 || formData.save_interval > 1800)) {
-      newErrors.save_interval = 'Save interval must be between 300 and 1800';
-    }
-
-    if (formData.frame_skip_interval && (formData.frame_skip_interval < 0.1 || formData.frame_skip_interval > 5.0)) {
-      newErrors.frame_skip_interval = 'Frame skip interval must be between 0.1 and 5.0';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  }, [config]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
-      return;
-    }
-
-    if (!camera?.demographics_config?.id) {
-      setErrors({ submit: 'Demographics configuration ID not found' });
-      return;
-    }
-
+    if (!config) return;
+    
     try {
-      await updateConfigMutation.mutateAsync({
-        configId: camera.demographics_config.id,
-        data: formData,
+      await updateMutation.mutateAsync({
+        configId: config.id,
+        data: {
+          detection_confidence_threshold: formData.detection_confidence_threshold,
+          demographics_confidence_threshold: formData.demographics_confidence_threshold,
+          track_history_max_length: formData.track_history_max_length,
+          exit_threshold: formData.exit_threshold,
+        }
       });
+      
       router.push(`/cameras/${cameraId}`);
-    } catch {
-      setErrors({ submit: 'Failed to update demographics configuration. Please try again.' });
+    } catch (error) {
+      console.error('Failed to update demographic configuration:', error);
     }
   };
 
-  if (cameraLoading) {
+  if (!camera || !config) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-            <div className="h-64 bg-gray-200 rounded"></div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (cameraError || !camera) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600">Error loading camera</h1>
-            <p className="mt-2 text-gray-800">
-              {cameraError?.message || 'Camera not found'}
-            </p>
-            <Link 
-              href="/cameras"
-              className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 focus-visible:ring-gray-500 h-10 px-4 text-sm mt-4"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Cameras
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!camera.demographics_config) {
-    return (
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-yellow-600">No Configuration Found</h1>
-            <p className="mt-2 text-gray-800">
-              This camera does not have a demographics configuration yet.
-            </p>
-            <div className="mt-4 space-x-4">
-              <Link 
-                href={`/cameras/${cameraId}`}
-                className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 focus-visible:ring-gray-500 h-10 px-4 text-sm"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Camera
-              </Link>
-              <Link 
-                href={`/cameras/${cameraId}/demographics/new`}
-                className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500 h-10 px-4 text-sm"
-              >
-                Create Configuration
-              </Link>
-            </div>
-          </div>
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <Alert>
+            <AlertDescription>
+              Camera or configuration not found
+            </AlertDescription>
+          </Alert>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navbar />
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <Link 
-            href={`/cameras/${cameraId}`}
-            className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 focus-visible:ring-gray-500 h-8 px-3 text-sm mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Camera Details
-          </Link>
-          
-          <h1 className="text-3xl font-bold text-gray-900">Edit Demographics Configuration</h1>
-          <p className="mt-2 text-gray-800">
-            Update demographics analytics configuration for {camera.name}
-          </p>
+          <div className="flex items-center gap-4 mb-6">
+            <Button variant="outline" size="icon" asChild>
+              <Link href={`/cameras/${cameraId}`}>
+                <ArrowLeft className="h-4 w-4" />
+                <span className="sr-only">Back to camera</span>
+              </Link>
+            </Button>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <Settings className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">Edit Demographics Configuration</h1>
+                <p className="text-muted-foreground">
+                  Modify settings for {camera.name}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <Card>
-            <CardHeader>
-              <CardTitle>Demographics Configuration</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Tracking Configuration */}
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Tracking Configuration</h3>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <CameraIcon className="h-5 w-5" />
+              Configuration Details
+            </CardTitle>
+            <CardDescription>
+              Update the demographic analysis settings for this camera
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid gap-6 sm:grid-cols-2">
+                {/* Detection Confidence Threshold */}
+                <div className="space-y-2">
+                  <label htmlFor="detection_confidence" className="text-sm font-medium">
+                    Detection Confidence Threshold
+                  </label>
                   <Input
-                    label="Track History Max Length"
+                    id="detection_confidence"
+                    type="number"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={formData.detection_confidence_threshold}
+                    onChange={(e) => setFormData(prev => ({ ...prev, detection_confidence_threshold: parseFloat(e.target.value) }))}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Minimum confidence level for person detection (0.0 to 1.0)
+                  </p>
+                </div>
+
+                {/* Demographics Confidence Threshold */}
+                <div className="space-y-2">
+                  <label htmlFor="demographics_confidence" className="text-sm font-medium">
+                    Demographics Confidence Threshold
+                  </label>
+                  <Input
+                    id="demographics_confidence"
+                    type="number"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={formData.demographics_confidence_threshold}
+                    onChange={(e) => setFormData(prev => ({ ...prev, demographics_confidence_threshold: parseFloat(e.target.value) }))}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Minimum confidence level for demographic analysis (0.0 to 1.0)
+                  </p>
+                </div>
+
+                {/* Track History Max Length */}
+                <div className="space-y-2">
+                  <label htmlFor="track_history" className="text-sm font-medium">
+                    Track History Max Length
+                  </label>
+                  <Input
+                    id="track_history"
                     type="number"
                     min="1"
                     max="100"
-                    value={formData.track_history_max_length || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      track_history_max_length: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.track_history_max_length}
+                    value={formData.track_history_max_length}
+                    onChange={(e) => setFormData(prev => ({ ...prev, track_history_max_length: parseInt(e.target.value) }))}
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Maximum number of frames to track each person
+                  </p>
+                </div>
+
+                {/* Exit Threshold */}
+                <div className="space-y-2">
+                  <label htmlFor="exit_threshold" className="text-sm font-medium">
+                    Exit Threshold (seconds)
+                  </label>
                   <Input
-                    label="Exit Threshold"
-                    type="number"
-                    min="1"
-                    max="300"
-                    value={formData.exit_threshold || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      exit_threshold: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.exit_threshold}
-                  />
-                  <Input
-                    label="Min Track Duration"
+                    id="exit_threshold"
                     type="number"
                     min="1"
                     max="60"
-                    value={formData.min_track_duration || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      min_track_duration: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.min_track_duration}
+                    value={formData.exit_threshold}
+                    onChange={(e) => setFormData(prev => ({ ...prev, exit_threshold: parseInt(e.target.value) }))}
                   />
-                  <Input
-                    label="Min Track Updates"
-                    type="number"
-                    min="1"
-                    max="100"
-                    value={formData.min_track_updates || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      min_track_updates: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.min_track_updates}
-                  />
+                  <p className="text-xs text-muted-foreground">
+                    Time in seconds before a person is considered to have exited
+                  </p>
                 </div>
               </div>
 
-              {/* Detection Configuration */}
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Detection Configuration</h3>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  <Input
-                    label="Detection Confidence Threshold"
-                    type="number"
-                    step="0.1"
-                    min="0.1"
-                    max="1.0"
-                    value={formData.detection_confidence_threshold || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      detection_confidence_threshold: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.detection_confidence_threshold}
-                  />
-                  <Input
-                    label="Demographics Confidence Threshold"
-                    type="number"
-                    step="0.1"
-                    min="0.1"
-                    max="1.0"
-                    value={formData.demographics_confidence_threshold || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      demographics_confidence_threshold: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.demographics_confidence_threshold}
-                  />
-                  <Input
-                    label="Box Area Threshold"
-                    type="number"
-                    step="0.01"
-                    min="0.05"
-                    max="1.0"
-                    value={formData.box_area_threshold || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      box_area_threshold: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.box_area_threshold}
-                  />
-                </div>
-              </div>
-
-              {/* Processing Configuration */}
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Processing Configuration</h3>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <Input
-                    label="Save Interval (seconds)"
-                    type="number"
-                    min="300"
-                    max="1800"
-                    value={formData.save_interval || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      save_interval: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.save_interval}
-                  />
-                  <Input
-                    label="Frame Skip Interval"
-                    type="number"
-                    step="0.1"
-                    min="0.1"
-                    max="5.0"
-                    value={formData.frame_skip_interval || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      frame_skip_interval: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.frame_skip_interval}
-                  />
-                </div>
-              </div>
-
-              {/* Error Message */}
-              {errors.submit && (
-                <div className="rounded-md bg-red-50 p-4">
-                  <p className="text-sm text-red-600">{errors.submit}</p>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
-                <Link 
-                  href={`/cameras/${cameraId}`}
-                  className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-500 h-10 px-4 text-sm"
-                >
-                  Cancel
-                </Link>
-                <Button type="submit" isLoading={updateConfigMutation.isPending}>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Changes
+              {/* Submit Button */}
+              <div className="flex items-center justify-end gap-4 pt-6 border-t">
+                <Button variant="outline" asChild>
+                  <Link href={`/cameras/${cameraId}`}>
+                    Cancel
+                  </Link>
+                </Button>
+                <Button type="submit" disabled={updateMutation.isPending}>
+                  <Save className="h-4 w-4 mr-2" />
+                  {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
                 </Button>
               </div>
-            </CardContent>
-          </Card>
-        </form>
+
+              {updateMutation.error && (
+                <Alert variant="destructive">
+                  <AlertDescription>
+                    Error updating configuration: {updateMutation.error.message}
+                  </AlertDescription>
+                </Alert>
+              )}
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

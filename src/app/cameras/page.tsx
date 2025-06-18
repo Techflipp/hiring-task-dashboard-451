@@ -7,7 +7,12 @@ import { Search, Camera as CameraIcon, CheckCircle, XCircle, Image as ImageIcon 
 import { useCameras } from '@/hooks/use-api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Navbar } from '@/components/layout/navbar';
 import { debounce } from '@/lib/utils';
 import { formatDate } from '@/lib/utils';
@@ -37,77 +42,98 @@ export default function CamerasPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <Navbar />
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600">Error loading cameras</h1>
-            <p className="mt-2 text-gray-800">{error.message}</p>
-          </div>
+          <Alert variant="destructive">
+            <XCircle className="h-4 w-4" />
+            <AlertDescription>
+              Error loading cameras: {error.message}
+            </AlertDescription>
+          </Alert>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <TooltipProvider>
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="sm:flex sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Cameras</h1>
-            <p className="mt-2 text-gray-800">
-              Manage your camera network and configurations
-            </p>
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+              <CameraIcon className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Cameras</h1>
+              <p className="text-gray-700 dark:text-gray-300">
+                Manage your camera network and configurations
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Search and Filters */}
-        <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-600 dark:text-gray-400" />
             <Input
               placeholder="Search cameras..."
-              className="pl-10 text-gray-900 placeholder:text-gray-500"
+              className="pl-10"
               onChange={handleSearchChange}
             />
           </div>
           <div className="flex items-center gap-2">
-            <label htmlFor="pageSize" className="text-sm font-medium text-gray-900">
-              Show:
-            </label>
-            <select
-              id="pageSize"
-              value={pageSize}
-              onChange={(e) => {
-                setPageSize(Number(e.target.value));
-                setPage(1);
-              }}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-            >
-              <option value={10}>10</option>
-              <option value={20}>20</option>
-              <option value={50}>50</option>
-            </select>
-            <span className="text-sm text-gray-900">per page</span>
+            <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Show:</span>
+            <Select value={pageSize.toString()} onValueChange={(value) => {
+              setPageSize(Number(value));
+              setPage(1);
+            }}>
+              <SelectTrigger className="w-20">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="20">20</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+              </SelectContent>
+            </Select>
+            <span className="text-sm text-gray-700 dark:text-gray-300">per page</span>
           </div>
         </div>
 
         {/* Loading State */}
         {isLoading && (
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {Array.from({ length: 6 }).map((_, i) => (
-              <Card key={i} className="animate-pulse">
+              <Card key={i}>
                 <CardHeader>
-                  <div className="h-6 bg-gray-200 rounded"></div>
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-5 w-5" />
+                      <Skeleton className="h-6 w-32" />
+                    </div>
+                    <Skeleton className="h-6 w-16" />
+                  </div>
+                  <Skeleton className="h-4 w-24" />
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-2">
-                    <div className="h-32 bg-gray-200 rounded"></div>
-                    <div className="h-4 bg-gray-200 rounded"></div>
-                    <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                  <div className="space-y-4">
+                    <Skeleton className="h-32 w-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-16" />
+                      <Skeleton className="h-6 w-full" />
+                    </div>
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-12" />
+                      <div className="flex gap-1">
+                        <Skeleton className="h-5 w-12" />
+                        <Skeleton className="h-5 w-16" />
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -118,110 +144,105 @@ export default function CamerasPage() {
         {/* Camera Grid */}
         {data && (
           <>
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {data.items.map((camera) => (
-                <Card key={camera.id} className="hover:shadow-md transition-shadow overflow-hidden">
+                <Card key={camera.id} className="group hover:shadow-lg transition-all duration-200">
                   <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center justify-between">
+                    <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <CameraIcon className="h-5 w-5 text-blue-600" />
-                        {camera.name}
+                        <CameraIcon className="h-5 w-5 text-primary" />
+                        <CardTitle className="text-lg text-gray-900 dark:text-gray-100">{camera.name}</CardTitle>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <Badge variant={camera.is_active ? "active" : "inactive"} className="gap-1">
                         {camera.is_active ? (
-                          <CheckCircle className="h-4 w-4 text-green-500" />
+                          <CheckCircle className="h-3 w-3" />
                         ) : (
-                          <XCircle className="h-4 w-4 text-red-500" />
+                          <XCircle className="h-3 w-3" />
                         )}
-                      </div>
-                    </CardTitle>
-                    <p className="text-sm text-gray-500">
+                        {camera.is_active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </div>
+                    <CardDescription className="text-gray-700 dark:text-gray-300">
                       Created {formatDate(camera.created_at)}
-                    </p>
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      {/* Camera Snapshot */}
-                      {camera.snapshot ? (
-                        <div className="relative h-32 w-full bg-gray-100 rounded-lg overflow-hidden">
-                          <Image
-                            src={camera.snapshot}
-                            alt={`${camera.name} snapshot`}
-                            className="h-full w-full object-cover"
-                            width={400}
-                            height={128}
-                            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                              e.currentTarget.style.display = 'none';
-                              e.currentTarget.nextElementSibling!.classList.remove('hidden');
-                            }}
-                          />
-                          <div className="hidden absolute inset-0 flex items-center justify-center">
-                            <ImageIcon className="h-8 w-8 text-gray-400" />
-                          </div>
+                  <CardContent className="space-y-4">
+                    {/* Camera Snapshot */}
+                    {camera.snapshot ? (
+                      <div className="relative h-32 w-full bg-muted rounded-lg overflow-hidden">
+                        <Image
+                          src={camera.snapshot}
+                          alt={`${camera.name} snapshot`}
+                          className="h-full w-full object-cover"
+                          width={400}
+                          height={128}
+                          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling!.classList.remove('hidden');
+                          }}
+                        />
+                        <div className="hidden absolute inset-0 flex items-center justify-center bg-muted">
+                          <ImageIcon className="h-8 w-8 text-muted-foreground" />
                         </div>
-                      ) : (
-                        <div className="h-32 w-full bg-gray-100 rounded-lg flex items-center justify-center">
-                          <ImageIcon className="h-8 w-8 text-gray-400" />
-                        </div>
-                      )}
-
-                      {/* Status */}
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">Status</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className={`h-2 w-2 rounded-full ${
-                            camera.is_active ? 'bg-green-500' : 'bg-red-500'
-                          }`} />
-                          <span className={`text-sm font-semibold ${
-                            camera.is_active ? 'text-green-700' : 'text-red-700'
-                          }`}>
-                            {camera.is_active ? 'Active' : 'Inactive'}
-                          </span>
-                        </div>
-                        {camera.status_message && (
-                          <p className="text-xs text-gray-700 mt-1">{camera.status_message}</p>
-                        )}
                       </div>
-
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">RTSP URL</p>
-                        <p className="text-sm text-gray-800 truncate font-mono">{camera.rtsp_url}</p>
+                    ) : (
+                      <div className="h-32 w-full bg-muted rounded-lg flex items-center justify-center">
+                        <ImageIcon className="h-8 w-8 text-muted-foreground" />
                       </div>
+                    )}
 
-                      {camera.tags && camera.tags.length > 0 && (
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">Tags</p>
-                          <div className="flex flex-wrap gap-1 mt-1">
-                            {camera.tags.map((tag) => (
-                              <span
-                                key={tag.id}
-                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold border"
-                                style={{ 
-                                  backgroundColor: tag.color + '15',
-                                  color: tag.color,
-                                  borderColor: tag.color + '40'
-                                }}
-                              >
-                                {tag.name}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                    {/* Status Message */}
+                    {camera.status_message && (
+                      <p className="text-xs text-gray-700 dark:text-gray-300">{camera.status_message}</p>
+                    )}
 
-                                              <div className="flex items-center justify-between pt-4">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-700 font-mono">
-                            ID: {camera.id.slice(0, 8)}...
-                          </span>
+                    {/* RTSP URL */}
+                    <div>
+                      <p className="text-sm font-semibold mb-1 text-gray-900 dark:text-gray-100">RTSP URL</p>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <p className="text-xs text-gray-700 dark:text-gray-300 font-mono truncate bg-muted px-2 py-1 rounded cursor-help">
+                            {camera.rtsp_url}
+                          </p>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs break-all">{camera.rtsp_url}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+
+                    {/* Tags */}
+                    {camera.tags && camera.tags.length > 0 && (
+                      <div>
+                        <p className="text-sm font-semibold mb-2 text-gray-900 dark:text-gray-100">Tags</p>
+                        <div className="flex flex-wrap gap-1">
+                          {camera.tags.map((tag) => (
+                            <Badge
+                              key={tag.id}
+                              variant="outline"
+                              className="text-xs"
+                              style={{ 
+                                borderColor: tag.color,
+                                color: tag.color 
+                              }}
+                            >
+                              {tag.name}
+                            </Badge>
+                          ))}
                         </div>
-                        <Link 
-                          href={`/cameras/${camera.id}`}
-                          className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 focus-visible:ring-gray-500 h-8 px-3 text-sm"
-                        >
-                          View Details
+                      </div>
+                    )}
+
+                    {/* Footer */}
+                    <div className="flex items-center justify-between pt-2 border-t">
+                      <span className="text-xs text-gray-700 dark:text-gray-300 font-mono">
+                        ID: {camera.id.slice(0, 8)}...
+                      </span>
+                      <Button asChild variant="outline" size="sm">
+                        <Link href={`/cameras/${camera.id}`}>
+                          Details
                         </Link>
-                      </div>
+                      </Button>
                     </div>
                   </CardContent>
                 </Card>
@@ -231,10 +252,10 @@ export default function CamerasPage() {
             {/* Pagination */}
             {data.pages > 1 && (
               <div className="mt-8 flex items-center justify-between">
-                <div className="text-sm text-gray-900 font-medium">
+                <p className="text-sm text-gray-700 dark:text-gray-300">
                   Showing {((page - 1) * pageSize) + 1} to{' '}
                   {Math.min(page * pageSize, data.total)} of {data.total} cameras
-                </div>
+                </p>
                 <div className="flex items-center gap-2">
                   <Button
                     variant="outline"
@@ -244,7 +265,7 @@ export default function CamerasPage() {
                   >
                     Previous
                   </Button>
-                  <span className="text-sm text-gray-900 font-medium">
+                  <span className="text-sm text-gray-700 dark:text-gray-300 px-3">
                     Page {page} of {data.pages}
                   </span>
                   <Button
@@ -261,10 +282,14 @@ export default function CamerasPage() {
 
             {/* Empty State */}
             {data.items.length === 0 && (
-              <div className="mt-8 text-center py-12">
-                <CameraIcon className="mx-auto h-12 w-12 text-gray-400" />
-                <h3 className="mt-2 text-sm font-medium text-gray-900">No cameras found</h3>
-                <p className="mt-1 text-sm text-gray-500">
+              <div className="text-center py-12">
+                <div className="flex justify-center mb-4">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+                    <CameraIcon className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">No cameras found</h3>
+                <p className="text-gray-700 dark:text-gray-300">
                   {search 
                     ? 'Try adjusting your search terms.' 
                     : 'No cameras are currently available in the system.'
@@ -274,7 +299,8 @@ export default function CamerasPage() {
             )}
           </>
         )}
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 } 

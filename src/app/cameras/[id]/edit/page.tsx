@@ -3,328 +3,386 @@
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Save } from 'lucide-react';
+import { ArrowLeft, Save, Camera as CameraIcon, Settings } from 'lucide-react';
 import { useCamera, useUpdateCamera, useTags } from '@/hooks/use-api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
 import { Navbar } from '@/components/layout/navbar';
-import { UpdateCameraData } from '@/types/api';
 
 export default function EditCameraPage() {
   const params = useParams();
   const router = useRouter();
   const cameraId = params.id as string;
-
-  const { data: camera, isLoading: cameraLoading, error: cameraError } = useCamera(cameraId);
-  const { data: tags } = useTags();
-  const updateCameraMutation = useUpdateCamera();
-
-  const [formData, setFormData] = useState<UpdateCameraData>({
+  
+  const [formData, setFormData] = useState({
     name: '',
     rtsp_url: '',
-    stream_frame_width: undefined,
-    stream_frame_height: undefined,
-    stream_max_length: undefined,
-    stream_quality: undefined,
-    stream_fps: undefined,
-    stream_skip_frames: undefined,
-    tags: [],
+    stream_frame_width: 1920,
+    stream_frame_height: 1080,
+    stream_max_length: 0,
+    stream_quality: 85,
+    stream_fps: 30,
+    stream_skip_frames: 0,
+    tags: [] as string[],
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { data: camera, isLoading: cameraLoading } = useCamera(cameraId);
+  const { data: tagsData } = useTags();
+  const updateMutation = useUpdateCamera();
 
-  // Initialize form data when camera loads
   useEffect(() => {
     if (camera) {
       setFormData({
         name: camera.name,
         rtsp_url: camera.rtsp_url,
-        stream_frame_width: camera.stream_frame_width,
-        stream_frame_height: camera.stream_frame_height,
-        stream_max_length: camera.stream_max_length,
-        stream_quality: camera.stream_quality,
-        stream_fps: camera.stream_fps,
-        stream_skip_frames: camera.stream_skip_frames,
+        stream_frame_width: camera.stream_frame_width || 1920,
+        stream_frame_height: camera.stream_frame_height || 1080,
+        stream_max_length: camera.stream_max_length || 0,
+        stream_quality: camera.stream_quality || 85,
+        stream_fps: camera.stream_fps || 30,
+        stream_skip_frames: camera.stream_skip_frames || 0,
         tags: camera.tags?.map(tag => tag.id) || [],
       });
     }
   }, [camera]);
 
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Camera name is required';
-    }
-
-    if (!formData.rtsp_url.trim()) {
-      newErrors.rtsp_url = 'RTSP URL is required';
-    } else if (!formData.rtsp_url.startsWith('rtsp://')) {
-      newErrors.rtsp_url = 'RTSP URL must start with rtsp://';
-    }
-
-    if (formData.stream_frame_width && (formData.stream_frame_width < 1 || formData.stream_frame_width > 2560)) {
-      newErrors.stream_frame_width = 'Width must be between 1 and 2560';
-    }
-
-    if (formData.stream_frame_height && (formData.stream_frame_height < 1 || formData.stream_frame_height > 2560)) {
-      newErrors.stream_frame_height = 'Height must be between 1 and 2560';
-    }
-
-    if (formData.stream_max_length && (formData.stream_max_length < 0 || formData.stream_max_length > 10000)) {
-      newErrors.stream_max_length = 'Max length must be between 0 and 10000';
-    }
-
-    if (formData.stream_quality && (formData.stream_quality < 80 || formData.stream_quality > 100)) {
-      newErrors.stream_quality = 'Quality must be between 80 and 100';
-    }
-
-    if (formData.stream_fps && (formData.stream_fps < 1 || formData.stream_fps > 120)) {
-      newErrors.stream_fps = 'FPS must be between 1 and 120';
-    }
-
-    if (formData.stream_skip_frames && (formData.stream_skip_frames < 0 || formData.stream_skip_frames > 100)) {
-      newErrors.stream_skip_frames = 'Skip frames must be between 0 and 100';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!validateForm()) {
-      return;
-    }
-
     try {
-      await updateCameraMutation.mutateAsync({
+      await updateMutation.mutateAsync({
         cameraId,
         data: formData,
       });
+      
       router.push(`/cameras/${cameraId}`);
-    } catch {
-      setErrors({ submit: 'Failed to update camera. Please try again.' });
+    } catch (error) {
+      console.error('Failed to update camera:', error);
     }
+  };
+
+  const handleTagToggle = (tagId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags.includes(tagId)
+        ? prev.tags.filter(id => id !== tagId)
+        : [...prev.tags, tagId],
+    }));
   };
 
   if (cameraLoading) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-            <div className="h-64 bg-gray-200 rounded"></div>
+        <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="space-y-8">
+            {/* Header Skeleton */}
+            <div className="flex items-center gap-4 mb-6">
+              <Skeleton className="h-10 w-10" />
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-10 w-10" />
+                <div className="space-y-2">
+                  <Skeleton className="h-8 w-32" />
+                  <Skeleton className="h-4 w-64" />
+                </div>
+              </div>
+            </div>
+
+            {/* Form Skeleton */}
+            <div className="space-y-8">
+              <Card>
+                <CardHeader>
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-4 w-64" />
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid gap-6 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-10 w-full" />
+                    </div>
+                    <div className="space-y-2 sm:col-span-2">
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-10 w-full" />
+                      <Skeleton className="h-3 w-48" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-4 w-64" />
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <div key={i} className="space-y-2">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-10 w-full" />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
     );
   }
 
-  if (cameraError || !camera) {
+  if (!camera) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <Navbar />
-        <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600">Error loading camera</h1>
-            <p className="mt-2 text-gray-800">
-              {cameraError?.message || 'Camera not found'}
-            </p>
-            <Link 
-              href="/cameras"
-              className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 focus-visible:ring-gray-500 h-10 px-4 text-sm mt-4"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Cameras
-            </Link>
-          </div>
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <Alert>
+            <AlertDescription>
+              Camera not found
+            </AlertDescription>
+          </Alert>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <Link 
-            href={`/cameras/${cameraId}`}
-            className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-gray-200 bg-white text-gray-900 hover:bg-gray-50 focus-visible:ring-gray-500 h-8 px-3 text-sm mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Camera Details
-          </Link>
-          
-          <h1 className="text-3xl font-bold text-gray-900">Edit Camera</h1>
-          <p className="mt-2 text-gray-800">
-            Update camera settings and configuration
-          </p>
+          <div className="flex items-center gap-4 mb-6">
+            <Button variant="outline" size="icon" asChild>
+              <Link href={`/cameras/${cameraId}`}>
+                <ArrowLeft className="h-4 w-4" />
+                <span className="sr-only">Back to camera</span>
+              </Link>
+            </Button>
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                <Settings className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">Edit Camera</h1>
+                <p className="text-muted-foreground">
+                  Update camera settings and configuration
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Basic Information */}
           <Card>
             <CardHeader>
-              <CardTitle>Camera Information</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <CameraIcon className="h-5 w-5" />
+                Basic Information
+              </CardTitle>
+              <CardDescription>
+                Camera name and RTSP connection details
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Basic Information */}
               <div className="grid gap-6 sm:grid-cols-2">
-                <Input
-                  label="Camera Name"
-                  value={formData.name}
-                  onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                  error={errors.name}
-                  required
-                />
-                <Input
-                  label="RTSP URL"
-                  value={formData.rtsp_url}
-                  onChange={(e) => setFormData(prev => ({ ...prev, rtsp_url: e.target.value }))}
-                  error={errors.rtsp_url}
-                  placeholder="rtsp://..."
-                  required
-                />
-              </div>
-
-              {/* Stream Configuration */}
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Stream Configuration</h3>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="space-y-2">
+                  <label htmlFor="name" className="text-sm font-medium">
+                    Camera Name *
+                  </label>
                   <Input
-                    label="Frame Width"
-                    type="number"
-                    min="1"
-                    max="2560"
-                    value={formData.stream_frame_width || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      stream_frame_width: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.stream_frame_width}
-                  />
-                  <Input
-                    label="Frame Height"
-                    type="number"
-                    min="1"
-                    max="2560"
-                    value={formData.stream_frame_height || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      stream_frame_height: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.stream_frame_height}
-                  />
-                  <Input
-                    label="Max Length (seconds)"
-                    type="number"
-                    min="0"
-                    max="10000"
-                    value={formData.stream_max_length || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      stream_max_length: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.stream_max_length}
-                  />
-                  <Input
-                    label="Quality (%)"
-                    type="number"
-                    min="80"
-                    max="100"
-                    value={formData.stream_quality || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      stream_quality: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.stream_quality}
-                  />
-                  <Input
-                    label="FPS"
-                    type="number"
-                    min="1"
-                    max="120"
-                    value={formData.stream_fps || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      stream_fps: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.stream_fps}
-                  />
-                  <Input
-                    label="Skip Frames"
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={formData.stream_skip_frames || ''}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      stream_skip_frames: e.target.value ? Number(e.target.value) : undefined 
-                    }))}
-                    error={errors.stream_skip_frames}
+                    id="name"
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                    placeholder="Enter camera name"
+                    required
                   />
                 </div>
-              </div>
 
-              {/* Tags */}
-              {tags && tags.length > 0 && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
-                  <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                    {tags.map((tag) => (
-                      <label key={tag.id} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          checked={formData.tags?.includes(tag.id) || false}
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              setFormData(prev => ({
-                                ...prev,
-                                tags: [...(prev.tags || []), tag.id]
-                              }));
-                            } else {
-                              setFormData(prev => ({
-                                ...prev,
-                                tags: prev.tags?.filter(id => id !== tag.id) || []
-                              }));
-                            }
-                          }}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                        />
-                        <span className="text-sm text-gray-700">{tag.name}</span>
-                      </label>
-                    ))}
-                  </div>
+                <div className="space-y-2 sm:col-span-2">
+                  <label htmlFor="rtsp_url" className="text-sm font-medium">
+                    RTSP URL *
+                  </label>
+                  <Input
+                    id="rtsp_url"
+                    type="url"
+                    value={formData.rtsp_url}
+                    onChange={(e) => setFormData(prev => ({ ...prev, rtsp_url: e.target.value }))}
+                    placeholder="rtsp://camera-ip:port/stream"
+                    className="font-mono"
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    The RTSP stream URL for this camera
+                  </p>
                 </div>
-              )}
-
-              {/* Error Message */}
-              {errors.submit && (
-                <div className="rounded-md bg-red-50 p-4">
-                  <p className="text-sm text-red-600">{errors.submit}</p>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-4 pt-6 border-t border-gray-200">
-                <Link 
-                  href={`/cameras/${cameraId}`}
-                  className="inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-gray-900 hover:bg-gray-100 focus-visible:ring-gray-500 h-10 px-4 text-sm"
-                >
-                  Cancel
-                </Link>
-                <Button type="submit" isLoading={updateCameraMutation.isPending}>
-                  <Save className="mr-2 h-4 w-4" />
-                  Save Changes
-                </Button>
               </div>
             </CardContent>
           </Card>
+
+          {/* Stream Configuration */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Stream Configuration</CardTitle>
+              <CardDescription>
+                Video stream settings and quality parameters
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="space-y-2">
+                  <label htmlFor="width" className="text-sm font-medium">
+                    Frame Width
+                  </label>
+                  <Input
+                    id="width"
+                    type="number"
+                    min="320"
+                    max="3840"
+                    value={formData.stream_frame_width}
+                    onChange={(e) => setFormData(prev => ({ ...prev, stream_frame_width: Number(e.target.value) }))}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="height" className="text-sm font-medium">
+                    Frame Height
+                  </label>
+                  <Input
+                    id="height"
+                    type="number"
+                    min="240"
+                    max="2160"
+                    value={formData.stream_frame_height}
+                    onChange={(e) => setFormData(prev => ({ ...prev, stream_frame_height: Number(e.target.value) }))}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="fps" className="text-sm font-medium">
+                    Frame Rate (FPS)
+                  </label>
+                  <Input
+                    id="fps"
+                    type="number"
+                    min="1"
+                    max="60"
+                    value={formData.stream_fps}
+                    onChange={(e) => setFormData(prev => ({ ...prev, stream_fps: Number(e.target.value) }))}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="quality" className="text-sm font-medium">
+                    Quality (%)
+                  </label>
+                  <Input
+                    id="quality"
+                    type="number"
+                    min="10"
+                    max="100"
+                    value={formData.stream_quality}
+                    onChange={(e) => setFormData(prev => ({ ...prev, stream_quality: Number(e.target.value) }))}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="maxLength" className="text-sm font-medium">
+                    Max Length (frames)
+                  </label>
+                  <Input
+                    id="maxLength"
+                    type="number"
+                    min="0"
+                    value={formData.stream_max_length}
+                    onChange={(e) => setFormData(prev => ({ ...prev, stream_max_length: Number(e.target.value) }))}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    0 = unlimited
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="skipFrames" className="text-sm font-medium">
+                    Skip Frames
+                  </label>
+                  <Input
+                    id="skipFrames"
+                    type="number"
+                    min="0"
+                    value={formData.stream_skip_frames}
+                    onChange={(e) => setFormData(prev => ({ ...prev, stream_skip_frames: Number(e.target.value) }))}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Tags */}
+          {tagsData && tagsData.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Tags</CardTitle>
+                <CardDescription>
+                  Assign tags to categorize this camera
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-wrap gap-2">
+                  {tagsData.map((tag) => (
+                    <Badge
+                      key={tag.id}
+                      variant={formData.tags.includes(tag.id) ? "default" : "outline"}
+                      className="cursor-pointer hover:opacity-80 transition-opacity"
+                      style={formData.tags.includes(tag.id) ? {
+                        backgroundColor: tag.color,
+                        borderColor: tag.color,
+                        color: 'white'
+                      } : {
+                        borderColor: tag.color,
+                        color: tag.color
+                      }}
+                      onClick={() => handleTagToggle(tag.id)}
+                    >
+                      {tag.name}
+                    </Badge>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Click tags to assign or remove them
+                </p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Submit Button */}
+          <div className="flex items-center justify-end gap-4 pt-6 border-t">
+            <Button variant="outline" asChild>
+              <Link href={`/cameras/${cameraId}`}>
+                Cancel
+              </Link>
+            </Button>
+            <Button type="submit" disabled={updateMutation.isPending}>
+              <Save className="h-4 w-4 mr-2" />
+              {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
+
+          {updateMutation.error && (
+            <Alert variant="destructive">
+              <AlertDescription>
+                Error updating camera: {updateMutation.error.message}
+              </AlertDescription>
+            </Alert>
+          )}
         </form>
       </div>
     </div>
