@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { api } from "@/services/api/api";
-import type { CameraUpdate } from "@/services/api/types";
+import type { components } from "@/services/api/types";
 
 export function useCameraUpdate() {
   const { enqueueSnackbar } = useSnackbar();
@@ -13,7 +13,7 @@ export function useCameraUpdate() {
       data,
     }: {
       cameraId: string;
-      data: CameraUpdate;
+      data: components["schemas"]["CameraUpdate"];
     }) => {
       const { data: updatedCamera, error } = await api.PUT(
         "/cameras/{camera_id}",
