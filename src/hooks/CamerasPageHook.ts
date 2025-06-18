@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { fetchCameras } from "@/lib/api";
 import { Camera } from "@/lib/types";
 
@@ -11,7 +11,7 @@ const CamerasPageHook = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
   
-    const loadCameras = async () => {
+    const loadCameras = useCallback(async () => {
       setIsLoading(true);
       try {
         const data = await fetchCameras(page, pageSize, searchTerm);
@@ -28,11 +28,11 @@ const CamerasPageHook = () => {
       } finally {
         setIsLoading(false);
       }
-    };
+    }, [page, pageSize, searchTerm, setPage]);
   
     useEffect(() => {
       loadCameras();
-    }, [page, pageSize, searchTerm]);
+    }, [loadCameras]);
   
     const handlePageSizeChange = (newSize: number) => {
       setPageSize(newSize);
@@ -42,22 +42,22 @@ const CamerasPageHook = () => {
     const handleSearch = (e: React.FormEvent) => {
       e.preventDefault();
       setPage(1);
-      loadCameras();
     };
-  return {
-    cameras,
-    page,
-    pageSize,
-    totalPages,
-    searchTerm,
-    isLoading,
-    error,
-    handlePageSizeChange,
-    handleSearch,
-    setPage,
-    loadCameras,
-    setSearchTerm
-  }
+  
+    return {
+      cameras,
+      page,
+      pageSize,
+      totalPages,
+      searchTerm,
+      isLoading,
+      error,
+      handlePageSizeChange,
+      handleSearch,
+      setPage,
+      loadCameras,
+      setSearchTerm
+    };
 }
 
-export default CamerasPageHook
+export default CamerasPageHook;

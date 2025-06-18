@@ -21,10 +21,13 @@ const AnalyticsPageHooks = () => {
       ethnicity: ['white', 'african', 'south_asian', 'east_asian', 'middle_eastern']
     };
   
-    useEffect(() : any => {
+    useEffect(() => {
       document.body.style.overflow = showFilterPanel ? 'hidden' : 'auto';
-      return () => (document.body.style.overflow = 'auto');
+      return () => {
+        document.body.style.overflow = 'auto';
+      };
     }, [showFilterPanel]);
+    
     
   
     useEffect(() => {
@@ -47,15 +50,17 @@ const AnalyticsPageHooks = () => {
       loadData();
     }, [id, filters]);
   
-    const handleFilterChange = (key: string, value: string) => {
-      setTempFilters(prev => {
-        if (value === '') {
-          const { [key]: _, ...rest } = prev;
-          return rest;
-        }
-        return { ...prev, [key]: value };
-      });
-    };
+
+const handleFilterChange = (key: string, value: string) => {
+  setTempFilters(prev => {
+    if (value === '') {
+      const rest = { ...prev };
+      delete rest[key];
+      return rest;
+    }
+    return { ...prev, [key]: value };
+  });
+};
   
     const applyFilters = () => {
       setFilters(tempFilters);

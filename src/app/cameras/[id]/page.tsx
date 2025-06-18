@@ -1,10 +1,10 @@
 "use client";
-import React from 'react';
-import { FiChevronLeft, FiEdit, FiSettings, FiActivity, FiPlus } from 'react-icons/fi';
-import CameraStream from '@/components/CameraStream';
-import DemographicsConfig from '@/components/DemographicsConfig';
-import Link from 'next/link';
-import CameraDetailPageHooks from '@/hooks/CameraDetailPageHooks';
+import React from "react";
+import { FiChevronLeft, FiEdit, FiSettings, FiActivity, FiPlus } from "react-icons/fi";
+import CameraStream from "@/components/CameraStream";
+import DemographicsConfig from "@/components/DemographicsConfig";
+import Link from "next/link";
+import CameraDetailPageHooks from "@/hooks/CameraDetailPageHooks";
 
 export default function CameraDetailPage() {
  
@@ -35,9 +35,9 @@ export default function CameraDetailPage() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">
-          <p>{error || 'Camera not found'}</p>
+          <p>{error || "Camera not found"}</p>
           <Link
-            href={'/cameras'}
+            href={"/cameras"}
             className="mt-2 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
           >
             Back to Cameras
@@ -52,7 +52,7 @@ export default function CameraDetailPage() {
      <div className="flex flex-col sm:flex-row sm:items-center mb-6 gap-4">
   <div className="flex items-center">
     <Link
-      href={'/cameras'}
+      href={"/cameras"}
       className="mr-2 p-2 rounded-full hover:bg-gray-100"
     >
       <FiChevronLeft size={24} />
@@ -63,17 +63,15 @@ export default function CameraDetailPage() {
   </div>
 
   <div className="sm:ml-auto flex flex-wrap gap-2">
-    {['details', 'config', 'analytics'].map((tab) => (
+    {["details", "config", "analytics"].map((tab) => (
       <button
         key={tab}
         onClick={() => setActiveTab(tab)}
-        className={`flex items-center px-4 py-2 rounded-3xl ${
-          activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-100'
-        }`}
+        className={`flex items-center px-4 py-2 rounded-3xl ${activeTab === tab ? "bg-indigo-600 text-white" : "bg-gray-100"}`}
       >
-        {tab === 'details' && <FiEdit className="mr-2" />}
-        {tab === 'config' && <FiSettings className="mr-2" />}
-        {tab === 'analytics' && <FiActivity className="mr-2" />}
+        {tab === "details" && <FiEdit className="mr-2" />}
+        {tab === "config" && <FiSettings className="mr-2" />}
+        {tab === "analytics" && <FiActivity className="mr-2" />}
         {tab}
       </button>
     ))}
@@ -81,7 +79,7 @@ export default function CameraDetailPage() {
 </div>
 
 
-      {activeTab === 'details' && (
+      {activeTab === "details" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <CameraStream rtspUrl={camera.rtsp_url} snapshotUrl={camera.snapshot} />
@@ -95,15 +93,15 @@ export default function CameraDetailPage() {
                 <div>
                   <p className="text-sm text-gray-500">Status</p>
                   <p className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                    camera.is_active ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    camera.is_active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
                   }`}>
-                    {camera.is_active ? 'Active' : 'Inactive'}
+                    {camera.is_active ? "Active" : "Inactive"}
                   </p>
                 </div>
                 {camera.stream_frame_width && camera.stream_frame_height && (
                   <div>
                     <p className="text-sm text-gray-500">Resolution</p>
-                    <p>{camera.stream_frame_width} × {camera.stream_frame_height}</p>
+                    <p>{camera.stream_frame_width} x {camera.stream_frame_height}</p>
                   </div>
                 )}
                 {camera.stream_fps && (
@@ -128,7 +126,7 @@ export default function CameraDetailPage() {
                 <span
                   key={tag.id}
                   className="px-3 py-1 rounded-full text-sm"
-                  style={{ backgroundColor: tag.color, color: 'white' }}
+                  style={{ backgroundColor: tag.color, color: "white" }}
                 >
                   {tag.name}
                 </span>
@@ -149,7 +147,7 @@ export default function CameraDetailPage() {
         </div>
       )}
 
-      {activeTab === 'config' && (
+      {activeTab === "config" && (
         <div className="bg-white rounded-lg shadow-md p-6">
           {config ? (
             <DemographicsConfig cameraId={camera.id} initialConfig={config} />
@@ -157,7 +155,7 @@ export default function CameraDetailPage() {
             <div className="text-center py-12">
               <h3 className="text-xl font-semibold mb-4">No Configuration Found</h3>
               <p className="text-gray-600 mb-6">
-                This camera doesn't have a demographics configuration yet.
+              This camera doesn&apos;t have a demographics configuration yet.
               </p>
               <button
                 onClick={handleCreateConfig}
@@ -171,7 +169,7 @@ export default function CameraDetailPage() {
         </div>
       )}
 
-      {activeTab === 'analytics' && (
+      {activeTab === "analytics" && (
         <div className="bg-white rounded-lg shadow-md p-6">
           <Link href={`/cameras/${id}/analytics`} className="flex items-center justify-center text-indigo-600 hover:text-indigo-800 font-medium">
             <FiActivity className="mr-2" />

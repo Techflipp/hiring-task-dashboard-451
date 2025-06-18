@@ -3,7 +3,7 @@ import React from 'react';
 import { FiCamera, FiEdit2, FiActivity } from 'react-icons/fi';
 import Link from 'next/link';
 import { Camera } from '@/lib/types';
-
+import Image from 'next/image';
 interface CameraCardProps {
   camera: Camera;
 }
@@ -12,7 +12,7 @@ const CameraCard: React.FC<CameraCardProps> = ({ camera }) => {
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02] hover:shadow-lg">
       <div className="relative">
-        <img
+        <Image
           src={camera.snapshot}
           alt={camera.name}
           className="w-full h-48 object-cover"

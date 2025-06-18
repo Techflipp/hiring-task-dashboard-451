@@ -1,7 +1,7 @@
 "use client";
 import { CameraStreamProps } from '@/lib/types';
 import React, { useEffect , useState } from 'react';
-
+import Image from 'next/image';
 
 
 const CameraStream: React.FC<CameraStreamProps> = ({ rtspUrl, snapshotUrl }) => {
@@ -41,7 +41,7 @@ const CameraStream: React.FC<CameraStreamProps> = ({ rtspUrl, snapshotUrl }) => 
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <img
+          <Image
             src={snapshotUrl || "https://picsum.photos/800/450"}
             alt="Camera Stream"
             className="w-full h-auto object-cover"

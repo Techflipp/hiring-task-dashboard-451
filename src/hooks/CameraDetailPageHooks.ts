@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { fetchCameraDetails } from '@/lib/api';
-import { Camera, DemographicsConfig } from '@/lib/types';
+"use client";
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+import { fetchCameraDetails } from "@/lib/api";
+import { Camera, DemographicsConfig } from "@/lib/types";
 
 const CameraDetailPageHooks = () => {
 
@@ -11,7 +12,7 @@ const CameraDetailPageHooks = () => {
     const [config, setConfig] = useState<DemographicsConfig | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [activeTab, setActiveTab] = useState('details');
+    const [activeTab, setActiveTab] = useState("details");
   
     useEffect(() => {
       if (!id) return;
@@ -29,7 +30,7 @@ const CameraDetailPageHooks = () => {
           
           setError(null);
         } catch (err) {
-          setError('Failed to load camera data');
+          setError("Failed to load camera data");
           console.error(err);
         } finally {
           setLoading(false);
@@ -55,10 +56,10 @@ const CameraDetailPageHooks = () => {
           frame_skip_interval: 1.0
         };
         setConfig(newConfig);
-        setActiveTab('config');
+        setActiveTab("config");
         setError(null);
       } catch (err) {
-        setError('Failed to create configuration');
+        setError("Failed to create configuration");
         console.error(err);
       } finally {
         setLoading(false);
