@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/apiClient";
 import { Camera, PaginatedResponse, CameraTag } from "@/types/camera.interface";
 import { CameraFormValues } from "@/lib/validators/cameraSchema";
+import { DemographicsFormValues } from "@/lib/validators/demographicsSchema";
 
 interface Params {
   page?: number;
@@ -48,6 +49,24 @@ export const useUpdateCamera = (id: string) => {
     },
   });
 };
+export const useUpsertDemographicsConfig = (cameraId: string, configId?: string) => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: DemographicsFormValues) => {
+      if (configId) {
+        return apiClient.put(`/demographics/config/${configId}`, data).then((res) => res.data)
+      } else {
+        return apiClient
+          .post(`/demographics/config`, { ...data, camera_id: cameraId })
+          .then((res) => res.data)
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['camera', cameraId] })
+    },
+  })
+}
 
 export const useTags = () => {
   return useQuery<CameraTag[]>({

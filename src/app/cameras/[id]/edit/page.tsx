@@ -1,9 +1,10 @@
 import { CameraEditForm } from '@/components/camera/CameraEditForm'
 
 interface Props {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
-export default function EditCameraPage({ params }: Props) {
-  return <CameraEditForm id={params.id} />
+export default async function EditCameraPage({ params }: Props) {
+    const {id} = await params
+  return <CameraEditForm id={id} />
 }

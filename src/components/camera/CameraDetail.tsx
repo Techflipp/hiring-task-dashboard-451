@@ -1,24 +1,24 @@
-'use client'
+"use client";
 
-import { useCameraDetail } from '@/hooks/useCamera'
-import { Badge } from '@/components/ui/Badge'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
-import { Skeleton } from '@/components/ui/Skeleton'
-import { Alert, AlertDescription } from '@/components/ui/Alert'
-import { Button } from '@/components/ui/Button'
-import { useRouter } from 'next/navigation'
+import { useCameraDetail } from "@/hooks/useCamera";
+import { Badge } from "@/components/ui/Badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { Alert, AlertDescription } from "@/components/ui/Alert";
+import { Button } from "@/components/ui/Button";
+import { useRouter } from "next/navigation";
 
 export const CameraDetail = ({ id }: { id: string }) => {
-  const { data, isLoading, error } = useCameraDetail(id)
-  const router = useRouter()
+  const { data, isLoading, error } = useCameraDetail(id);
+  const router = useRouter();
 
-  if (isLoading) return <Skeleton className="h-48 w-full rounded-lg" />
+  if (isLoading) return <Skeleton className="h-48 w-full rounded-lg" />;
   if (error || !data)
     return (
       <Alert variant="destructive">
         <AlertDescription>Failed to load camera details.</AlertDescription>
       </Alert>
-    )
+    );
 
   const {
     name,
@@ -29,14 +29,19 @@ export const CameraDetail = ({ id }: { id: string }) => {
     status_message,
     created_at,
     updated_at,
-  } = data
+  } = data;
 
   return (
     <Card className="max-w-4xl mx-auto mt-6">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           {name}
-          <Button onClick={() => router.push(`/cameras/${id}/edit`)}>Edit Camera</Button>
+          <Button onClick={() => router.push(`/cameras/${id}/edit`)}>
+            Edit Camera
+          </Button>
+          <Button onClick={() => router.push(`/cameras/${id}/configure`)}>
+            Configure
+          </Button>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -57,7 +62,7 @@ export const CameraDetail = ({ id }: { id: string }) => {
 
         <p
           className={`text-sm font-medium ${
-            is_active ? 'text-green-600' : 'text-red-600'
+            is_active ? "text-green-600" : "text-red-600"
           }`}
         >
           {status_message}
@@ -69,5 +74,5 @@ export const CameraDetail = ({ id }: { id: string }) => {
         </p>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
