@@ -1,12 +1,16 @@
+'use client';
 import { Camera } from '@/types/camera.interface'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
+import { useRouter } from 'next/navigation'
 
 export const CameraCard = ({ camera }: { camera: Camera }) => {
+  const router = useRouter();
+  const handleClick= ()=> router.push(`/cameras/${camera.id}`)
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden cursor-pointer" onClick={handleClick}>
       <Image
         src={camera.snapshot}
         alt={camera.name}
