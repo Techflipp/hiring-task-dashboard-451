@@ -52,7 +52,10 @@ export function DemographicsTable({ data }: DemographicsTableProps) {
     }
   };
 
-  const formatValue = (value: any, field: string) => {
+  const formatValue = (
+    value: string | number | Date,
+    field: string
+  ): string => {
     if (field === "created_at") {
       return new Date(value).toLocaleString();
     }
@@ -62,9 +65,12 @@ export function DemographicsTable({ data }: DemographicsTableProps) {
       field === "emotion" ||
       field === "ethnicity"
     ) {
-      return value.charAt(0).toUpperCase() + value.slice(1).replace("_", " ");
+      return (
+        String(value).charAt(0).toUpperCase() +
+        String(value).slice(1).replace("_", " ")
+      );
     }
-    return value;
+    return String(value);
   };
 
   const SortIcon = ({ field }: { field: keyof DemographicsResult }) => {

@@ -9,7 +9,10 @@ import { DemographicsChart } from "@/components/analytics/demographics-chart";
 import { DemographicsTable } from "@/components/analytics/demographics-table";
 import { AnalyticsSummary } from "@/components/analytics/analytics-summary";
 import { ExportControls } from "@/components/analytics/export-controls";
-import { demographicsResultsSchema } from "@/services/schema/demographics-results.schema";
+import {
+  DemographicsResultsFormData,
+  demographicsResultsSchema,
+} from "@/services/schema/demographics-results.schema";
 import { BarChart3, Users, Calendar } from "lucide-react";
 
 export default function AnalyticsPage() {
@@ -21,16 +24,16 @@ export default function AnalyticsPage() {
     watch,
     reset,
     formState: { errors },
-  } = useForm({
+  } = useForm<DemographicsResultsFormData>({
     resolver: yupResolver(demographicsResultsSchema),
     defaultValues: {
       camera_id: "",
-      gender: "",
-      age: "",
-      emotion: "",
-      ethnicity: "",
-      start_date: "",
-      end_date: "",
+      gender: undefined,
+      age: undefined,
+      emotion: undefined,
+      ethnicity: undefined,
+      start_date: undefined,
+      end_date: undefined,
     },
   });
 

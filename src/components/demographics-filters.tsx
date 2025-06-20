@@ -9,22 +9,13 @@ import {
   EmotionEnum,
   EthnicGroupEnum,
 } from "@/services/api/types";
+import { DemographicsResultsFormData } from "@/services/schema/demographics-results.schema";
 
 type Camera = components["schemas"]["Camera"];
 
-interface DemographicsFormData {
-  camera_id: string;
-  gender?: string;
-  age?: string;
-  emotion?: string;
-  ethnicity?: string;
-  start_date?: string;
-  end_date?: string;
-}
-
 interface DemographicsFiltersProps {
-  register: UseFormRegister<DemographicsFormData>;
-  errors: FieldErrors<DemographicsFormData>;
+  register: UseFormRegister<DemographicsResultsFormData>;
+  errors: FieldErrors<DemographicsResultsFormData>;
   cameras: Camera[];
   onSubmit: () => void;
   reset: () => void;
