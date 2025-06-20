@@ -2,13 +2,22 @@ export interface Camera {
   id: string;
   name: string;
   rtsp_url: string;
+  tags?: {
+    id: string;
+    name: string;
+    color: string;
+  }[];
+  is_active: boolean;
+  status_message: string;
+  snapshot: string;
+  created_at: string;
+  updated_at: string;
   stream_frame_width?: number;
   stream_frame_height?: number;
   stream_max_length?: number;
   stream_quality?: number;
   stream_fps?: number;
   stream_skip_frames?: number;
-  tags?: string[];
   demographics_config?: DemographicsConfig;
 }
 
