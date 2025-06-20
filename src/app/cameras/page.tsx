@@ -10,13 +10,7 @@ import CameraCard from '@/components/CameraCard';
 import Pagination from '@/components/Pagination';
 import { Camera as CameraTypes } from '@/types/camera';
 
-// Define types
-// interface Camera {
-//     id: string;
-//     is_active: boolean;
-//     status_message: string;
-//     // ... other camera properties
-// }
+
 
 interface UseCamerasResult {
     data: {
