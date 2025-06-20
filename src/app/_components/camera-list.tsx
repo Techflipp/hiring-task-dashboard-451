@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CameraListProps } from "@/app/_lib/types";
 
 export function CameraList({
@@ -10,16 +10,23 @@ export function CameraList({
   currentPage,
   itemsPerPage,
   searchQuery,
+  totalPages,
 }: CameraListProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
-  const totalPages = Math.ceil(total / itemsPerPage);
-
+  // Client-side search handler
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget as HTMLFormElement);
     const query = formData.get("search") as string;
-    router.push(`/dashboard/cameras?camera_name=${query}`);
+
+    // Create new URLSearchParams
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("camera_name", query);
+    params.set("page", "1"); // Reset to first page on new search
+
+    router.push(`/dashboard/cameras?${params.toString()}`);
   };
 
   return (

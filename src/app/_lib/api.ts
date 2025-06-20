@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL = "https://task-451-api.ryd.wafaicloud.com";
 
 interface GetCamerasParams {
   page: number;
@@ -12,6 +12,7 @@ export const getCameras = async ({
   cameraName,
 }: GetCamerasParams) => {
   const url = new URL(`${API_BASE_URL}/cameras/`);
+  console.log('url:', url)
   url.searchParams.append("page", page.toString());
   url.searchParams.append("size", size.toString());
 
@@ -20,6 +21,7 @@ export const getCameras = async ({
   }
 
   const response = await fetch(url.toString());
+  console.log('response:', response)
 
   if (!response.ok) {
     throw new Error("Failed to fetch cameras");

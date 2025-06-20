@@ -40,4 +40,5 @@ export interface CameraListProps {
   currentPage: number;
   itemsPerPage: number;
   searchQuery: string;
+  totalPages: number;
 }
