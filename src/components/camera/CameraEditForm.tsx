@@ -47,7 +47,7 @@ export const CameraEditForm = ({ id }: { id: string }) => {
     router.push(`/cameras/${id}`)
   }
 
-  if (isLoading) return <Skeleton className="h-48 w-full" />
+  if (isLoading) return <Skeleton className="h-48 w-full" data-testid="form-skeleton" />
   if (error)
     return (
       <Alert variant="destructive">
