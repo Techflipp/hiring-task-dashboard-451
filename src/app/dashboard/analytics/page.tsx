@@ -7,7 +7,7 @@ import {
   AnalyticsFilters,
   ResultsChart,
   ResultsTable,
-} from "@/app/_components/analytics";
+} from "@/app";
 
 export default function AnalyticsPage() {
   const [filters, setFilters] = useState({
