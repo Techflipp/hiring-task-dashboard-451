@@ -20,10 +20,9 @@ export const AnalyticsCharts = ({
   emotion?: Record<string, number>
   ethnicity?: Record<string, number>
 }) => {
-  console.log({gender,age,emotion,ethnicity})
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      {/* 🎯 Gender Chart */}
+      {/* Gender Chart */}
       {gender && (
         <div>
           <h3 className="text-lg font-semibold mb-2">Gender</h3>
@@ -41,7 +40,7 @@ export const AnalyticsCharts = ({
         </div>
       )}
 
-      {/* 🧠 Emotion */}
+      {/* Emotion */}
       {emotion && (
         <div>
           <h3 className="text-lg font-semibold mb-2">Emotion</h3>
@@ -57,7 +56,7 @@ export const AnalyticsCharts = ({
         </div>
       )}
 
-      {/* 🧓 Age */}
+      {/* Age */}
       {age && (
         <div>
           <h3 className="text-lg font-semibold mb-2">Age</h3>
@@ -73,7 +72,7 @@ export const AnalyticsCharts = ({
         </div>
       )}
 
-      {/* 🌍 Ethnicity */}
+      {/* Ethnicity */}
       {ethnicity && (
         <div>
           <h3 className="text-lg font-semibold mb-2">Ethnicity</h3>

@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/apiClient"
 import { DemographicsFormValues } from "@/lib/validators/demographicsSchema"
 import { useQueryClient, useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
 
 export const useUpsertDemographicsConfig = (cameraId: string, configId?: string) => {
   const queryClient = useQueryClient()
@@ -17,6 +18,10 @@ export const useUpsertDemographicsConfig = (cameraId: string, configId?: string)
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['camera', cameraId] })
+      toast.success("Configuration saved successfully")
     },
+    onError: (error) =>{
+      toast.error("Error Saving Configuration" + error.message)
+    }
   })
 }
