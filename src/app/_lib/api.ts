@@ -1,18 +1,17 @@
-const API_BASE_URL = "https://task-451-api.ryd.wafaicloud.com";
-
 interface GetCamerasParams {
   page: number;
   size: number;
   cameraName?: string;
 }
 
+const API_BASE_URL = "https://task-451-api.ryd.wafaicloud.com";
+
 export const getCameras = async ({
   page,
   size,
   cameraName,
 }: GetCamerasParams) => {
-  const url = new URL(`${API_BASE_URL}/cameras/`);
-  console.log('url:', url)
+  const url = new URL(`${API_BASE_URL}/cameras/`); // Note the trailing slash
   url.searchParams.append("page", page.toString());
   url.searchParams.append("size", size.toString());
 
@@ -20,16 +19,28 @@ export const getCameras = async ({
     url.searchParams.append("camera_name", cameraName);
   }
 
-  const response = await fetch(url.toString());
-  console.log('response:', response)
+  try {
+    const response = await fetch(url.toString(), {
+      headers: {
+        Accept: "application/json",
+      },
+    });
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch cameras");
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("API Error:", errorText);
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+
+    // Handle both response formats
+    return { cameras: data?.items, total: data?.total };
+  } catch (error) {
+    console.error("Fetch Error:", error);
+    throw error;
   }
-
-  return response.json();
 };
-
 export const getCameraById = async (id: string) => {
   const response = await fetch(`${API_BASE_URL}/cameras/${id}`);
 
