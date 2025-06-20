@@ -1,12 +1,11 @@
 "use client";
-
-import { useCameraDetail } from "@/hooks/useCamera";
 import { Badge } from "@/components/ui/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Alert, AlertDescription } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
+import { useCameraDetail } from "@/hooks/useCameraDetails";
 
 export const CameraDetail = ({ id }: { id: string }) => {
   const { data, isLoading, error } = useCameraDetail(id);
@@ -53,7 +52,7 @@ export const CameraDetail = ({ id }: { id: string }) => {
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {tags.map((tag: any) => (
+          {tags.map((tag) => (
             <Badge key={tag.id} style={{ backgroundColor: tag.color }}>
               {tag.name}
             </Badge>

@@ -5,12 +5,13 @@ import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { demographicsConfigSchema, DemographicsFormValues } from '@/lib/validators/demographicsSchema'
-import { useCameraDetail, useUpsertDemographicsConfig } from '@/hooks/useCamera'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Label } from '@/components/ui/Label'
 import { Button } from '@/components/ui/Button'
 import { Skeleton } from '@/components/ui/Skeleton'
+import { useCameraDetail } from '@/hooks/useCameraDetails'
+import { useUpsertDemographicsConfig } from '@/hooks/useUpsertDemographicConfig'
 
 export const DemographicsConfigForm = ({ id }: { id: string }) => {
   const router = useRouter()

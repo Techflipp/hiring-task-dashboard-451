@@ -1,8 +1,8 @@
 'use client'
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
-import { useCameraDetail, useUpdateCamera } from '@/hooks/useCamera'
 import { CameraFormValues, cameraFormSchema } from '@/lib/validators/cameraSchema'
 import { Alert, AlertDescription } from '../ui/Alert'
 import { Button } from '../ui/Button'
@@ -10,6 +10,9 @@ import { Card, CardHeader, CardTitle, CardContent } from '../ui/Card'
 import { Input } from '../ui/Input'
 import { Skeleton } from '../ui/Skeleton'
 import { Label } from '../ui/Label'
+import { useCameraDetail } from '@/hooks/useCameraDetails'
+import { useUpdateCamera } from '@/hooks/useUpdateCamera'
+import { CameraTag } from '@/types/camera.interface'
 
 export const CameraEditForm = ({ id }: { id: string }) => {
   const router = useRouter()
@@ -25,7 +28,6 @@ export const CameraEditForm = ({ id }: { id: string }) => {
     },
   })
 
-  // Populate form once data is available
   if (data && !form.getValues('name')) {
     form.reset({
       name: data.name,
@@ -36,7 +38,7 @@ export const CameraEditForm = ({ id }: { id: string }) => {
       stream_quality: data.stream_quality,
       stream_fps: data.stream_fps,
       stream_skip_frames: data.stream_skip_frames,
-      tags: data.tags?.map((t: any) => t.id),
+      tags: data.tags?.map((t: CameraTag) => t.id),
     })
   }
 
@@ -60,45 +62,31 @@ export const CameraEditForm = ({ id }: { id: string }) => {
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <Label>Name</Label>
-            <Input {...form.register('name')} />
-          </div>
-
-          <div>
-            <Label>RTSP URL</Label>
-            <Input {...form.register('rtsp_url')} />
-          </div>
-
-          <div>
-            <Label>Stream Width</Label>
-            <Input type="number" {...form.register('stream_frame_width', { valueAsNumber: true })} />
-          </div>
-
-          <div>
-            <Label>Stream Height</Label>
-            <Input type="number" {...form.register('stream_frame_height', { valueAsNumber: true })} />
-          </div>
-
-          <div>
-            <Label>Stream FPS</Label>
-            <Input type="number" {...form.register('stream_fps', { valueAsNumber: true })} />
-          </div>
-
-          <div>
-            <Label>Stream Quality</Label>
-            <Input type="number" {...form.register('stream_quality', { valueAsNumber: true })} />
-          </div>
-
-          <div>
-            <Label>Stream Max Length</Label>
-            <Input type="number" {...form.register('stream_max_length', { valueAsNumber: true })} />
-          </div>
-
-          <div>
-            <Label>Skip Frames</Label>
-            <Input type="number" {...form.register('stream_skip_frames', { valueAsNumber: true })} />
-          </div>
+          {[
+            { name: 'name', label: 'Name' },
+            { name: 'rtsp_url', label: 'RTSP URL' },
+            { name: 'stream_frame_width', label: 'Stream Width', type: 'number' },
+            { name: 'stream_frame_height', label: 'Stream Height', type: 'number' },
+            { name: 'stream_fps', label: 'Stream FPS', type: 'number' },
+            { name: 'stream_quality', label: 'Stream Quality', type: 'number' },
+            { name: 'stream_max_length', label: 'Stream Max Length', type: 'number' },
+            { name: 'stream_skip_frames', label: 'Skip Frames', type: 'number' },
+          ].map((field) => (
+            <div key={field.name}>
+              <Label>{field.label}</Label>
+              <Input
+                type={field.type || 'text'}
+                {...form.register(field.name as keyof CameraFormValues, {
+                  valueAsNumber: field.type === 'number',
+                })}
+              />
+              {form.formState.errors[field.name as keyof CameraFormValues] && (
+                <p className="text-sm text-red-600 mt-1">
+                  {form.formState.errors[field.name as keyof CameraFormValues]?.message as string}
+                </p>
+              )}
+            </div>
+          ))}
 
           <Button type="submit" disabled={updateMutation.isPending}>
             Save Changes
