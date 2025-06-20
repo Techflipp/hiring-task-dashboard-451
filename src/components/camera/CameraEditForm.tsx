@@ -73,8 +73,9 @@ export const CameraEditForm = ({ id }: { id: string }) => {
             { name: 'stream_skip_frames', label: 'Skip Frames', type: 'number' },
           ].map((field) => (
             <div key={field.name}>
-              <Label>{field.label}</Label>
+              <Label htmlFor={field.name}>{field.label}</Label>
               <Input
+              id={field.name}
                 type={field.type || 'text'}
                 {...form.register(field.name as keyof CameraFormValues, {
                   valueAsNumber: field.type === 'number',

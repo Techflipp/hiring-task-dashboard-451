@@ -2,6 +2,7 @@
  * For a detailed explanation regarding each configuration property, visit:
  * https://jestjs.io/docs/configuration
  */
+// import '@testing-library/jest-dom'
 import nextJest from "next/jest";
 
 import type {Config} from 'jest';
