@@ -4,18 +4,19 @@
 "use client";
 
 import React, { useState, useCallback } from 'react';
-import { Search, Camera, Wifi, WifiOff, Grid3X3, List, Play, RefreshCw } from 'lucide-react';
+import { Search, CameraIcon, Wifi, WifiOff, Grid3X3, List, Play, RefreshCw } from 'lucide-react';
 import { useCameras } from '@/hooks/useCameras';
 import CameraCard from '@/components/CameraCard';
 import Pagination from '@/components/Pagination';
+import { Camera } from '@/types/camera';
 
 // Define types
-interface Camera {
-    id: string;
-    is_active: boolean;
-    status_message: string;
-    // ... other camera properties
-}
+// interface Camera {
+//     id: string;
+//     is_active: boolean;
+//     status_message: string;
+//     // ... other camera properties
+// }
 
 interface UseCamerasResult {
     data: {
@@ -211,7 +212,7 @@ export default function CamerasPage() {
                             </div>
                         ) : (
                             <div className="text-center py-12">
-                                <Camera className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                                <CameraIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No cameras found</h3>
                                 <p className="text-gray-600">No cameras match your search criteria</p>
                             </div>
