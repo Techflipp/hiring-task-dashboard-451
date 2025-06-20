@@ -12,13 +12,11 @@ import {
   Button,
   Divider,
   Alert,
-  Skeleton,
   Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
 } from '@mui/material';
 import {
@@ -44,16 +42,17 @@ const CameraDetailPage: React.FC<CameraDetailPageProps> = ({ params }) => {
   useEffect(() => {
     const loadParams = async () => {
       try {
-        const { id } = await params;
-        setCameraId(id);
+        const resolvedParams = await params;
+        setCameraId(resolvedParams.id);
+        if (isLoadingParams) {
+          setIsLoadingParams(false);
+        }
       } catch (error) {
         console.error('Failed to load params:', error);
-      } finally {
-        setIsLoadingParams(false);
       }
     };
     loadParams();
-  }, [params]);
+  }, [params, isLoadingParams]);
 
   const { data: camera, isLoading, error } = useCamera(cameraId);
 
@@ -97,7 +96,7 @@ const CameraDetailPage: React.FC<CameraDetailPageProps> = ({ params }) => {
         >
           Back to Cameras
         </Button>
-        
+
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 2 }}>
           <Box>
             <Typography variant="h4" component="h1" gutterBottom>
@@ -107,7 +106,7 @@ const CameraDetailPage: React.FC<CameraDetailPageProps> = ({ params }) => {
               Camera ID: {camera.id}
             </Typography>
           </Box>
-          
+
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button
               component={Link}
@@ -140,7 +139,7 @@ const CameraDetailPage: React.FC<CameraDetailPageProps> = ({ params }) => {
                 Basic Information
               </Typography>
               <Divider sx={{ mb: 2 }} />
-              
+
               <Box sx={{ mb: 2 }}>
                 <Typography variant="subtitle2" color="text.secondary">
                   RTSP URL
@@ -179,7 +178,7 @@ const CameraDetailPage: React.FC<CameraDetailPageProps> = ({ params }) => {
                 Stream Configuration
               </Typography>
               <Divider sx={{ mb: 2 }} />
-              
+
               <TableContainer component={Paper} variant="outlined">
                 <Table size="small">
                   <TableBody>
@@ -251,9 +250,9 @@ const CameraDetailPage: React.FC<CameraDetailPageProps> = ({ params }) => {
                   {camera.demographics_config ? 'Edit Config' : 'Create Config'}
                 </Button>
               </Box>
-              
+
               <Divider sx={{ mb: 2 }} />
-              
+
               {camera.demographics_config ? (
                 <TableContainer component={Paper} variant="outlined">
                   <Table size="small">

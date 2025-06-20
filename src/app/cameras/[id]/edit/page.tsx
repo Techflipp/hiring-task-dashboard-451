@@ -149,7 +149,7 @@ const CameraEditPage: React.FC<CameraEditPageProps> = ({ params }) => {
     }
   };
 
-  const handleInputChange = (field: keyof CameraFormData, value: any) => {
+  const handleInputChange = (field: keyof CameraFormData, value: string | number | string[] | undefined) => {
     setFormData(prev => ({
       ...prev,
       [field]: value,

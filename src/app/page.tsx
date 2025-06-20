@@ -25,7 +25,7 @@ import {
   IconButton,
   ToggleButton,
   ToggleButtonGroup,
-  Alert,
+  Alert
 } from '@mui/material';
 import {
   ViewList as ListIcon,
@@ -34,7 +34,7 @@ import {
   Visibility as ViewIcon,
 } from '@mui/icons-material';
 import Link from 'next/link';
-import { useCameras, useTags } from '@/hooks/useApi';
+import { useCameras } from '@/hooks/useApi';
 import { CameraGridSkeleton, CameraTableSkeleton } from '@/components/Layout/LoadingSkeleton';
 import Grid from '@mui/material/Grid';
 
@@ -50,8 +50,6 @@ const CameraListPage: React.FC = () => {
     camera_name: searchTerm || undefined,
   });
 
-  const { data: tags } = useTags();
-
   const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
@@ -59,11 +57,6 @@ const CameraListPage: React.FC = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
     setPage(1); // Reset to first page when searching
-  };
-
-  const handlePageSizeChange = (event: any) => {
-    setPageSize(event.target.value);
-    setPage(1); // Reset to first page when changing page size
   };
 
   if (error) {
@@ -103,7 +96,11 @@ const CameraListPage: React.FC = () => {
           <Select
             value={pageSize}
             label="Items per page"
-            onChange={handlePageSizeChange}
+            onChange={(event) => {
+              const value = (event.target as { value: unknown }).value;
+              setPageSize(Number(value));
+              setPage(1);
+            }}
           >
             <MenuItem value={10}>10</MenuItem>
             <MenuItem value={20}>20</MenuItem>

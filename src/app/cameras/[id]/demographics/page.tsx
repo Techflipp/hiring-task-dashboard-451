@@ -94,7 +94,7 @@ const DemographicsPage: React.FC<DemographicsPageProps> = ({ params }) => {
 
   const { data: demographicsData, isLoading: isLoadingData, error: dataError } = useDemographicsResults(filters);
 
-  const handleFilterChange = (field: keyof DemographicsFilters, value: any) => {
+  const handleFilterChange = (field: keyof DemographicsFilters, value: string | undefined) => {
     setFilters(prev => ({
       ...prev,
       [field]: value,
@@ -194,11 +194,6 @@ const DemographicsPage: React.FC<DemographicsPageProps> = ({ params }) => {
 
   const hourlyData = Object.entries(analytics?.hourly_distribution ?? {}).map(([hour, value]) => ({
     hour: `${hour}:00`,
-    detections: value,
-  }));
-
-  const dailyData = Object.entries(analytics?.daily_distribution ?? {}).map(([date, value]) => ({
-    date,
     detections: value,
   }));
 

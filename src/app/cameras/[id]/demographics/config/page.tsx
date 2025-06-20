@@ -13,11 +13,6 @@ import {
   CircularProgress,
   Breadcrumbs,
   Link as MuiLink,
-  Slider,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
 } from '@mui/material';
 import {
   Save as SaveIcon,
@@ -161,7 +156,7 @@ const DemographicsConfigPage: React.FC<DemographicsConfigPageProps> = ({ params 
     }
   };
 
-  const handleInputChange = (field: keyof DemographicsConfigFormData, value: any) => {
+  const handleInputChange = (field: keyof DemographicsConfigFormData, value: string | number | undefined) => {
     setFormData(prev => ({
       ...prev,
       [field]: value,
