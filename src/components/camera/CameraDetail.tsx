@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
 import { useCameraDetail } from "@/hooks/useCameraDetails";
 import { EyeIcon, PencilIcon, SlidersHorizontalIcon } from "lucide-react";
+import Image from "next/image";
 
 export const CameraDetail = ({ id }: { id: string }) => {
   const { data, isLoading, error } = useCameraDetail(id);
@@ -79,7 +80,7 @@ export const CameraDetail = ({ id }: { id: string }) => {
       <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
         {/* Snapshot */}
         <div className="overflow-hidden rounded-xl border shadow-sm">
-          <img
+          <Image
             src={snapshot}
             alt={name}
             className="object-cover w-full h-full aspect-video"
