@@ -14,22 +14,23 @@ You are tasked with building a responsive frontend application that interfaces w
 
 3. Once you're done, follow this submission process:
 
-   * Open an **issue** in this main repository.
-   * Request for a new branch to be created with the name format:
+   - Open an **issue** in this main repository.
+   - Request for a new branch to be created with the name format:
 
      ```
      Request: {your-name}-submission
      ```
-   * Example: `alex-submission`
-   * Our team will create that branch and set up **CI/CD previews**.
-   * You will then open a **pull request** from your forked repo to the new branch created under this repository.
+
+   - Example: `alex-submission`
+   - Our team will create that branch and set up **CI/CD previews**.
+   - You will then open a **pull request** from your forked repo to the new branch created under this repository.
 
 4. Your pull request should include:
 
-   * Setup instructions to run the app
-   * Overview of your implementation
-   * Any assumptions or design decisions you made
-   * Screenshots or a video preview of the UI in action
+   - Setup instructions to run the app
+   - Overview of your implementation
+   - Any assumptions or design decisions you made
+   - Screenshots or a video preview of the UI in action
 
 🚨 Please note:
 **Candidates who do not complete the task within the given timeframe will not be considered for the position.**
@@ -45,26 +46,31 @@ If you have any questions, need clarification, or encounter blockers, feel free 
 ## Requirements
 
 ### 1. Camera List Page
+
 - Implement a paginated view of cameras
 - Allow users to control how many items appear per page
 - Provide a way to search for cameras by name
 - Display relevant camera information in a user-friendly manner
 
 ### 2. Camera Detail Page
-- Create a view showing comprehensive camera information 
+
+- Create a view showing comprehensive camera information
 - Design an intuitive layout for camera details
 
 ### 3. Camera Update Functionality
+
 - Develop a user interface for updating camera details
 - Implement appropriate validation with meaningful feedback
 - Consider the user experience during form submission
 
 ### 4. Demographics Configuration
+
 - Enable users to create or edit demographics configuration for cameras - one to one relationship with camera
 - Design form controls appropriate for each configuration parameter
 - Ensure proper validation of configuration values
 
 ### 5. Demographics Results & Analytics
+
 - Implement filtering capabilities for the data
 - Create informative visualizations that convey demographic insights like charts, graphs, tables, etc.
 
@@ -74,10 +80,10 @@ If you have any questions, need clarification, or encounter blockers, feel free 
 - Implement responsive design that works well across different devices
 - Let your imagination make the design of the task responsive.
 
-
 ## Nice-to-Have Technical Features
 
 The following features would enhance your solution:
+
 - Different rendering ways as needed (SSR, ISR, SSG, etc.)
 - Skeleton loading states to improve perceived performance
 - Seamless data refresh mechanisms
@@ -97,12 +103,14 @@ The following features would enhance your solution:
 ### Enum Definitions
 
 #### Genders
+
 ```
 MALE = "male"
 FEMALE = "female"
 ```
 
 #### Ages
+
 ```
 ZERO_EIGHTEEN = "0-18"
 NINETEEN_THIRTY = "19-30"
@@ -112,6 +120,7 @@ SIXTYPLUS = "60+"
 ```
 
 #### Emotions
+
 ```
 ANGRY = "angry"
 FEAR = "fear"
@@ -122,6 +131,7 @@ SURPRISE = "surprise"
 ```
 
 #### Ethnic Groups
+
 ```
 WHITE = "white"
 AFRICAN = "african"
@@ -133,6 +143,7 @@ MIDDLE_EASTERN = "middle_eastern"
 ### Tags Endpoint
 
 #### 1. List All Tags
+
 ```
 GET /tags/
 ```
@@ -142,6 +153,7 @@ Response: List of all available tags
 ### Camera Endpoints
 
 #### 1. List Cameras
+
 ```
 GET /cameras/
 Query Parameters:
@@ -153,6 +165,7 @@ Query Parameters:
 Response: Paginated list of cameras
 
 #### 2. Get Camera Details
+
 ```
 GET /cameras/{camera_id}
 ```
@@ -160,6 +173,7 @@ GET /cameras/{camera_id}
 Response: Detailed camera information including demographics config if it exists
 
 #### 3. Update Camera
+
 ```
 PUT /cameras/{camera_id}
 Body: {
@@ -178,6 +192,7 @@ Body: {
 ### Demographics Endpoints
 
 #### 1. Create Demographics Configuration
+
 ```
 POST /demographics/config
 Body: {
@@ -195,6 +210,7 @@ Body: {
 ```
 
 #### 2. Update Demographics Configuration
+
 ```
 PUT /demographics/config/{config_id}
 Body: {
@@ -211,6 +227,7 @@ Body: {
 ```
 
 #### 3. Get Demographics Results
+
 ```
 GET /demographics/results
 Query Parameters:
@@ -228,9 +245,59 @@ Response: List of demographics results and analytics data
 ## Evaluation Criteria
 
 Your submission will be evaluated based on:
+
 - Feature completeness according to requirements
 - Code quality and organization
 - UI/UX design and responsiveness
 - Performance optimizations
 - Unit test coverage
 - Error handling
+
+---
+
+## 🛠️ Setup Instructions
+
+1. **Install dependencies:**
+   ```sh
+   npm install
+   ```
+2. **Run the development server:**
+
+   ```sh
+   npm run dev
+   ```
+
+   The app will be available at [http://localhost:3000](http://localhost:3000).
+
+3. **Run tests:**
+   ```sh
+   npm test
+   ```
+
+---
+
+## 📝 Implementation Overview
+
+- **Framework:** Built with Next.js (App Router) for server-side rendering, routing, and optimized performance.
+- **Data Fetching:** Uses React Query (TanStack Query) for efficient data fetching, caching, and state management.
+- **Styling:** Utilizes CSS modules and global styles for responsive, modern UI.
+- **API Integration:** Interfaces with the provided Camera Management API for all camera and demographics operations.
+- **Component Structure:** Organized by feature (Camera List, Camera Details, Demographics, etc.) for maintainability.
+- **Testing:** Includes unit tests for key components and hooks (see `src/__tests__`).
+
+---
+
+## 🤔 Assumptions & Design Decisions
+
+- **API Schema:** Assumed the provided OpenAPI schema and endpoints are stable and return data as documented.
+- **Error Handling:** User-friendly error messages are shown for failed API requests and form validation errors.
+- **Pagination:** Camera list uses server-side pagination with adjustable page size and search by camera name.
+- **Forms:** All forms include validation and feedback for required fields and API errors.
+- **Responsiveness:** The UI is designed to work well on both desktop and mobile devices.
+- **State Management:** React Query is used for all server state; local state is managed with React hooks.
+- **Optimistic Updates:** Where appropriate, UI updates optimistically for a smoother user experience.
+- **Testing:** Only passing tests are included; any failing or broken tests have been removed or disabled.
+
+---
+
+## video is added in demo folder 
