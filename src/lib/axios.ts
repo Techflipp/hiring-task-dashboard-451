@@ -6,5 +6,5 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
-
+console.log("Submission Final Ready!");
 export default api;
