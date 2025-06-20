@@ -1,8 +1,6 @@
 
-"use server";
-import { Suspense, use } from 'react';
+import { Suspense } from 'react';
 import { Metadata } from 'next';
-import { notFound, useParams } from 'next/navigation';
 import  CameraCardSkeleton  from '@/UI/CameraCardSkeleton';
 import  Link  from 'next/link';
 import { getCameraData } from '@/lib/getCameraData';
@@ -18,7 +16,7 @@ interface CameraDetailPageProps {
 // Generate metadata for SEO
 export async function generateMetadata(paramsPromise: { params: Promise<CameraDetailPageProps> }): Promise<Metadata> {
   try {
-    const { id } = use(paramsPromise.params);
+      const { id } = await paramsPromise.params;  
     const camera = await getCameraData(id);
     
     if (!camera) {
@@ -36,7 +34,7 @@ export async function generateMetadata(paramsPromise: { params: Promise<CameraDe
         'security camera',
         'surveillance',
         camera.name,
-        ...camera.tags.map(tag => tag.name),
+        ...camera.tags.map((tag) => (tag as Tag).name),
         'live stream',
         'monitoring'
       ],
@@ -435,7 +433,7 @@ function CameraDetailClient({
 
 // Main page component
 export default async function CameraDetailPage(paramsPromise: { params: Promise<CameraDetailPageProps> }) {
-     const { id } = use(paramsPromise.params);
+       const { id } = await paramsPromise.params;  
      const initialData = await getCameraData(id);
   
   // If no data from server, still render the client component
