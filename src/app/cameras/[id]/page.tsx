@@ -1,5 +1,4 @@
 import { CameraDetail } from '@/components/camera/CameraDetail'
-import { notFound } from 'next/navigation'
 
 interface Props {
   params: Promise<{ id: string }>

@@ -1,4 +1,5 @@
 import { apiClient } from "@/lib/apiClient"
+import { AnalyticsResponse } from "@/types/analytics.interface"
 import { useQuery } from "@tanstack/react-query"
 
 export const useAnalytics = (params: Record<string, string>) => {
@@ -8,7 +9,7 @@ export const useAnalytics = (params: Record<string, string>) => {
   if(!params?.end_date?.length){
     delete params.end_date
   }
-  return useQuery({
+  return useQuery<AnalyticsResponse>({
     queryKey: ['demographics', params],
     queryFn: async () => {
       const { data } = await apiClient.get('/demographics/results', { params })
