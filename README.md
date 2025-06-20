@@ -8,8 +8,9 @@ STEPS :-
  1. Navigate to root directory of the folder.
  2. Run the command "npm install" to install all the dependencies.
  3. Run the command "npm run dev" to start the application in development mode.
+ 4. use url "http://localhost:3000" to access the application.
 
- 
+
 🚀 Overview of My Implementation
 This project implements a responsive camera management dashboard using the following stack:
 
