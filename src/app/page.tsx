@@ -1,103 +1,301 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useState } from 'react';
+import {
+  Container,
+  Typography,
+  Box,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Pagination,
+  Card,
+  CardContent,
+  Chip,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  IconButton,
+  ToggleButton,
+  ToggleButtonGroup,
+  Alert
+} from '@mui/material';
+import {
+  ViewList as ListIcon,
+  ViewModule as GridIcon,
+  Edit as EditIcon,
+  Visibility as ViewIcon,
+} from '@mui/icons-material';
+import Link from 'next/link';
+import { useCameras } from '@/hooks/useApi';
+import { CameraGridSkeleton, CameraTableSkeleton } from '@/components/Layout/LoadingSkeleton';
+import Grid from '@mui/material/Grid';
+
+const CameraListPage: React.FC = () => {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid');
+
+  const { data: camerasData, isLoading, error } = useCameras({
+    page,
+    size: pageSize,
+    camera_name: searchTerm || undefined,
+  });
+
+  const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+    setPage(1); // Reset to first page when searching
+  };
+
+  if (error) {
+    return (
+      <Container maxWidth="xl" sx={{ mt: 4 }}>
+        <Alert severity="error">
+          Failed to load cameras. Please try again later.
+        </Alert>
+      </Container>
+    );
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+      <Box sx={{ mb: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          Cameras
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Manage and monitor your camera systems
+        </Typography>
+      </Box>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      {/* Controls */}
+      <Box sx={{ mb: 3, display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+        <TextField
+          label="Search cameras"
+          variant="outlined"
+          size="small"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          sx={{ minWidth: 250 }}
+        />
+        
+        <FormControl size="small" sx={{ minWidth: 120 }}>
+          <InputLabel>Items per page</InputLabel>
+          <Select
+            value={pageSize}
+            label="Items per page"
+            onChange={(event) => {
+              const value = (event.target as { value: unknown }).value;
+              setPageSize(Number(value));
+              setPage(1);
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+            <MenuItem value={10}>10</MenuItem>
+            <MenuItem value={20}>20</MenuItem>
+            <MenuItem value={50}>50</MenuItem>
+            <MenuItem value={100}>100</MenuItem>
+          </Select>
+        </FormControl>
+
+        <ToggleButtonGroup
+          value={viewMode}
+          exclusive
+          onChange={(event, newViewMode) => {
+            if (newViewMode !== null) {
+              setViewMode(newViewMode);
+            }
+          }}
+          size="small"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          <ToggleButton value="grid">
+            <GridIcon />
+          </ToggleButton>
+          <ToggleButton value="table">
+            <ListIcon />
+          </ToggleButton>
+        </ToggleButtonGroup>
+      </Box>
+
+      {/* Content */}
+      {isLoading ? (
+        viewMode === 'grid' ? <CameraGridSkeleton /> : <CameraTableSkeleton />
+      ) : (
+        <>
+          {viewMode === 'grid' ? (
+            <Grid container spacing={3}>
+              {camerasData?.items.map((camera) => (
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={camera.id}>
+                  <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Typography variant="h6" component="h2" gutterBottom>
+                        {camera.name}
+                      </Typography>
+                      
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                        {camera.rtsp_url}
+                      </Typography>
+
+                      <Box sx={{ mb: 2 }}>
+                        {camera.stream_frame_width && camera.stream_frame_height && (
+                          <Typography variant="body2" color="text.secondary">
+                            Resolution: {camera.stream_frame_width}×{camera.stream_frame_height}
+                          </Typography>
+                        )}
+                        {camera.stream_fps && (
+                          <Typography variant="body2" color="text.secondary">
+                            FPS: {camera.stream_fps}
+                          </Typography>
+                        )}
+                      </Box>
+
+                      {camera.tags && camera.tags.length > 0 && (
+                        <Box sx={{ mb: 2, display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {camera.tags.map((tag) => (
+                            <Chip
+                              key={tag.id}
+                              label={tag.name}
+                              size="small"
+                              variant="outlined"
+                            />
+                          ))}
+                        </Box>
+                      )}
+
+                      <Box sx={{ mt: 'auto', display: 'flex', gap: 1 }}>
+                        <Button
+                          component={Link}
+                          href={`/cameras/${camera.id}`}
+                          variant="outlined"
+                          size="small"
+                          startIcon={<ViewIcon />}
+                          fullWidth
+                        >
+                          View Details
+                        </Button>
+                        <Button
+                          component={Link}
+                          href={`/cameras/${camera.id}/edit`}
+                          variant="contained"
+                          size="small"
+                          startIcon={<EditIcon />}
+                          fullWidth
+                        >
+                          Edit
+                        </Button>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>RTSP URL</TableCell>
+                    <TableCell>Resolution</TableCell>
+                    <TableCell>FPS</TableCell>
+                    <TableCell>Tags</TableCell>
+                    <TableCell>Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {camerasData?.items.map((camera) => (
+                    <TableRow key={camera.id}>
+                      <TableCell>
+                        <Typography variant="subtitle2">{camera.name}</Typography>
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2" sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {camera.rtsp_url}
+                        </Typography>
+                      </TableCell>
+                      <TableCell>
+                        {camera.stream_frame_width && camera.stream_frame_height
+                          ? `${camera.stream_frame_width}×${camera.stream_frame_height}`
+                          : 'N/A'
+                        }
+                      </TableCell>
+                      <TableCell>{camera.stream_fps || 'N/A'}</TableCell>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {camera.tags?.map((tag) => (
+                            <Chip
+                              key={tag.id}
+                              label={tag.name}
+                              size="small"
+                              variant="outlined"
+                            />
+                          ))}
+                        </Box>
+                      </TableCell>
+                      <TableCell>
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <IconButton
+                            component={Link}
+                            href={`/cameras/${camera.id}`}
+                            size="small"
+                            color="primary"
+                          >
+                            <ViewIcon />
+                          </IconButton>
+                          <IconButton
+                            component={Link}
+                            href={`/cameras/${camera.id}/edit`}
+                            size="small"
+                            color="secondary"
+                          >
+                            <EditIcon />
+                          </IconButton>
+                        </Box>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+
+          {/* Pagination */}
+          {camerasData && camerasData.pages > 1 && (
+            <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
+              <Pagination
+                count={camerasData.pages}
+                page={page}
+                onChange={handlePageChange}
+                color="primary"
+                showFirstButton
+                showLastButton
+              />
+            </Box>
+          )}
+
+          {/* Results info */}
+          {camerasData && (
+            <Box sx={{ mt: 2, textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary">
+                Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, camerasData.total)} of {camerasData.total} cameras
+              </Typography>
+            </Box>
+          )}
+        </>
+      )}
+    </Container>
   );
-}
+};
+
+export default CameraListPage;
