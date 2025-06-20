@@ -80,11 +80,11 @@ export function useDemographicsConfigUpdate() {
 
       return updatedConfig;
     },
-    onSuccess: (data, variables) => {
+    onSuccess: () => {
       enqueueSnackbar("Demographics configuration updated successfully!", {
         variant: "success",
       });
-      // Invalidate camera query to refresh the demographics config
+
       queryClient.invalidateQueries({
         queryKey: ["camera"],
       });

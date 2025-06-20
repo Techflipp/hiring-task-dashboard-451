@@ -46,10 +46,14 @@ export default function CameraListPage() {
           <CameraSkelton pageSize={pageSize} />
         ) : (
           <>
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
               {data?.items.map((camera) => (
-                <Link href={`/cameras/${camera.id}`} key={camera.id}>
-                  <div className="rounded-2xl border border-gray-800 bg-gray-900 p-6 shadow-lg transition-transform hover:-translate-y-1 hover:shadow-xl">
+                <Link
+                  href={`/cameras/${camera.id}`}
+                  key={camera.id}
+                  className="h-full"
+                >
+                  <div className="flex flex-col h-full rounded-2xl border border-gray-800 bg-gray-900 p-6 shadow-lg transition-transform hover:-translate-y-1 hover:shadow-xl">
                     <div className="mb-4 flex items-center justify-between">
                       <h2
                         className={`text-xl font-bold ${

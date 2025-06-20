@@ -28,7 +28,6 @@ export function useCameras({ page, size, cameraName }: UseCamerasParams) {
         enqueueSnackbar("Error loading cameras. Please try again later.", {
           variant: "error",
         });
-        console.log(error)
         throw error;
       }
 
