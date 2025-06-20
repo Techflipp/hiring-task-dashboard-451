@@ -3,6 +3,18 @@ import { useSnackbar } from "notistack";
 import { api } from "@/services/api/api";
 import type { components } from "@/services/api/types";
 
+interface ApiError {
+  data?: {
+    detail?: Array<{
+      msg: string;
+      loc: (string | number)[];
+      type: string;
+    }>;
+  };
+  status?: number;
+  statusText?: string;
+}
+
 export function useDemographicsConfigCreate() {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
@@ -32,13 +44,11 @@ export function useDemographicsConfigCreate() {
         queryKey: ["camera", variables.camera_id],
       });
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       console.error("Create error:", error);
       if (error.data?.detail) {
         const validationErrors = error.data.detail;
-        const errorMessages = validationErrors
-          .map((err: any) => err.msg)
-          .join(", ");
+        const errorMessages = validationErrors.map((err) => err.msg).join(", ");
         enqueueSnackbar(`Validation error: ${errorMessages}`, {
           variant: "error",
         });
@@ -89,13 +99,11 @@ export function useDemographicsConfigUpdate() {
         queryKey: ["camera"],
       });
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       console.error("Update error:", error);
       if (error.data?.detail) {
         const validationErrors = error.data.detail;
-        const errorMessages = validationErrors
-          .map((err: any) => err.msg)
-          .join(", ");
+        const errorMessages = validationErrors.map((err) => err.msg).join(", ");
         enqueueSnackbar(`Validation error: ${errorMessages}`, {
           variant: "error",
         });

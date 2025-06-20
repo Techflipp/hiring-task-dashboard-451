@@ -9,11 +9,11 @@ type Props = {
 };
 
 const Notistack = ({ children }: Props) => {
-  const notistackRef = React.useRef<SnackbarProvider>();
+  const notistackRef = React.useRef<SnackbarProvider>(null);
 
   return (
     <SnackbarProvider
-      ref={notistackRef as any}
+      ref={notistackRef}
       variant="default"
       maxSnack={5}
       preventDuplicate

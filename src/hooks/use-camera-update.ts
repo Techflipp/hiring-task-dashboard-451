@@ -36,13 +36,15 @@ export function useCameraUpdate() {
       });
       queryClient.invalidateQueries({ queryKey: ["cameras"] });
     },
-    onError: (error: any) => {
+    onError: (
+      error: Error & { data?: components["schemas"]["HTTPValidationError"] }
+    ) => {
       console.error("Update error:", error);
       if (error.data?.detail) {
         // Handle validation errors from API
         const validationErrors = error.data.detail;
         const errorMessages = validationErrors
-          .map((err: any) => err.msg)
+          .map((err: components["schemas"]["ValidationError"]) => err.msg)
           .join(", ");
         enqueueSnackbar(`Validation error: ${errorMessages}`, {
           variant: "error",

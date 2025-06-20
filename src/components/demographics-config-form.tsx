@@ -299,13 +299,15 @@ export function DemographicsConfigForm({
                   <input
                     {...register("save_interval")}
                     type="number"
-                    step="0.1"
+                    step="1"
+                    min="300"
+                    max="1800"
                     className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.save_interval
                         ? "border-red-500"
                         : "border-gray-600"
                     }`}
-                    placeholder="Time interval between saves"
+                    placeholder="300 to 1800 seconds"
                     disabled={isLoading}
                   />
                   {errors.save_interval && (
@@ -315,7 +317,7 @@ export function DemographicsConfigForm({
                   )}
                   <p className="text-xs text-gray-400 mt-1">
                     Time interval in seconds between saving demographics data
-                    batches
+                    batches (300-1800 seconds)
                   </p>
                 </div>
 

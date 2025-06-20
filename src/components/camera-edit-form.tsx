@@ -9,8 +9,10 @@ import { api } from "@/services/api/api";
 import { components } from "@/services/api/types";
 import { X, Save, RotateCcw } from "lucide-react";
 import { cameraUpdateSchema } from "@/services/schema/camera-update.schema";
+import type { InferType } from "yup";
 
 type CameraDetail = components["schemas"]["CameraDetail"];
+type CameraUpdateData = InferType<typeof cameraUpdateSchema>;
 
 interface CameraEditFormProps {
   camera: CameraDetail;
@@ -42,7 +44,7 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
   });
 
   const updateCameraMutation = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: CameraUpdateData) => {
       const { data: updatedCamera, error } = await api.PUT(
         "/cameras/{camera_id}",
         {
@@ -80,7 +82,7 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
     },
   });
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: CameraUpdateData) => {
     setIsSubmitting(true);
     updateCameraMutation.mutate(data);
   };

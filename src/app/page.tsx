@@ -107,7 +107,7 @@ export default function Home() {
               description:
                 "Monitor your cameras in real-time with advanced security features.",
             },
-          ].map((feature, index) => (
+          ].map((feature) => (
             <div
               key={feature.title}
               className="p-6 rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:-translate-y-1 transition-transform duration-200"

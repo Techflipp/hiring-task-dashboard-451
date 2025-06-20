@@ -55,8 +55,8 @@ export const demographicsConfigSchema = yup.object({
     .nullable()
     .optional()
     .transform((value) => (isNaN(value) || value === "" ? null : value))
-    .min(0.1, "Save interval must be at least 0.1 seconds")
-    .max(3600, "Save interval must be at most 3600 seconds"),
+    .min(300, "Save interval must be at least 300 seconds (5 minutes)")
+    .max(1800, "Save interval must be at most 1800 seconds (30 minutes)"),
   frame_skip_interval: yup
     .number()
     .nullable()
