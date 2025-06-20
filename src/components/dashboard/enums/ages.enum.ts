@@ -1,0 +1,7 @@
+export enum AgeGroup {
+  ZERO_EIGHTEEN = "0-18",
+  NINETEEN_THIRTY = "19-30",
+  THIRTYONE_FORTYFIVE = "31-45",
+  FORTYSIX_SIXTY = "46-60",
+  SIXTYPLUS = "60+",
+}

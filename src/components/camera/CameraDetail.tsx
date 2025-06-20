@@ -35,15 +35,18 @@ export const CameraDetail = ({ id }: { id: string }) => {
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
           {name}
-          <Button onClick={() => router.push(`/cameras/${id}/edit`)}>
+         <div>
+           <Button onClick={() => router.push(`/cameras/${id}/edit`)} className="mr-2">
             Edit Camera
           </Button>
           <Button onClick={() => router.push(`/cameras/${id}/configure`)}>
             Configure
           </Button>
+         </div>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <div className="flex flex-col gap-4 p-4">
+        <CardContent className="space-y-2">
         <img src={snapshot} alt={name} className="w-full rounded-md border" />
 
         <div className="space-y-1">
@@ -72,6 +75,8 @@ export const CameraDetail = ({ id }: { id: string }) => {
           Updated: {new Date(updated_at).toLocaleString()}
         </p>
       </CardContent>
+      <Button onClick={()=> router.push(`/cameras/${id}/analytics`)}>Analytics</Button>
+      </div>
     </Card>
   );
 };

@@ -13,16 +13,35 @@ import { Button } from "../ui/Button";
 import { AnalyticsCharts } from "./ResultsChart";
 import { DemographicsTable } from "./DemographicTable";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { ResponsiveContainer } from "recharts";
+import { Skeleton } from "../ui/Skeleton";
+import { Gender } from "./enums/genders.enum";
+import { AgeGroup } from "./enums/ages.enum";
+import { Emotions } from "./enums/emotions.enum";
+import { EthnicsGroup } from "./enums/ethnics.enum";
 
-const genders = ["male", "female"];
-const ages = ["0-18", "19-30", "31-45", "46-60", "60+"];
-const emotions = ["angry", "fear", "happy", "neutral", "sad", "surprise"];
+const genders = [Gender.FEMALE, Gender.MALE];
+const ages = [
+  AgeGroup.ZERO_EIGHTEEN,
+  AgeGroup.NINETEEN_THIRTY,
+  AgeGroup.THIRTYONE_FORTYFIVE,
+  AgeGroup.FORTYSIX_SIXTY,
+  AgeGroup.SIXTYPLUS,
+];
+const emotions = [
+  Emotions.ANGRY,
+  Emotions.FEAR,
+  Emotions.HAPPY,
+  Emotions.NEUTRAL,
+  Emotions.SAD,
+  Emotions.SURPRISE,
+];
 const ethnicities = [
-  "white",
-  "african",
-  "south_asian",
-  "east_asian",
-  "middle_eastern",
+  EthnicsGroup.WHITE,
+  EthnicsGroup.AFRICAN,
+  EthnicsGroup.EAST_ASIAN,
+  EthnicsGroup.MIDDLE_EASTERN,
+  EthnicsGroup.SOUTH_ASIAN,
 ];
 
 interface Filters {
@@ -46,17 +65,17 @@ export const DemographicsAnalyticsDashboard = ({
     ethnicity: "",
     start_date: "",
     end_date: "",
-  }
+  };
   const [filters, setFilters] = useState<Filters>(initState);
 
   const { data, isLoading, error, refetch } = useAnalytics({
     camera_id: cameraId,
     ...filters,
   });
-  const handleClear=()=> {
-    setFilters(()=> initState);
-    refetch()
-  }
+  const handleClear = () => {
+    setFilters(() => initState);
+    refetch();
+  };
 
   const handleChange = (key: keyof Filters, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -151,14 +170,26 @@ export const DemographicsAnalyticsDashboard = ({
 
         <div className="col-span-full flex justify-end">
           <Button onClick={() => refetch()}>Apply Filters</Button>
-          <Button className="bg-orange-400 ml-2" onClick={() => handleClear()}>Clear</Button>
+          <Button className="bg-orange-400 ml-2" onClick={() => handleClear()}>
+            Clear
+          </Button>
         </div>
       </div>
 
       {/* 📊 Analytics Results */}
-      {isLoading && <p>Loading analytics...</p>}
+      {isLoading && (
+        <>
+          {[
+            ...Array(4).map((v, i) => (
+              <ResponsiveContainer width="100%" height={300} key={i}>
+                <Skeleton className="w-full h-full" />
+              </ResponsiveContainer>
+            )),
+          ]}
+        </>
+      )}
       {error && <p className="text-red-500">Error loading data</p>}
-      {(data?.analytics && !isLoading)  && (
+      {data?.analytics && !isLoading && (
         <div className="space-y-6">
           <AnalyticsCharts
             gender={data.analytics.gender_distribution}
@@ -168,11 +199,9 @@ export const DemographicsAnalyticsDashboard = ({
           />
         </div>
       )}
-      {(data?.items && !isLoading)  && (
+      {data?.items && !isLoading && (
         <div className="space-y-6">
-          <DemographicsTable
-            items={data.items}
-          />
+          <DemographicsTable items={data.items} />
         </div>
       )}
     </div>
