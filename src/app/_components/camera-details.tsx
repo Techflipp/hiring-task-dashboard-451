@@ -95,14 +95,14 @@ export function CameraDetails({ camera }: CameraDetailsProps) {
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end">
+        {/* <div className="mt-6 flex justify-end">
           <Link
             href={`/dashboard/cameras/${camera.id}/edit`}
             className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Edit Camera
           </Link>
-        </div>
+        </div> */}
       </div>
     </div>
   );
