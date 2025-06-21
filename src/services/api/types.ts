@@ -1,0 +1,797 @@
+export interface paths {
+    "/tags/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get All Tags
+         * @description Get all tags.
+         */
+        get: operations["get_all_tags_tags__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cameras/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get All Cameras
+         * @description Get all cameras with pagination.
+         *     Use page and size query parameters to control pagination.
+         */
+        get: operations["get_all_cameras_cameras__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/cameras/{camera_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Camera
+         * @description Get a specific camera by ID with its demographics config.
+         */
+        get: operations["get_camera_cameras__camera_id__get"];
+        /**
+         * Update Camera
+         * @description Update a camera.
+         */
+        put: operations["update_camera_cameras__camera_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/demographics/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create Demographics Config
+         * @description Create a demographics configuration for a camera if it doesn't already have one.
+         */
+        post: operations["create_demographics_config_demographics_config_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/demographics/config/{config_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Update Demographics Config
+         * @description Update a demographics configuration.
+         */
+        put: operations["update_demographics_config_demographics_config__config_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/demographics/results": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Demographics Results
+         * @description Get demographics results with optional filters and pagination.
+         *     Also returns analytics for the filtered data.
+         */
+        get: operations["get_demographics_results_demographics_results_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Root */
+        get: operations["root__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+}
+export type webhooks = Record<string, never>;
+export interface components {
+    schemas: {
+        /**
+         * AgeEnum
+         * @enum {string}
+         */
+        AgeEnum: AgeEnum;
+        /** Analytics */
+        Analytics: {
+            /** Gender Distribution */
+            gender_distribution: {
+                [key: string]: number;
+            };
+            /** Age Distribution */
+            age_distribution: {
+                [key: string]: number;
+            };
+            /** Emotion Distribution */
+            emotion_distribution: {
+                [key: string]: number;
+            };
+            /** Ethnicity Distribution */
+            ethnicity_distribution: {
+                [key: string]: number;
+            };
+            /** Total Count */
+            total_count: number;
+        };
+        /** Camera */
+        Camera: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Rtsp Url */
+            rtsp_url: string;
+            /** Tags */
+            tags: components["schemas"]["Tag"][];
+            /** Is Active */
+            is_active: boolean;
+            /** Status Message */
+            status_message: string;
+            /** Snapshot */
+            snapshot: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** CameraDetail */
+        CameraDetail: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Rtsp Url */
+            rtsp_url: string;
+            /** Tags */
+            tags: components["schemas"]["Tag"][];
+            /** Is Active */
+            is_active: boolean;
+            /** Status Message */
+            status_message: string;
+            /** Snapshot */
+            snapshot: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            /** Stream Frame Width */
+            stream_frame_width: number;
+            /** Stream Frame Height */
+            stream_frame_height: number;
+            /** Stream Max Length */
+            stream_max_length: number;
+            /** Stream Quality */
+            stream_quality: number;
+            /** Stream Fps */
+            stream_fps: number;
+            /** Stream Skip Frames */
+            stream_skip_frames: number;
+            demographics_config: components["schemas"]["DemographicsConfig"] | null;
+        };
+        /** CameraUpdate */
+        CameraUpdate: {
+            /** Name */
+            name: string;
+            /** Rtsp Url */
+            rtsp_url: string;
+            /**
+             * Stream Frame Width
+             * @description Width of the resized frame in pixels (1-2560)
+             */
+            stream_frame_width?: number | null;
+            /**
+             * Stream Frame Height
+             * @description Height of the resized frame in pixels (1-2560)
+             */
+            stream_frame_height?: number | null;
+            /**
+             * Stream Max Length
+             * @description Maximum frames to keep in Redis stream (0 = unlimited)
+             */
+            stream_max_length?: number | null;
+            /**
+             * Stream Quality
+             * @description JPEG compression quality (80-100), percentage of original stream quality
+             */
+            stream_quality?: number | null;
+            /**
+             * Stream Fps
+             * @description Target frames per second to stream to Redis (1-120)
+             */
+            stream_fps?: number | null;
+            /**
+             * Stream Skip Frames
+             * @description Number of frames to skip between captures (0 = no skipping)
+             */
+            stream_skip_frames?: number | null;
+            /** Tags */
+            tags?: string[] | null;
+        };
+        /** DemographicsConfig */
+        DemographicsConfig: {
+            /**
+             * Track History Max Length
+             * @description Maximum number of detection records to keep for tracking one person
+             */
+            track_history_max_length?: number | null;
+            /**
+             * Exit Threshold
+             * @description Time in seconds to wait after losing sight of a person before considering them as exited
+             */
+            exit_threshold?: number | null;
+            /**
+             * Min Track Duration
+             * @description Minimum track duration in seconds before considering a person for demographics analysis
+             */
+            min_track_duration?: number | null;
+            /**
+             * Detection Confidence Threshold
+             * @description Minimum confidence threshold for person detection (0.1 to 1.0)
+             */
+            detection_confidence_threshold?: number | null;
+            /**
+             * Demographics Confidence Threshold
+             * @description Minimum confidence threshold for demographics classification (0.1 to 1.0)
+             */
+            demographics_confidence_threshold?: number | null;
+            /**
+             * Min Track Updates
+             * @description Minimum number of successful detections required before saving demographics data to database
+             */
+            min_track_updates?: number | null;
+            /**
+             * Box Area Threshold
+             * @description Minimum bounding box area threshold relative to frame size (determines minimum person size for analysis)
+             */
+            box_area_threshold?: number | null;
+            /**
+             * Save Interval
+             * @description Time interval in seconds between saving demographics data batches
+             */
+            save_interval?: number | null;
+            /**
+             * Frame Skip Interval
+             * @description Time interval in seconds between processing frames (higher values reduce processing load)
+             */
+            frame_skip_interval?: number | null;
+            /** Id */
+            id: string;
+            /** Camera Id */
+            camera_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** DemographicsConfigCreate */
+        DemographicsConfigCreate: {
+            /**
+             * Track History Max Length
+             * @description Maximum number of detection records to keep for tracking one person
+             */
+            track_history_max_length?: number | null;
+            /**
+             * Exit Threshold
+             * @description Time in seconds to wait after losing sight of a person before considering them as exited
+             */
+            exit_threshold?: number | null;
+            /**
+             * Min Track Duration
+             * @description Minimum track duration in seconds before considering a person for demographics analysis
+             */
+            min_track_duration?: number | null;
+            /**
+             * Detection Confidence Threshold
+             * @description Minimum confidence threshold for person detection (0.1 to 1.0)
+             */
+            detection_confidence_threshold?: number | null;
+            /**
+             * Demographics Confidence Threshold
+             * @description Minimum confidence threshold for demographics classification (0.1 to 1.0)
+             */
+            demographics_confidence_threshold?: number | null;
+            /**
+             * Min Track Updates
+             * @description Minimum number of successful detections required before saving demographics data to database
+             */
+            min_track_updates?: number | null;
+            /**
+             * Box Area Threshold
+             * @description Minimum bounding box area threshold relative to frame size (determines minimum person size for analysis)
+             */
+            box_area_threshold?: number | null;
+            /**
+             * Save Interval
+             * @description Time interval in seconds between saving demographics data batches
+             */
+            save_interval?: number | null;
+            /**
+             * Frame Skip Interval
+             * @description Time interval in seconds between processing frames (higher values reduce processing load)
+             */
+            frame_skip_interval?: number | null;
+            /** Camera Id */
+            camera_id: string;
+        };
+        /** DemographicsConfigUpdate */
+        DemographicsConfigUpdate: {
+            /**
+             * Track History Max Length
+             * @description Maximum number of detection records to keep for tracking one person
+             */
+            track_history_max_length?: number | null;
+            /**
+             * Exit Threshold
+             * @description Time in seconds to wait after losing sight of a person before considering them as exited
+             */
+            exit_threshold?: number | null;
+            /**
+             * Min Track Duration
+             * @description Minimum track duration in seconds before considering a person for demographics analysis
+             */
+            min_track_duration?: number | null;
+            /**
+             * Detection Confidence Threshold
+             * @description Minimum confidence threshold for person detection (0.1 to 1.0)
+             */
+            detection_confidence_threshold?: number | null;
+            /**
+             * Demographics Confidence Threshold
+             * @description Minimum confidence threshold for demographics classification (0.1 to 1.0)
+             */
+            demographics_confidence_threshold?: number | null;
+            /**
+             * Min Track Updates
+             * @description Minimum number of successful detections required before saving demographics data to database
+             */
+            min_track_updates?: number | null;
+            /**
+             * Box Area Threshold
+             * @description Minimum bounding box area threshold relative to frame size (determines minimum person size for analysis)
+             */
+            box_area_threshold?: number | null;
+            /**
+             * Save Interval
+             * @description Time interval in seconds between saving demographics data batches
+             */
+            save_interval?: number | null;
+            /**
+             * Frame Skip Interval
+             * @description Time interval in seconds between processing frames (higher values reduce processing load)
+             */
+            frame_skip_interval?: number | null;
+        };
+        /** DemographicsResult */
+        DemographicsResult: {
+            /** Count */
+            count: number;
+            gender: components["schemas"]["GenderEnum"];
+            age: components["schemas"]["AgeEnum"];
+            emotion: components["schemas"]["EmotionEnum"];
+            ethnicity: components["schemas"]["EthnicGroupEnum"];
+            /** Id */
+            id: string;
+            /** Config Id */
+            config_id: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** DemographicsResultsResponse */
+        DemographicsResultsResponse: {
+            /** Items */
+            items: components["schemas"]["DemographicsResult"][];
+            analytics: components["schemas"]["Analytics"];
+        };
+        /**
+         * EmotionEnum
+         * @enum {string}
+         */
+        EmotionEnum: EmotionEnum;
+        /**
+         * EthnicGroupEnum
+         * @enum {string}
+         */
+        EthnicGroupEnum: EthnicGroupEnum;
+        /**
+         * GenderEnum
+         * @enum {string}
+         */
+        GenderEnum: GenderEnum;
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
+        /** Page[Camera] */
+        Page_Camera_: {
+            /** Items */
+            items: components["schemas"]["Camera"][];
+            /** Total */
+            total: number | null;
+            /** Page */
+            page: number | null;
+            /** Size */
+            size: number | null;
+            /** Pages */
+            pages?: number | null;
+        };
+        /** Tag */
+        Tag: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Color */
+            color: string;
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
+        };
+    };
+    responses: never;
+    parameters: never;
+    requestBodies: never;
+    headers: never;
+    pathItems: never;
+}
+export type $defs = Record<string, never>;
+export interface operations {
+    get_all_tags_tags__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Tag"][];
+                };
+            };
+        };
+    };
+    get_all_cameras_cameras__get: {
+        parameters: {
+            query?: {
+                camera_name?: string;
+                /** @description Page number */
+                page?: number;
+                /** @description Page size */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Page_Camera_"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_camera_cameras__camera_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                camera_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CameraDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_camera_cameras__camera_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                camera_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CameraUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CameraDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_demographics_config_demographics_config_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DemographicsConfigCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DemographicsConfig"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_demographics_config_demographics_config__config_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                config_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DemographicsConfigUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DemographicsConfig"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_demographics_results_demographics_results_get: {
+        parameters: {
+            query: {
+                camera_id: string;
+                gender?: string | null;
+                age?: string | null;
+                emotion?: string | null;
+                ethnicity?: string | null;
+                start_date?: string | null;
+                end_date?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DemographicsResultsResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    root__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+        };
+    };
+}
+export enum AgeEnum {
+    Value0_18 = "0-18",
+    Value19_30 = "19-30",
+    Value31_45 = "31-45",
+    Value46_60 = "46-60",
+    Value60Plus = "60+"
+}
+export enum EmotionEnum {
+    angry = "angry",
+    fear = "fear",
+    happy = "happy",
+    neutral = "neutral",
+    sad = "sad",
+    surprise = "surprise"
+}
+export enum EthnicGroupEnum {
+    white = "white",
+    african = "african",
+    south_asian = "south_asian",
+    east_asian = "east_asian",
+    middle_eastern = "middle_eastern"
+}
+export enum GenderEnum {
+    male = "male",
+    female = "female"
+}

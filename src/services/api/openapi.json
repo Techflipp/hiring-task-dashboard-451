@@ -1,0 +1,1444 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Camera Management API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/tags/": {
+      "get": {
+        "tags": [
+          "tags"
+        ],
+        "summary": "Get All Tags",
+        "description": "Get all tags.",
+        "operationId": "get_all_tags_tags__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Tag"
+                  },
+                  "type": "array",
+                  "title": "Response Get All Tags Tags  Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cameras/": {
+      "get": {
+        "tags": [
+          "cameras"
+        ],
+        "summary": "Get All Cameras",
+        "description": "Get all cameras with pagination.\nUse page and size query parameters to control pagination.",
+        "operationId": "get_all_cameras_cameras__get",
+        "parameters": [
+          {
+            "name": "camera_name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "",
+              "title": "Camera Name"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Page number",
+              "default": 1,
+              "title": "Page"
+            },
+            "description": "Page number"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "description": "Page size",
+              "default": 50,
+              "title": "Size"
+            },
+            "description": "Page size"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Page_Camera_"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cameras/{camera_id}": {
+      "get": {
+        "tags": [
+          "cameras"
+        ],
+        "summary": "Get Camera",
+        "description": "Get a specific camera by ID with its demographics config.",
+        "operationId": "get_camera_cameras__camera_id__get",
+        "parameters": [
+          {
+            "name": "camera_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Camera Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CameraDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "cameras"
+        ],
+        "summary": "Update Camera",
+        "description": "Update a camera.",
+        "operationId": "update_camera_cameras__camera_id__put",
+        "parameters": [
+          {
+            "name": "camera_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Camera Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CameraUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CameraDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demographics/config": {
+      "post": {
+        "tags": [
+          "demographics"
+        ],
+        "summary": "Create Demographics Config",
+        "description": "Create a demographics configuration for a camera if it doesn't already have one.",
+        "operationId": "create_demographics_config_demographics_config_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DemographicsConfigCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemographicsConfig"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demographics/config/{config_id}": {
+      "put": {
+        "tags": [
+          "demographics"
+        ],
+        "summary": "Update Demographics Config",
+        "description": "Update a demographics configuration.",
+        "operationId": "update_demographics_config_demographics_config__config_id__put",
+        "parameters": [
+          {
+            "name": "config_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Config Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DemographicsConfigUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemographicsConfig"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/demographics/results": {
+      "get": {
+        "tags": [
+          "demographics"
+        ],
+        "summary": "Get Demographics Results",
+        "description": "Get demographics results with optional filters and pagination.\nAlso returns analytics for the filtered data.",
+        "operationId": "get_demographics_results_demographics_results_get",
+        "parameters": [
+          {
+            "name": "camera_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Camera Id"
+            }
+          },
+          {
+            "name": "gender",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Gender"
+            }
+          },
+          {
+            "name": "age",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Age"
+            }
+          },
+          {
+            "name": "emotion",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Emotion"
+            }
+          },
+          {
+            "name": "ethnicity",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Ethnicity"
+            }
+          },
+          {
+            "name": "start_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Start Date"
+            }
+          },
+          {
+            "name": "end_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "End Date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DemographicsResultsResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Root",
+        "operationId": "root__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgeEnum": {
+        "type": "string",
+        "enum": [
+          "0-18",
+          "19-30",
+          "31-45",
+          "46-60",
+          "60+"
+        ],
+        "title": "AgeEnum"
+      },
+      "Analytics": {
+        "properties": {
+          "gender_distribution": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Gender Distribution"
+          },
+          "age_distribution": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Age Distribution"
+          },
+          "emotion_distribution": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Emotion Distribution"
+          },
+          "ethnicity_distribution": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "type": "object",
+            "title": "Ethnicity Distribution"
+          },
+          "total_count": {
+            "type": "integer",
+            "title": "Total Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "gender_distribution",
+          "age_distribution",
+          "emotion_distribution",
+          "ethnicity_distribution",
+          "total_count"
+        ],
+        "title": "Analytics"
+      },
+      "Camera": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "rtsp_url": {
+            "type": "string",
+            "title": "Rtsp Url"
+          },
+          "tags": {
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            },
+            "type": "array",
+            "title": "Tags"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "status_message": {
+            "type": "string",
+            "title": "Status Message"
+          },
+          "snapshot": {
+            "type": "string",
+            "title": "Snapshot"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "rtsp_url",
+          "tags",
+          "is_active",
+          "status_message",
+          "snapshot",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "Camera"
+      },
+      "CameraDetail": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "rtsp_url": {
+            "type": "string",
+            "title": "Rtsp Url"
+          },
+          "tags": {
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            },
+            "type": "array",
+            "title": "Tags"
+          },
+          "is_active": {
+            "type": "boolean",
+            "title": "Is Active"
+          },
+          "status_message": {
+            "type": "string",
+            "title": "Status Message"
+          },
+          "snapshot": {
+            "type": "string",
+            "title": "Snapshot"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "stream_frame_width": {
+            "type": "integer",
+            "title": "Stream Frame Width"
+          },
+          "stream_frame_height": {
+            "type": "integer",
+            "title": "Stream Frame Height"
+          },
+          "stream_max_length": {
+            "type": "integer",
+            "title": "Stream Max Length"
+          },
+          "stream_quality": {
+            "type": "integer",
+            "title": "Stream Quality"
+          },
+          "stream_fps": {
+            "type": "integer",
+            "title": "Stream Fps"
+          },
+          "stream_skip_frames": {
+            "type": "integer",
+            "title": "Stream Skip Frames"
+          },
+          "demographics_config": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DemographicsConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "rtsp_url",
+          "tags",
+          "is_active",
+          "status_message",
+          "snapshot",
+          "created_at",
+          "updated_at",
+          "stream_frame_width",
+          "stream_frame_height",
+          "stream_max_length",
+          "stream_quality",
+          "stream_fps",
+          "stream_skip_frames",
+          "demographics_config"
+        ],
+        "title": "CameraDetail"
+      },
+      "CameraUpdate": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "rtsp_url": {
+            "type": "string",
+            "title": "Rtsp Url"
+          },
+          "stream_frame_width": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2560,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stream Frame Width",
+            "description": "Width of the resized frame in pixels (1-2560)"
+          },
+          "stream_frame_height": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 2560,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stream Frame Height",
+            "description": "Height of the resized frame in pixels (1-2560)"
+          },
+          "stream_max_length": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 10000,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stream Max Length",
+            "description": "Maximum frames to keep in Redis stream (0 = unlimited)"
+          },
+          "stream_quality": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 80
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stream Quality",
+            "description": "JPEG compression quality (80-100), percentage of original stream quality"
+          },
+          "stream_fps": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 120,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stream Fps",
+            "description": "Target frames per second to stream to Redis (1-120)"
+          },
+          "stream_skip_frames": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stream Skip Frames",
+            "description": "Number of frames to skip between captures (0 = no skipping)"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "rtsp_url"
+        ],
+        "title": "CameraUpdate"
+      },
+      "DemographicsConfig": {
+        "properties": {
+          "track_history_max_length": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Track History Max Length",
+            "description": "Maximum number of detection records to keep for tracking one person"
+          },
+          "exit_threshold": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 300,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Threshold",
+            "description": "Time in seconds to wait after losing sight of a person before considering them as exited"
+          },
+          "min_track_duration": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 60,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Track Duration",
+            "description": "Minimum track duration in seconds before considering a person for demographics analysis"
+          },
+          "detection_confidence_threshold": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0.1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detection Confidence Threshold",
+            "description": "Minimum confidence threshold for person detection (0.1 to 1.0)"
+          },
+          "demographics_confidence_threshold": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0.1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demographics Confidence Threshold",
+            "description": "Minimum confidence threshold for demographics classification (0.1 to 1.0)"
+          },
+          "min_track_updates": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Track Updates",
+            "description": "Minimum number of successful detections required before saving demographics data to database"
+          },
+          "box_area_threshold": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0.05
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Box Area Threshold",
+            "description": "Minimum bounding box area threshold relative to frame size (determines minimum person size for analysis)"
+          },
+          "save_interval": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1800,
+                "minimum": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Save Interval",
+            "description": "Time interval in seconds between saving demographics data batches"
+          },
+          "frame_skip_interval": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 5,
+                "minimum": 0.1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frame Skip Interval",
+            "description": "Time interval in seconds between processing frames (higher values reduce processing load)"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "camera_id": {
+            "type": "string",
+            "title": "Camera Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "camera_id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "DemographicsConfig"
+      },
+      "DemographicsConfigCreate": {
+        "properties": {
+          "track_history_max_length": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Track History Max Length",
+            "description": "Maximum number of detection records to keep for tracking one person"
+          },
+          "exit_threshold": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 300,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Threshold",
+            "description": "Time in seconds to wait after losing sight of a person before considering them as exited"
+          },
+          "min_track_duration": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 60,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Track Duration",
+            "description": "Minimum track duration in seconds before considering a person for demographics analysis"
+          },
+          "detection_confidence_threshold": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0.1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detection Confidence Threshold",
+            "description": "Minimum confidence threshold for person detection (0.1 to 1.0)"
+          },
+          "demographics_confidence_threshold": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0.1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demographics Confidence Threshold",
+            "description": "Minimum confidence threshold for demographics classification (0.1 to 1.0)"
+          },
+          "min_track_updates": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Track Updates",
+            "description": "Minimum number of successful detections required before saving demographics data to database"
+          },
+          "box_area_threshold": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0.05
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Box Area Threshold",
+            "description": "Minimum bounding box area threshold relative to frame size (determines minimum person size for analysis)"
+          },
+          "save_interval": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1800,
+                "minimum": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Save Interval",
+            "description": "Time interval in seconds between saving demographics data batches"
+          },
+          "frame_skip_interval": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 5,
+                "minimum": 0.1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frame Skip Interval",
+            "description": "Time interval in seconds between processing frames (higher values reduce processing load)"
+          },
+          "camera_id": {
+            "type": "string",
+            "title": "Camera Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "camera_id"
+        ],
+        "title": "DemographicsConfigCreate"
+      },
+      "DemographicsConfigUpdate": {
+        "properties": {
+          "track_history_max_length": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Track History Max Length",
+            "description": "Maximum number of detection records to keep for tracking one person"
+          },
+          "exit_threshold": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 300,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Threshold",
+            "description": "Time in seconds to wait after losing sight of a person before considering them as exited"
+          },
+          "min_track_duration": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 60,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Track Duration",
+            "description": "Minimum track duration in seconds before considering a person for demographics analysis"
+          },
+          "detection_confidence_threshold": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0.1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Detection Confidence Threshold",
+            "description": "Minimum confidence threshold for person detection (0.1 to 1.0)"
+          },
+          "demographics_confidence_threshold": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0.1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Demographics Confidence Threshold",
+            "description": "Minimum confidence threshold for demographics classification (0.1 to 1.0)"
+          },
+          "min_track_updates": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 100,
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Track Updates",
+            "description": "Minimum number of successful detections required before saving demographics data to database"
+          },
+          "box_area_threshold": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 1,
+                "minimum": 0.05
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Box Area Threshold",
+            "description": "Minimum bounding box area threshold relative to frame size (determines minimum person size for analysis)"
+          },
+          "save_interval": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 1800,
+                "minimum": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Save Interval",
+            "description": "Time interval in seconds between saving demographics data batches"
+          },
+          "frame_skip_interval": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 5,
+                "minimum": 0.1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frame Skip Interval",
+            "description": "Time interval in seconds between processing frames (higher values reduce processing load)"
+          }
+        },
+        "type": "object",
+        "title": "DemographicsConfigUpdate"
+      },
+      "DemographicsResult": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "gender": {
+            "$ref": "#/components/schemas/GenderEnum"
+          },
+          "age": {
+            "$ref": "#/components/schemas/AgeEnum"
+          },
+          "emotion": {
+            "$ref": "#/components/schemas/EmotionEnum"
+          },
+          "ethnicity": {
+            "$ref": "#/components/schemas/EthnicGroupEnum"
+          },
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "config_id": {
+            "type": "string",
+            "title": "Config Id"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count",
+          "gender",
+          "age",
+          "emotion",
+          "ethnicity",
+          "id",
+          "config_id",
+          "created_at"
+        ],
+        "title": "DemographicsResult"
+      },
+      "DemographicsResultsResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/DemographicsResult"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "analytics": {
+            "$ref": "#/components/schemas/Analytics"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "analytics"
+        ],
+        "title": "DemographicsResultsResponse"
+      },
+      "EmotionEnum": {
+        "type": "string",
+        "enum": [
+          "angry",
+          "fear",
+          "happy",
+          "neutral",
+          "sad",
+          "surprise"
+        ],
+        "title": "EmotionEnum"
+      },
+      "EthnicGroupEnum": {
+        "type": "string",
+        "enum": [
+          "white",
+          "african",
+          "south_asian",
+          "east_asian",
+          "middle_eastern"
+        ],
+        "title": "EthnicGroupEnum"
+      },
+      "GenderEnum": {
+        "type": "string",
+        "enum": [
+          "male",
+          "female"
+        ],
+        "title": "GenderEnum"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Page_Camera_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Camera"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Page"
+          },
+          "size": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Size"
+          },
+          "pages": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pages"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "page",
+          "size"
+        ],
+        "title": "Page[Camera]"
+      },
+      "Tag": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "color": {
+            "type": "string",
+            "title": "Color"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "color"
+        ],
+        "title": "Tag"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
