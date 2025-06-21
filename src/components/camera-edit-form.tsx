@@ -176,8 +176,6 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
               <input
                 {...register("stream_frame_width")}
                 type="number"
-                min="1"
-                max="2560"
                 className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.stream_frame_width
                     ? "border-red-500"
@@ -200,8 +198,6 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
               <input
                 {...register("stream_frame_height")}
                 type="number"
-                min="1"
-                max="2560"
                 className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.stream_frame_height
                     ? "border-red-500"
@@ -224,7 +220,6 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
               <input
                 {...register("stream_max_length")}
                 type="number"
-                min="0"
                 className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.stream_max_length
                     ? "border-red-500"
@@ -247,8 +242,6 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
               <input
                 {...register("stream_quality")}
                 type="number"
-                min="80"
-                max="100"
                 className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.stream_quality ? "border-red-500" : "border-gray-600"
                 }`}
@@ -289,7 +282,6 @@ export function CameraEditForm({ camera, onCancel }: CameraEditFormProps) {
               <input
                 {...register("stream_skip_frames")}
                 type="number"
-                min="0"
                 className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.stream_skip_frames
                     ? "border-red-500"

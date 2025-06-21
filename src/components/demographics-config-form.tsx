@@ -186,8 +186,6 @@ export function DemographicsConfigForm({
                     {...register("detection_confidence_threshold")}
                     type="number"
                     step="0.1"
-                    min="0.1"
-                    max="1.0"
                     className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.detection_confidence_threshold
                         ? "border-red-500"
@@ -216,8 +214,6 @@ export function DemographicsConfigForm({
                     {...register("demographics_confidence_threshold")}
                     type="number"
                     step="0.1"
-                    min="0.1"
-                    max="1.0"
                     className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.demographics_confidence_threshold
                         ? "border-red-500"
@@ -300,8 +296,6 @@ export function DemographicsConfigForm({
                     {...register("save_interval")}
                     type="number"
                     step="1"
-                    min="300"
-                    max="1800"
                     className={`w-full px-3 py-2 bg-gray-700 border rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       errors.save_interval
                         ? "border-red-500"

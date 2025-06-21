@@ -26,15 +26,6 @@ export default function AnalyticsPage() {
     formState: { errors },
   } = useForm<DemographicsResultsFormData>({
     resolver: yupResolver(demographicsResultsSchema),
-    defaultValues: {
-      camera_id: "",
-      gender: undefined,
-      age: undefined,
-      emotion: undefined,
-      ethnicity: undefined,
-      start_date: undefined,
-      end_date: undefined,
-    },
   });
 
   const filters = watch();

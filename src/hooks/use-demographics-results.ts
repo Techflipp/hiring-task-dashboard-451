@@ -15,9 +15,19 @@ export function useDemographicsResults(filters: DemographicsResultsFilters) {
   return useQuery({
     queryKey: ["demographics-results", filters],
     queryFn: async () => {
+      const filteredParams = Object.entries(filters).reduce(
+        (acc, [key, value]) => {
+          if (value != null && value !== "") {
+            acc[key] = value;
+          }
+          return acc;
+        },
+        {} as Record<string, string>
+      );
+
       const { data, error } = await api.GET("/demographics/results", {
         params: {
-          query: filters,
+          query: { camera_id: filteredParams.camera_id, ...filteredParams },
         },
       });
 
