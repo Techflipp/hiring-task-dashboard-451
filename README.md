@@ -1,236 +1,75 @@
-# TechFlipp Frontend Task
+# 📸 CameraVision Analytics
 
-## Overview
+Welcome to **CameraVision Analytics**! This is an advanced camera management and demographics analytics platform designed to help you monitor your cameras and analyze real-time demographic data. Built with Next.js, React, and Tailwind CSS, it offers a sleek, responsive, and intuitive user experience.
 
-👋 This is a NextJS interview challenge. Please fork this repo, and push your code to a branch in your forked repo (following the instructions below).
+## ✨ Features
 
-You are tasked with building a responsive frontend application that interfaces with our Camera Management API. The application will allow users to manage cameras and view demographic analytics data collected by these cameras.
+*   **Dashboard**: Get a quick overview of your system with key statistics and recent activity.
+*   **Camera Management**:
+    *   **List Cameras**: View all your cameras with their status (online/offline) and configuration presence.
+    *   **Add New Camera**: Easily add new cameras with detailed stream settings and tags.
+    *   **View Camera Details**: Dive deep into individual camera configurations, status, and associated demographics settings.
+    *   **Edit Camera**: Update camera details and stream parameters.
+*   **Demographics Configuration**: Configure advanced settings for demographics detection on a per-camera basis.
+*   **Demographics Analytics**:
+    *   **Interactive Dashboard**: Visualize demographic data (gender, age, emotion, ethnicity) through various charts (Pie, Bar, Line).
+    *   **Detailed Records Table**: View individual detection records with timestamps and confidence levels.
+    *   **Advanced Filtering**: Filter analytics data by camera, gender, age, emotion, ethnicity, and date range.
+*   **System Settings**: Customize application preferences, notifications, security, and system behavior, with settings persisting in local storage.
+*   **Responsive Design**: Optimized for seamless experience across various devices (desktop, tablet, mobile).
+*   **Toast Notifications**: Provides clear feedback for user actions (success, error, validation).
+*   **Client-Side Data Fetching**: Utilizes React Query for efficient data management, caching, and synchronization.
+*   **API Simulation & Persistence**: The API client includes dummy data and local storage integration to simulate backend operations (CRUD for cameras and demographics configs) for a full-stack feel without a real backend.
 
-### ✅ Submission Instructions
+## 🚀 Technologies Used
 
-1. **Fork** this repository to your GitHub account.
+*   **Next.js**: React framework for production.
+*   **React**: A JavaScript library for building user interfaces.
+*   **Tailwind CSS**: A utility-first CSS framework for rapid UI development.
+*   **shadcn/ui**: Beautifully designed components built with Radix UI and Tailwind CSS.
+*   **Lucide React**: A collection of beautiful & consistent icons.
+*   **React Query (TanStack Query)**: Powerful asynchronous state management for React.
+*   **Recharts**: A composable charting library built on React components.
 
-2. Complete the task in a branch of your **own fork**.
+## 🛠️ Project Setup
 
-3. Once you're done, follow this submission process:
+Follow these steps to get the CameraVision Analytics project up and running on your local machine.
 
-   * Open an **issue** in this main repository.
-   * Request for a new branch to be created with the name format:
+### Prerequisites
 
-     ```
-     Request: {your-name}-submission
-     ```
-   * Example: `alex-submission`
-   * Our team will create that branch and set up **CI/CD previews**.
-   * You will then open a **pull request** from your forked repo to the new branch created under this repository.
+Make sure you have the following installed:
 
-4. Your pull request should include:
-
-   * Setup instructions to run the app
-   * Overview of your implementation
-   * Any assumptions or design decisions you made
-   * Screenshots or a video preview of the UI in action
-
-🚨 Please note:
-**Candidates who do not complete the task within the given timeframe will not be considered for the position.**
-
----
-
-### 💬 Questions?
-
-If you have any questions, need clarification, or encounter blockers, feel free to **open an issue** in this repository. We’ll be happy to assist!
-
----
-
-## Requirements
-
-### 1. Camera List Page
-- Implement a paginated view of cameras
-- Allow users to control how many items appear per page
-- Provide a way to search for cameras by name
-- Display relevant camera information in a user-friendly manner
-
-### 2. Camera Detail Page
-- Create a view showing comprehensive camera information 
-- Design an intuitive layout for camera details
-
-### 3. Camera Update Functionality
-- Develop a user interface for updating camera details
-- Implement appropriate validation with meaningful feedback
-- Consider the user experience during form submission
-
-### 4. Demographics Configuration
-- Enable users to create or edit demographics configuration for cameras - one to one relationship with camera
-- Design form controls appropriate for each configuration parameter
-- Ensure proper validation of configuration values
-
-### 5. Demographics Results & Analytics
-- Implement filtering capabilities for the data
-- Create informative visualizations that convey demographic insights like charts, graphs, tables, etc.
-
-## Technical Requirements
-
-- Build the application using Next.js, following its best practices for routing, data fetching, and component organization
-- Implement responsive design that works well across different devices
-- Let your imagination make the design of the task responsive.
+*   **Node.js**: Version 18.x or higher (LTS recommended). You can download it from [nodejs.org](https://nodejs.org/).
+*   **npm** (comes with Node.js) or **Yarn** or **pnpm**.
 
 
-## Nice-to-Have Technical Features
+### Installation
 
-The following features would enhance your solution:
-- Different rendering ways as needed (SSR, ISR, SSG, etc.)
-- Skeleton loading states to improve perceived performance
-- Seamless data refresh mechanisms
-- Render error messages in form fields
-- Optimistic UI updates for a better user experience
-- Organized state management
-- Use React Query (TanStack Query) for fetching and caching data.
-- Creative and intuitive UI/UX design
-- SEO and performance optimizations
-- Unit tests for key components
+1. **Clone the repository**
+   ```sh
+   git clone <repository-url>
+   cd reactflow-example
 
-## API Specification
+2. **Install dependencies**
+   ```sh
+   npm install
+   # or if using yarn
+   yarn install
 
-**Base URL**: https://task-451-api.ryd.wafaicloud.com/
-**Schema**: https://task-451-api.ryd.wafaicloud.com/docs
+3. **Start the development server**
+   ```sh
+   npm run dev
+   # or
+   yarn dev
 
-### Enum Definitions
+4. **Build for production**
+   ```sh
+   npm run build
+   # or
+   yarn build
 
-#### Genders
-```
-MALE = "male"
-FEMALE = "female"
-```
-
-#### Ages
-```
-ZERO_EIGHTEEN = "0-18"
-NINETEEN_THIRTY = "19-30"
-THIRTYONE_FORTYFIVE = "31-45"
-FORTYSIX_SIXTY = "46-60"
-SIXTYPLUS = "60+"
-```
-
-#### Emotions
-```
-ANGRY = "angry"
-FEAR = "fear"
-HAPPY = "happy"
-NEUTRAL = "neutral"
-SAD = "sad"
-SURPRISE = "surprise"
-```
-
-#### Ethnic Groups
-```
-WHITE = "white"
-AFRICAN = "african"
-SOUTH_ASIAN = "south_asian"
-EAST_ASIAN = "east_asian"
-MIDDLE_EASTERN = "middle_eastern"
-```
-
-### Tags Endpoint
-
-#### 1. List All Tags
-```
-GET /tags/
-```
-
-Response: List of all available tags
-
-### Camera Endpoints
-
-#### 1. List Cameras
-```
-GET /cameras/
-Query Parameters:
-- page: int (default=1) - Page number
-- size: int (default=20) - Items per page
-- camera_name: string (optional) - Filter by camera name
-```
-
-Response: Paginated list of cameras
-
-#### 2. Get Camera Details
-```
-GET /cameras/{camera_id}
-```
-
-Response: Detailed camera information including demographics config if it exists
-
-#### 3. Update Camera
-```
-PUT /cameras/{camera_id}
-Body: {
-  "name": string,
-  "rtsp_url": string,
-  "stream_frame_width": int (optional, min=1, max=2560),
-  "stream_frame_height": int (optional, min=1, max=2560),
-  "stream_max_length": int (optional, min=0, max=10000),
-  "stream_quality": int (optional, min=80, max=100),
-  "stream_fps": int (optional, min=1, max=120),
-  "stream_skip_frames": int (optional, min=0, max=100),
-  "tags": array of tag ids (optional)
-}
-```
-
-### Demographics Endpoints
-
-#### 1. Create Demographics Configuration
-```
-POST /demographics/config
-Body: {
-  "camera_id": string,
-  "track_history_max_length": int (optional, min=1, max=100),
-  "exit_threshold": int (optional, min=1, max=300),
-  "min_track_duration": int (optional, min=1, max=60),
-  "detection_confidence_threshold": float (optional, min=0.1, max=1.0),
-  "demographics_confidence_threshold": float (optional, min=0.1, max=1.0),
-  "min_track_updates": int (optional, min=1, max=100),
-  "box_area_threshold": float (optional, min=0.05, max=1.0),
-  "save_interval": int (optional, min=300, max=1800),
-  "frame_skip_interval": float (optional, min=0.1, max=5.0)
-}
-```
-
-#### 2. Update Demographics Configuration
-```
-PUT /demographics/config/{config_id}
-Body: {
-  "track_history_max_length": int (optional, min=1, max=100),
-  "exit_threshold": int (optional, min=1, max=300),
-  "min_track_duration": int (optional, min=1, max=60),
-  "detection_confidence_threshold": float (optional, min=0.1, max=1.0),
-  "demographics_confidence_threshold": float (optional, min=0.1, max=1.0),
-  "min_track_updates": int (optional, min=1, max=100),
-  "box_area_threshold": float (optional, min=0.05, max=1.0),
-  "save_interval": int (optional, min=300, max=1800),
-  "frame_skip_interval": float (optional, min=0.1, max=5.0)
-}
-```
-
-#### 3. Get Demographics Results
-```
-GET /demographics/results
-Query Parameters:
-- camera_id: string (required)
-- gender: string (optional) - Filter by gender
-- age: string (optional) - Filter by age group
-- emotion: string (optional) - Filter by emotion
-- ethnicity: string (optional) - Filter by ethnicity
-- start_date: datetime (optional) - Filter by start date
-- end_date: datetime (optional) - Filter by end date
-```
-
-Response: List of demographics results and analytics data
-
-## Evaluation Criteria
-
-Your submission will be evaluated based on:
-- Feature completeness according to requirements
-- Code quality and organization
-- UI/UX design and responsiveness
-- Performance optimizations
-- Unit test coverage
-- Error handling
+5. **Preview the production build**
+   ```sh
+   npm run preview
+   # or
+   yarn preview
