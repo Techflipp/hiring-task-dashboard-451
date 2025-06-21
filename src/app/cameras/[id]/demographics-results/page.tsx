@@ -5,9 +5,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Pie, Bar } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
 import { useParams } from "next/navigation";
-import { getDemographicsResults } from "@/app/services/demographics";
-import CustomTable from "../../../../../public/components/customTable";
-import AppSpinner from "../../../../../public/components/AppSpinner/AppSpinner";
+import { getDemographicsResults } from "@/services/demographics";
+import CustomTable from "@/components/CustomTable";
+import AppSpinner from "@/components/AppSpinner/AppSpinner";
 
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 

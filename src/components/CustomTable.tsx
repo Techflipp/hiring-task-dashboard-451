@@ -110,4 +110,4 @@ function CustomTable<T extends { id?: string; _id?: string }>({ columns, data, s
   );
 }
 
-export default React.memo(CustomTable) as typeof CustomTable;
+export default CustomTable

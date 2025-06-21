@@ -1,6 +1,6 @@
 // services/demographics.ts
 "use client";
-import API from "../axios/axios";
+import API from "./instance";
 
 export const getDemographicsResults = async (filters) => {
   // remove empty values

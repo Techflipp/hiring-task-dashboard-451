@@ -1,6 +1,6 @@
 // services/cameras.ts
 
-import API from "../axios/axios";
+import API from "./instance";
 
 export const getCameras = async (page = 1, size = 10, search = "") => {
   const res = await API.get("/cameras", {

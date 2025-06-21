@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { getCameraDetails, updateCamera } from "@/app/services/cameras";
+import { getCameraDetails, updateCamera } from "@/services/cameras";
 import { useQuery } from "@tanstack/react-query";
 
 export default function EditCameraPage() {
