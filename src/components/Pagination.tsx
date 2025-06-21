@@ -1,8 +1,15 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+
+interface PaginationProps {
+    currentPage: number;
+    totalPages: number;
+    onPageChange: (page: number | string) => void;
+    isLoading?: boolean;
+}
 // Pagination Component
-const Pagination = ({ currentPage, totalPages, onPageChange, isLoading = false }) => {
+const Pagination = ({ currentPage, totalPages, onPageChange, isLoading = false }:PaginationProps) => {
     const generatePageNumbers = () => {
         const pages = [];
         const maxVisible = 5;

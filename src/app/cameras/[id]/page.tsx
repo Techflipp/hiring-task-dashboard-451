@@ -34,7 +34,7 @@ export async function generateMetadata(paramsPromise: { params: Promise<CameraDe
         'security camera',
         'surveillance',
         camera.name,
-        ...camera.tags.map((tag) => (tag as Tag).name),
+       ...camera.tags.map((tag: Tag) => tag.name),
         'live stream',
         'monitoring'
       ],

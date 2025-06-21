@@ -102,7 +102,7 @@ export default function CamerasPage() {
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-    const { data, isLoading }: UseCamerasResult = useCameras({ page, camera_name: search });
+    const { data , isLoading }: UseCamerasResult = useCameras({ page, camera_name: search });
 
     const handleSearch = useCallback(() => {
         setPage(1);
@@ -187,7 +187,7 @@ export default function CamerasPage() {
                         {/* Results Info */}
                         <div className="flex items-center justify-between mb-6">
                             <p className="text-gray-600">
-                                Showing {(data?.items?.length * data?.page) || 0} of {data?.total || 0} cameras
+                              Showing {(data?.items ? data.items.length * (data.page || 1) : 0)} of {data?.total || 0} cameras
                             </p>
                             <p className="text-sm text-gray-500">
                                 Page {data?.page || 1} of {data?.pages || 1}
@@ -213,16 +213,18 @@ export default function CamerasPage() {
                         )}
 
                         {/* Pagination */}
-                        {data?.total > 0 && data?.pages > 1 && (
-                            <div className="flex justify-center">
-                                <Pagination
-                                    currentPage={data.page}
-                                    totalPages={data.pages}
-                                    onPageChange={handlePageChange}
-                                    isLoading={isLoading}
-                                />
-                            </div>
-                        )}
+                {data && data.total > 0 && data.pages > 1 && (
+                    <div className="flex justify-center">
+                        <Pagination
+                        currentPage={data.page ?? 1}
+                        totalPages={data.pages ?? 1}
+                        // @ts-ignore
+                        onPageChange={handlePageChange}
+                        isLoading={isLoading}
+                        />
+                    </div>
+                    )}
+
                     </>
                 )}
             </div>

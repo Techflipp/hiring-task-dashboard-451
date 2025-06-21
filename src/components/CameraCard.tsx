@@ -4,18 +4,23 @@ import  Link  from 'next/link';
 import React, { useState } from 'react';
 import { Camera, Wifi, WifiOff, Play, Eye, Settings, MoreHorizontal } from 'lucide-react';
 import CameraMenu from './CameraMenu';
+import { Camera as CameraTypes } from '@/types/camera';
+interface CameraCardProps {
+  camera: CameraTypes;
+  viewMode: string;
+}
 
-const CameraCard = ({ camera, viewMode }) => {
+const CameraCard = ({ camera, viewMode }: CameraCardProps) => {
   const [imageError, setImageError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  const getStatusColor = (isActive, statusMessage) => {
+  const getStatusColor = (isActive:boolean, statusMessage:string) => {
     if (!isActive) return 'text-red-500 bg-red-50 border-red-200';
     if (statusMessage.toLowerCase().includes('recording')) return 'text-amber-600 bg-amber-50 border-amber-200';
     return 'text-green-600 bg-green-50 border-green-200';
   };
 
-  const getStatusIcon = (isActive, statusMessage) => {
+  const getStatusIcon = (isActive:boolean, statusMessage:string) => {
     if (!isActive) return <WifiOff className="w-3 h-3" />;
     if (statusMessage.toLowerCase().includes('recording')) return <Play className="w-3 h-3" />;
     return <Wifi className="w-3 h-3" />;

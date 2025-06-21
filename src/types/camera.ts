@@ -24,7 +24,6 @@ export type Camera = {
   id: string;
   name: string;
   rtsp_url: string;
-  tags: Tag[];
   is_active: boolean;
   status_message: string;
   snapshot: string;
@@ -37,6 +36,8 @@ export type Camera = {
   stream_fps: number;
   stream_skip_frames: number;
   demographics_config: DemographicsConfig;
+  tags: Tag[];
+
 };
 
  
